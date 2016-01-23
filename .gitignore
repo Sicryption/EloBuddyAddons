@@ -19,7 +19,6 @@ obj/
 *.msi
 *.msm
 *.msp
-*.config
 *.cache
 *.txt
 *.pdb
