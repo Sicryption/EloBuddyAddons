@@ -35,60 +35,31 @@ namespace UnsignedAnnie
             && a.IsValidTarget(range)).FirstOrDefault();
         }
 
-        public static Obj_AI_Base GetEnemy(GameObjectType type, AttackSpell spell)
+        public static Obj_AI_Base GetEnemyKS(GameObjectType type, AttackSpell spell)
         {
+            float range = 0;
+            if (spell == AttackSpell.W)
+                range = Program.W.Range;
+            else if (spell == AttackSpell.R)
+                range = Program.R.Range;
+            else if (spell == AttackSpell.Q)
+                range = Program.Q.Range;
+            else if (spell == AttackSpell.Ignite)
+                range = Program.Ignite.Range;
             //ksing
-            if (spell == AttackSpell.W)//w
-            {
-                return ObjectManager.Get<Obj_AI_Base>().OrderBy(a => a.Health).Where(a => a.IsEnemy
+            return ObjectManager.Get<Obj_AI_Base>().OrderBy(a => a.Health).Where(a => a.IsEnemy
                 && a.Type == type
-                && a.Distance(Annie) <= Program.W.Range
+                && a.Distance(Annie) <= range
                 && !a.IsDead
                 && !a.IsInvulnerable
-                && a.IsValidTarget(Program.W.Range)
-                && a.Health <= AnnieCalcs.W(a)).FirstOrDefault();
-            }
-            else if (spell == AttackSpell.Q)//q
-            {
-                return ObjectManager.Get<Obj_AI_Base>().OrderBy(a => a.Health).Where(a => a.IsEnemy
-                && a.Type == type
-                && a.Distance(Annie) <= Program.Q.Range
-                && !a.IsDead
-                && !a.IsInvulnerable
-                && a.IsValidTarget(Program.Q.Range)
-                && a.Health <= AnnieCalcs.Q(a)).FirstOrDefault();
-            }
-            else if (spell == AttackSpell.R)//r
-            {
-                return ObjectManager.Get<Obj_AI_Base>().OrderBy(a => a.Health).Where(a => a.IsEnemy
-                && a.Type == type
-                && a.Distance(Annie) <= Program.R.Range
-                && !a.IsDead
-                && !a.IsInvulnerable
-                && a.IsValidTarget(Program.R.Range)
-                && a.Health <= AnnieCalcs.R(a)).FirstOrDefault();
-            }
-            else if (spell == AttackSpell.RPet)//rpet
-            {
-                if (Annie.Pet == null)
-                    return null;
-                return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                && a.Type == type
-                && a.Distance(Annie.Pet) <= 200
-                && !a.IsDead
-                && !a.IsInvulnerable
-                && a.IsValidTarget(200)).FirstOrDefault();
-            }
-            else//ignite
-            {
-                return ObjectManager.Get<Obj_AI_Base>().OrderBy(a => a.Health).Where(a => a.IsEnemy
-                && a.Type == type
-                && a.Distance(Annie) <= Program.Ignite.Range
-                && !a.IsDead
-                && !a.IsInvulnerable
-                && a.IsValidTarget(Program.Ignite.Range)
-                && a.Health <= AnnieCalcs.Ignite(a)).FirstOrDefault();
-            }
+                && a.IsValidTarget(range)
+                && 
+                (
+                (a.Health <= AnnieCalcs.W(a) && AttackSpell.W == spell) ||
+                (a.Health <= AnnieCalcs.Q(a) && AttackSpell.Q == spell) ||
+                (a.Health <= AnnieCalcs.R(a) && AttackSpell.R == spell) ||
+                (a.Health <= AnnieCalcs.Ignite(a) && AttackSpell.Ignite == spell)
+                )).FirstOrDefault();
         }
 
         public static AIHeroClient Annie { get { return ObjectManager.Player; } }
@@ -102,7 +73,7 @@ namespace UnsignedAnnie
 
             if (QCHECK && QREADY)
             {
-                Obj_AI_Minion enemy = (Obj_AI_Minion)GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.Q);
+                Obj_AI_Minion enemy = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
 
                 if (enemy != null)
                     Program.Q.Cast(enemy);
@@ -110,7 +81,7 @@ namespace UnsignedAnnie
 
             if (WCHECK && WREADY)
             {
-                Obj_AI_Minion enemy = (Obj_AI_Minion)GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.W);
+                Obj_AI_Minion enemy = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.W);
 
                 if (enemy != null)
                     Program.W.Cast(enemy.Position);
@@ -134,21 +105,21 @@ namespace UnsignedAnnie
             {
                 if (QCHECK && QREADY)
                 {
-                    AIHeroClient enemy = (AIHeroClient)GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
+                    AIHeroClient enemy = (AIHeroClient)GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.Q);
 
                     if (enemy != null)
                         Program.Q.Cast(enemy);
                 }
                 if (WCHECK && WREADY)
                 {
-                    AIHeroClient enemy = (AIHeroClient)GetEnemy(GameObjectType.AIHeroClient, AttackSpell.W);
+                    AIHeroClient enemy = (AIHeroClient)GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.W);
 
                     if (enemy != null)
                         Program.W.Cast(enemy.Position);
                 }
                 if (RCHECK && RREADY)
                 {
-                    AIHeroClient enemy = (AIHeroClient)GetEnemy(GameObjectType.AIHeroClient, AttackSpell.R);
+                    AIHeroClient enemy = (AIHeroClient)GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.R);
 
                     if (enemy != null)
                         Program.R.Cast(enemy.Position);
@@ -156,7 +127,7 @@ namespace UnsignedAnnie
                 
                 if (ICHECK && IREADY)
                 {
-                    AIHeroClient enemy = (AIHeroClient)GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Ignite);
+                    AIHeroClient enemy = (AIHeroClient)GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.Ignite);
 
                     if (enemy != null)
                         Program.Ignite.Cast(enemy);
@@ -181,10 +152,10 @@ namespace UnsignedAnnie
 
             if (WCHECK && WREADY)
             {
-                Obj_AI_Base enemy = GetBestWLocation(GameObjectType.obj_AI_Minion);
+                Vector3 pos = GetBestWLocation(GameObjectType.obj_AI_Minion);
 
-                if (enemy != null)
-                    Program.W.Cast(enemy.Position);
+                if (pos != Vector3.Zero)
+                    Program.W.Cast(pos);
             }
 
             if (Orbwalker.CanAutoAttack)
@@ -213,10 +184,10 @@ namespace UnsignedAnnie
 
             if (WCHECK && WREADY)
             {
-                AIHeroClient enemy = (AIHeroClient)GetBestWLocation(GameObjectType.AIHeroClient);
+                Vector3 pos = GetBestWLocation(GameObjectType.AIHeroClient);
 
-                if (enemy != null)
-                    Program.W.Cast(enemy.Position);
+                if (pos != Vector3.Zero)
+                    Program.W.Cast(pos);
             }
 
             if (Orbwalker.CanAutoAttack)
@@ -241,6 +212,14 @@ namespace UnsignedAnnie
             bool EREADY = Program.E.IsReady();
             bool RREADY = Program.R.IsReady();
 
+            if (!Annie.HasBuff("pyromania_particle") && ECHECK && EREADY)
+            {
+                AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.Q.Range, GameObjectType.AIHeroClient);
+
+                if (enemy != null)
+                    Program.E.Cast();
+            }
+
             if (RCHECK && RREADY)
             {
                 AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.R.Range, GameObjectType.AIHeroClient);
@@ -259,18 +238,10 @@ namespace UnsignedAnnie
 
             if (WCHECK && WREADY)
             {
-                AIHeroClient enemy = (AIHeroClient)GetBestWLocation(GameObjectType.AIHeroClient);
+                Vector3 pos = GetBestWLocation(GameObjectType.AIHeroClient);
 
-                if (enemy != null)
-                    Program.W.Cast(enemy.Position);
-            }
-
-            if (ECHECK && EREADY)
-            {
-                AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.Q.Range, GameObjectType.AIHeroClient);
-
-                if (enemy != null)
-                    Program.E.Cast();
+                if (pos != Vector3.Zero)
+                    Program.W.Cast(pos);
             }
 
             if (ItemsCHECK)
@@ -279,12 +250,6 @@ namespace UnsignedAnnie
 
                 if (enemy != null)
                     UseItems();
-            }
-
-            if(GetEnemy(GameObjectType.AIHeroClient, AttackSpell.RPet) != null
-                && Program.E.IsReady())
-            {
-                Program.E.Cast();
             }
 
             if (IgniteCHECK && Program.Ignite != null && Program.Ignite.IsReady())
@@ -362,9 +327,8 @@ namespace UnsignedAnnie
         
         public static void ControlTibbers()
         {
-            /*if(Annie.Pet != null)
+            if(Annie.Pet != null)
             {
-                //try for turret
                 AIHeroClient enemy = ObjectManager.Get<AIHeroClient>()
                     .OrderBy(a => a.Health)
                     .Where(a => !a.IsDead
@@ -398,44 +362,30 @@ namespace UnsignedAnnie
                             Player.IssueOrder(GameObjectOrder.AutoAttackPet, minion);
                     }
                 }
-            }*/
+            }
         }
 
-        public static Obj_AI_Base GetBestWLocation(GameObjectType type)
+        public static Vector3 GetBestWLocation(GameObjectType type)
         {
-            int numEnemiesInRange = 0;
-            Obj_AI_Base enem = null;
-
-            foreach (Obj_AI_Base enemy in ObjectManager.Get<Obj_AI_Base>()
-                .OrderBy(a => a.Health)
-                .Where(a => a.Distance(Annie) <= Program.W.Range
-                && a.IsEnemy
-                && a.Type == type
-                && !a.IsDead
-                && !a.IsInvulnerable))
+            int mostUnits = 0;
+            Vector3 bestPos = Vector3.Zero;
+            PredictionResult[] prediction = Prediction.Position.PredictConeSpellAoe(ObjectManager.Get<Obj_AI_Base>()
+                    .Where(a => !a.IsDead
+                    && !a.IsInvulnerable
+                    && a.Type == type)
+                    .ToArray(), Program.W.Range, 50, 1, 0, Annie.Position);
+            foreach(PredictionResult pr in prediction)
             {
-                int tempNumEnemies = 0;
-                foreach (Obj_AI_Base enemy2 in ObjectManager.Get<Obj_AI_Base>()
-                    .OrderBy(a => a.Health)
-                    .Where(a => a.Distance(Annie) <= Program.W.Range
-                    && a.IsEnemy
-                    && !a.IsDead
-                    && a.Type == type
-                    && !a.IsInvulnerable))
+                if(pr.CollisionObjects.Length > mostUnits)
                 {
-                    if (enemy != enemy2
-                        && enemy2.Distance(enemy) <= 75)
-                        tempNumEnemies++;
-                }
-
-                if (tempNumEnemies > numEnemiesInRange)
-                {
-                    enem = enemy;
-                    numEnemiesInRange = tempNumEnemies;
+                    mostUnits = pr.CollisionObjects.Length;
+                    bestPos = pr.CastPosition;
                 }
             }
 
-            return enem;
+            //Chat.Print("Units: " + mostUnits);
+
+            return bestPos;
         }
     }
 }

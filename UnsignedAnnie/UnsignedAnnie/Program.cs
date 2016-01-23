@@ -96,12 +96,12 @@ namespace UnsignedAnnie
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            if (Program.DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue)
+            if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue)
             {
                 Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.BlueViolet);
             }
 
-            if (Program.DrawingsMenu["DR"].Cast<CheckBox>().CurrentValue)
+            if (DrawingsMenu["DR"].Cast<CheckBox>().CurrentValue)
             {
                 Drawing.DrawCircle(_Player.Position, R.Range, System.Drawing.Color.BlueViolet);
             }
@@ -131,19 +131,19 @@ namespace UnsignedAnnie
             {
                 AnnieFunctions.Flee();
             }
-            if (Program.SettingsMenu["SS"].Cast<CheckBox>().CurrentValue)
+            if (SettingsMenu["SS"].Cast<CheckBox>().CurrentValue)
             {
                 AnnieFunctions.StackMode();
             }
-            if (Program.Killsteal["KSER"].Cast<CheckBox>().CurrentValue)
+            if (Killsteal["KSER"].Cast<CheckBox>().CurrentValue)
             {
                 AnnieFunctions.KillSteal();
             }
-            if (Program.SettingsMenu["SHM"].Cast<CheckBox>().CurrentValue)
+            if (SettingsMenu["SHM"].Cast<CheckBox>().CurrentValue)
             {
                 AnnieFunctions.UseItems();
             }
-            if (Program.SettingsMenu["ST"].Cast<CheckBox>().CurrentValue)
+            if (SettingsMenu["ST"].Cast<CheckBox>().CurrentValue)
             {
                 AnnieFunctions.ControlTibbers();
             }
