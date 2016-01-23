@@ -141,7 +141,7 @@ namespace UnsignedRenekton
                 if (enemy != null)
                     Program.Q.Cast();
             }
-            if (IgCheck && IgReady)
+            if (Program.Ignite != null && IgCheck && IgReady)
             {
                 Obj_AI_Base enemy = GetEnemyKS(Abilities.Ignite, GameObjectType.AIHeroClient);
                 if (enemy != null)
