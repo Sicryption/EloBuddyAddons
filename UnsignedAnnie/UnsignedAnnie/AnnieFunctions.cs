@@ -157,14 +157,6 @@ namespace UnsignedAnnie
                 if (pos != Vector3.Zero)
                     Program.W.Cast(pos);
             }
-
-            if (Orbwalker.CanAutoAttack)
-            {
-                Obj_AI_Base enemy = (Obj_AI_Minion)GetEnemy(Annie.GetAutoAttackRange(), GameObjectType.obj_AI_Base);
-
-                if (enemy != null)
-                    Orbwalker.ForcedTarget = enemy;
-            }
         }
        
         public static void Harrass()
@@ -188,14 +180,6 @@ namespace UnsignedAnnie
 
                 if (pos != Vector3.Zero)
                     Program.W.Cast(pos);
-            }
-
-            if (Orbwalker.CanAutoAttack)
-            {
-                AIHeroClient enemy = (AIHeroClient)GetEnemy(Annie.GetAutoAttackRange(), GameObjectType.AIHeroClient);
-
-                if (enemy != null)
-                    Orbwalker.ForcedTarget = enemy;
             }
         }
 
@@ -222,11 +206,18 @@ namespace UnsignedAnnie
 
             if (RCHECK && RREADY)
             {
+                Vector3 pos = GetBestRLocation(GameObjectType.AIHeroClient);
+
+                if (pos != Vector3.Zero)
+                    Program.R.Cast(pos);
+            }
+            /*if (RCHECK && RREADY)
+            {
                 AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.R.Range, GameObjectType.AIHeroClient);
 
                 if (enemy != null)
                     Program.R.Cast(enemy);
-            }
+            }*/
 
             if (QCHECK && QREADY)
             {
@@ -258,14 +249,6 @@ namespace UnsignedAnnie
 
                 if (enemy != null)
                     Program.Ignite.Cast(enemy);
-            }
-
-            if (Orbwalker.CanAutoAttack)
-            {
-                AIHeroClient enemy = (AIHeroClient)GetEnemy(Annie.GetAutoAttackRange(), GameObjectType.AIHeroClient);
-
-                if (enemy != null)
-                    Orbwalker.ForcedTarget = enemy;
             }
         }
 
@@ -365,6 +348,18 @@ namespace UnsignedAnnie
             }
         }
 
+        public static void AutoUlt()
+        {
+            if(GetBestRLocationUnits(GameObjectType.AIHeroClient) >= 4)
+            {
+                Vector3 pos = GetBestRLocation(GameObjectType.AIHeroClient);
+                if(pos != Vector3.Zero)
+                {
+
+                }
+            }
+        }
+
         public static Vector3 GetBestWLocation(GameObjectType type)
         {
             int mostUnits = 0;
@@ -386,6 +381,47 @@ namespace UnsignedAnnie
             //Chat.Print("Units: " + mostUnits);
 
             return bestPos;
+        }
+        
+        public static Vector3 GetBestRLocation(GameObjectType type)
+        {
+            int mostUnits = 0;
+            Vector3 bestPos = Vector3.Zero;
+            PredictionResult[] prediction = Prediction.Position.PredictCircularMissileAoe(ObjectManager.Get<Obj_AI_Base>()
+                    .Where(a => !a.IsDead
+                    && !a.IsInvulnerable
+                    && a.Type == type)
+                    .ToArray(), Program.R.Range, 290, 0, 0, Annie.Position);
+            foreach (PredictionResult pr in prediction)
+            {
+                if (pr.CollisionObjects.Length > mostUnits)
+                {
+                    mostUnits = pr.CollisionObjects.Length;
+                    bestPos = pr.CastPosition;
+                }
+            }
+
+            //Chat.Print("Units: " + mostUnits);
+
+            return bestPos;
+        }
+        public static int GetBestRLocationUnits(GameObjectType type)
+        {
+            int mostUnits = 0;
+            PredictionResult[] prediction = Prediction.Position.PredictCircularMissileAoe(ObjectManager.Get<Obj_AI_Base>()
+                    .Where(a => !a.IsDead
+                    && !a.IsInvulnerable
+                    && a.Type == type)
+                    .ToArray(), Program.R.Range, 290, 0, 0, Annie.Position);
+            foreach (PredictionResult pr in prediction)
+            {
+                if (pr.CollisionObjects.Length > mostUnits)
+                    mostUnits = pr.CollisionObjects.Length;
+            }
+
+            //Chat.Print("Units: " + mostUnits);
+
+            return mostUnits;
         }
     }
 }

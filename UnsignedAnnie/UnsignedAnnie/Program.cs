@@ -76,10 +76,11 @@ namespace UnsignedAnnie
             DrawingsMenu.Add("DR", new CheckBox("Draw R"));
             
             SettingsMenu = menu.AddSubMenu("Settings", "settingsmenu");
-            SettingsMenu.AddGroupLabel("Combo Settings");
+            SettingsMenu.AddGroupLabel("Settings");
             SettingsMenu.Add("SS", new CheckBox("Prepare Stun at Base"));
             SettingsMenu.Add("SHM", new CheckBox("Auto-Use Mana and Health Potions"));
             SettingsMenu.Add("ST", new CheckBox("Auto-Control Tibbers"));
+            SettingsMenu.Add("SAU", new CheckBox("Auto Tibbers on 4 or more units (with stun)"));
 
             SpellDataInst Sum1 = _Player.Spellbook.GetSpell(SpellSlot.Summoner1);
             SpellDataInst Sum2 = _Player.Spellbook.GetSpell(SpellSlot.Summoner2);
@@ -144,6 +145,10 @@ namespace UnsignedAnnie
                 AnnieFunctions.UseItems();
             }
             if (SettingsMenu["ST"].Cast<CheckBox>().CurrentValue)
+            {
+                AnnieFunctions.ControlTibbers();
+            }
+            if (SettingsMenu["SAU"].Cast<CheckBox>().CurrentValue)
             {
                 AnnieFunctions.ControlTibbers();
             }
