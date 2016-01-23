@@ -34,51 +34,31 @@ namespace UnsignedYasuo
             && !a.IsInvulnerable
             && a.IsValidTarget(range)).FirstOrDefault();
         }
-        
+
         public static Obj_AI_Base GetEnemy(GameObjectType type, AttackSpell spell)
         {
-            if(spell == AttackSpell.E)
-            {
-                return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
+            float range = 0;
+            if (spell == AttackSpell.E)
+                range = Program.E.Range;
+            if (spell == AttackSpell.Q)
+                range = Program.Q.Range;
+            if (spell == AttackSpell.EQ)
+                range = Program.E.Range;
+            if (spell == AttackSpell.Ignite)
+                range = Program.Ignite.Range;
+
+            return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
                 && a.Type == type
                 && a.Distance(_Player) <= Program.E.Range
                 && !a.IsDead
                 && !a.IsInvulnerable
                 && a.IsValidTarget(Program.E.Range)
                 && !a.HasBuff("YasuoDashWrapper")
-                && a.Health <= YasuoCalcs.E(a)).FirstOrDefault();
-            }
-            else if (spell == AttackSpell.Q)
-            {
-                return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                && a.Type == type
-                && a.Distance(_Player) <= Program.Q.Range
-                && !a.IsDead
-                && !a.IsInvulnerable
-                && a.IsValidTarget(Program.Q.Range)
-                && a.Health <= YasuoCalcs.Q(a)).FirstOrDefault();
-            }
-            else if (spell == AttackSpell.EQ)//eq
-            {
-                return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                && a.Type == type
-                && a.Distance(_Player) <= Program.E.Range
-                && !a.IsDead
-                && !a.IsInvulnerable
-                && a.IsValidTarget(Program.E.Range)
-                && !a.HasBuff("YasuoDashWrapper")
-                && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a))).FirstOrDefault();
-            }
-            else//ignite
-            {
-                return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                && a.Type == type
-                && a.Distance(_Player) <= Program.Ignite.Range
-                && !a.IsDead
-                && !a.IsInvulnerable
-                && a.IsValidTarget(Program.Ignite.Range)
-                && a.Health <= (YasuoCalcs.Ignite(a))).FirstOrDefault();
-            }
+                &&
+                ((spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a)) ||
+                (spell == AttackSpell.Q && a.Health <= YasuoCalcs.Q(a)) ||
+                (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a))) ||
+                (spell == AttackSpell.Ignite && a.Health <= YasuoCalcs.Ignite(a)))).FirstOrDefault();
         }
 
         public static AIHeroClient _Player { get { return ObjectManager.Player; } }
@@ -227,13 +207,6 @@ namespace UnsignedYasuo
                     UseItemsAndIgnite(minion);
             }
 
-            if (Orbwalker.CanAutoAttack)
-            {
-                Obj_AI_Minion minion = (Obj_AI_Minion)GetEnemy(_Player.GetAutoAttackRange(), GameObjectType.obj_AI_Minion);
-
-                if (minion != null)
-                    Orbwalker.ForcedTarget = minion;
-            }
             dashing = false;
         }
 
@@ -326,12 +299,13 @@ namespace UnsignedYasuo
                 if (_Player.Distance(enemy) <= 1200)
                 {
                     enemiesIR++;
-                    if (enemy.HasBuffOfType(BuffType.Knockback))
+                    if (enemy.HasBuffOfType(BuffType.Knockup))
                         enemiesKU++;
                 }
             }
 
-            Program.R.Cast();
+            if(enemiesKU >= 3)
+                Program.R.Cast();
 
             if (ECHECK && EREADY)
             {
@@ -393,13 +367,6 @@ namespace UnsignedYasuo
                     UseItemsAndIgnite(enemy);
             }
 
-            if (Orbwalker.CanAutoAttack)
-            {
-                AIHeroClient enemy = (AIHeroClient)GetEnemy(_Player.GetAutoAttackRange(), GameObjectType.AIHeroClient);
-
-                if (enemy != null)
-                    Orbwalker.ForcedTarget = enemy;
-            }
             dashing = false;
         }
 
