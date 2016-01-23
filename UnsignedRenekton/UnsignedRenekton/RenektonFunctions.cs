@@ -133,7 +133,6 @@ namespace UnsignedRenekton
             bool QReady = Program.Q.IsReady();
             bool WReady = Program.W.IsReady();
             bool EReady = Program.E.IsReady();
-            bool IgReady = Program.Ignite.IsReady();
             
             if (QReady && QCheck)
             {
@@ -141,7 +140,7 @@ namespace UnsignedRenekton
                 if (enemy != null)
                     Program.Q.Cast();
             }
-            if (Program.Ignite != null && IgCheck && IgReady)
+            if (Program.Ignite != null && IgCheck && Program.Ignite.IsReady())
             {
                 Obj_AI_Base enemy = GetEnemyKS(Abilities.Ignite, GameObjectType.AIHeroClient);
                 if (enemy != null)
