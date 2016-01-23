@@ -20,6 +20,7 @@ namespace EloBuddyHelper
 
             Obj_AI_Base.OnBuffGain  += OnBuffGain;
             Obj_AI_Base.OnBuffLose += OnBuffLose;
+            Obj_AI_Base.OnBuffUpdate += OnBuffUpdate;
         }
 
         static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs buff)
@@ -31,6 +32,11 @@ namespace EloBuddyHelper
         {
             if (sender.IsMe)
                 Chat.Print("Buff Lost: " + buff.Buff.Name);
+        }
+        static void OnBuffUpdate(Obj_AI_Base sender, Obj_AI_BaseBuffUpdateEventArgs buff)
+        {
+            if (sender.IsMe)
+                Chat.Print("Buff Updated: " + buff.Buff.Name);
         }
     }
 }
