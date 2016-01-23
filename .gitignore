@@ -10,6 +10,7 @@ $RECYCLE.BIN/
 
 # hide these folders
 obj/
+Dependencies/
 [Bb]in
 [Dd]ebug*/
 [Rr]elease*/
