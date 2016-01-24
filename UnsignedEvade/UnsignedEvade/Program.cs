@@ -28,6 +28,7 @@ namespace UnsignedEvade
             
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
+            AIHeroClient.OnProcessSpellCast += EvadeController.SpellCreated;
         }
 
         private static void Drawing_OnDraw(EventArgs args)
