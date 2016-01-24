@@ -310,14 +310,14 @@ namespace UnsignedAnnie
         
         public static void ControlTibbers()
         {
-            if(Program.Tibbers != null)
+            if(Program.R.Name == "infernalguardianguide")
             {
                 AIHeroClient enemy = ObjectManager.Get<AIHeroClient>()
                     .OrderBy(a => a.Health)
                     .Where(a => !a.IsDead
                     && !a.IsInvulnerable
                     && a.IsEnemy
-                    && a.Distance(Program.Tibbers) <= 1500).FirstOrDefault();
+                    && a.Distance(Annie.Pet) <= 1500).FirstOrDefault();
 
                 if (enemy != null)
                     Player.IssueOrder(GameObjectOrder.AutoAttackPet, enemy);
@@ -328,7 +328,7 @@ namespace UnsignedAnnie
                         .Where(a => !a.IsDead
                         && !a.IsInvulnerable
                         && a.IsEnemy
-                        && a.Distance(Program.Tibbers) <= 1500).FirstOrDefault();
+                        && a.Distance(Annie.Pet) <= 1500).FirstOrDefault();
 
                     if (turret != null)
                         Player.IssueOrder(GameObjectOrder.AutoAttackPet, turret);
@@ -339,7 +339,7 @@ namespace UnsignedAnnie
                             .Where(a => !a.IsDead
                             && !a.IsInvulnerable
                             && a.IsEnemy
-                            && a.Distance(Program.Tibbers) <= 1500).FirstOrDefault();
+                            && a.Distance(Annie.Pet) <= 1500).FirstOrDefault();
 
                         if (minion != null)
                             Player.IssueOrder(GameObjectOrder.AutoAttackPet, minion);
@@ -350,14 +350,14 @@ namespace UnsignedAnnie
 
         public static void AutoUlt()
         {
-            if(GetBestRLocationUnits(GameObjectType.AIHeroClient) >= 4 && Program.R.IsReady())
+            Vector3 ultPos = Vector3.Zero;
+            if(GetBestRLocationUnits(GameObjectType.AIHeroClient, out ultPos) >= 3 && Program.R.IsReady() && Program.R.Name == "InfernalGuardian")
             {
-                Vector3 pos = GetBestRLocation(GameObjectType.AIHeroClient);
-                if(pos != Vector3.Zero)
+                if (ultPos != Vector3.Zero)
                 {
-                    if(Program.PassiveStacks == 4)
+                    if (Annie.HasBuff("pyromania_particle"))
                     {
-                        Program.R.Cast(pos);
+                        Program.R.Cast(ultPos);
                     }
                     else if(Program.PassiveStacks == 3 && Program.E.IsReady())
                     {
@@ -385,14 +385,17 @@ namespace UnsignedAnnie
             PredictionResult[] prediction = Prediction.Position.PredictConeSpellAoe(
                 ObjectManager.Get<Obj_AI_Base>()
                     .Where(a => !a.IsDead
-                    && !a.IsInvulnerable
-                    && a.Type == type)
+                    && !a.IsInvulnerable)
                     .ToArray(), Program.W.Range, 50, 1, 0, Annie.Position);
-            foreach(PredictionResult pr in prediction)
+            foreach (PredictionResult pr in prediction)
             {
-                if(pr.CollisionObjects.Length > mostUnits)
+                int tempUnits = 0;
+                foreach (Obj_AI_Base enemy in pr.CollisionObjects)
+                    if (!enemy.IsDead && !enemy.IsInvulnerable && enemy.IsEnemy && enemy.Type == type)
+                        tempUnits++;
+                if (tempUnits > mostUnits)
                 {
-                    mostUnits = pr.CollisionObjects.Length;
+                    mostUnits = tempUnits;
                     bestPos = pr.CastPosition;
                 }
             }
@@ -403,40 +406,49 @@ namespace UnsignedAnnie
         {
             int mostUnits = 0;
             Vector3 bestPos = Vector3.Zero;
-            PredictionResult[] prediction = Prediction.Position.PredictCircularMissileAoe(ObjectManager.Get<Obj_AI_Base>()
+            PredictionResult[] prediction = Prediction.Position.PredictCircularMissileAoe(
+                ObjectManager.Get<Obj_AI_Base>()
                     .Where(a => !a.IsDead
-                    && !a.IsInvulnerable
                     && a.Type == type)
-                    .ToArray(), Program.R.Range, 290, 0, 0, Annie.Position);
+                    .ToArray(), Program.R.Range, 290, 1, 0, Annie.Position);
+
             foreach (PredictionResult pr in prediction)
             {
-                if (pr.CollisionObjects.Length > mostUnits)
+                int tempUnits = 0;
+                foreach (Obj_AI_Base enemy in pr.CollisionObjects)
+                    if (!enemy.IsDead && !enemy.IsInvulnerable && enemy.IsEnemy && enemy.Type == type)
+                        tempUnits++;
+                if (tempUnits > mostUnits)
                 {
-                    mostUnits = pr.CollisionObjects.Length;
+                    mostUnits = tempUnits;
                     bestPos = pr.CastPosition;
                 }
             }
-
-            //Chat.Print("Units: " + mostUnits);
-
             return bestPos;
         }
-        public static int GetBestRLocationUnits(GameObjectType type)
+        public static int GetBestRLocationUnits(GameObjectType type, out Vector3 pos)
         {
             int mostUnits = 0;
-            PredictionResult[] prediction = Prediction.Position.PredictCircularMissileAoe(ObjectManager.Get<Obj_AI_Base>()
+            Vector3 bestPos = Vector3.Zero;
+            PredictionResult[] prediction = Prediction.Position.PredictConeSpellAoe(
+                ObjectManager.Get<Obj_AI_Base>()
                     .Where(a => !a.IsDead
-                    && !a.IsInvulnerable
-                    && a.Type == type)
-                    .ToArray(), Program.R.Range, 290, 0, 0, Annie.Position);
+                    && !a.IsInvulnerable)
+                    .ToArray(), Program.R.Range, 290, 1, 0, Annie.Position);
+
             foreach (PredictionResult pr in prediction)
             {
-                if (pr.CollisionObjects.Length > mostUnits)
-                    mostUnits = pr.CollisionObjects.Length;
+                int tempUnits = 0;
+                foreach (Obj_AI_Base enemy in pr.CollisionObjects)
+                    if (!enemy.IsDead && !enemy.IsInvulnerable && enemy.IsEnemy && enemy.Type == type)
+                        tempUnits++;
+                if (tempUnits > mostUnits)
+                {
+                    mostUnits = tempUnits;
+                    bestPos = pr.CastPosition;
+                }
             }
-
-            //Chat.Print("Units: " + mostUnits);
-
+            pos = bestPos;
             return mostUnits;
         }
     }

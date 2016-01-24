@@ -16,7 +16,6 @@ namespace UnsignedAnnie
         public static Spell.Active E;
         public static Spell.Targeted R;
         public static Spell.Targeted Ignite;
-        public static Obj_AI_Base Tibbers;
         public static int PassiveStacks
         {
             get
@@ -102,22 +101,7 @@ namespace UnsignedAnnie
             
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
-            Obj_AI_Base.OnCreate += OnCreate;
-            Obj_AI_Base.OnDelete += OnDelete;
         }
-
-        private static void OnCreate(GameObject ob, EventArgs args)
-        {
-            if(ob.Name == "tibbers" && ob.IsAlly)
-                Tibbers = (Obj_AI_Base)ob;
-        }
-
-        private static void OnDelete(GameObject ob, EventArgs args)
-        {
-            if (ob.Name == "tibbers" && ob.IsAlly)
-                Tibbers = null;
-        }
-
         private static void Drawing_OnDraw(EventArgs args)
         {
             if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue)
@@ -173,7 +157,7 @@ namespace UnsignedAnnie
             }
             if (SettingsMenu["SAU"].Cast<CheckBox>().CurrentValue)
             {
-                AnnieFunctions.ControlTibbers();
+                AnnieFunctions.AutoUlt();
             }
         }
     }
