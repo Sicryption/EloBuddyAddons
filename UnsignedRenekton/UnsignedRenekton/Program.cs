@@ -11,6 +11,7 @@ namespace UnsignedRenekton
 {
     internal class Program
     {
+        public static readonly Random Random = new Random(DateTime.Now.Millisecond);
         public static Menu ComboMenu, DrawingsMenu, LaneClear, LastHit, Killsteal, Harass, menu;
         public static Spell.Active Q;
         public static Spell.Active W;
