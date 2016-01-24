@@ -211,13 +211,6 @@ namespace UnsignedAnnie
                 if (pos != Vector3.Zero)
                     Program.R.Cast(pos);
             }
-            /*if (RCHECK && RREADY)
-            {
-                AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.R.Range, GameObjectType.AIHeroClient);
-
-                if (enemy != null)
-                    Program.R.Cast(enemy);
-            }*/
 
             if (QCHECK && QREADY)
             {
@@ -233,6 +226,13 @@ namespace UnsignedAnnie
 
                 if (pos != Vector3.Zero)
                     Program.W.Cast(pos);
+                else
+                {
+                    AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.W.Range, GameObjectType.AIHeroClient);
+
+                    if (enemy != null)
+                        Program.W.Cast(enemy.Position);
+                }
             }
 
             if (ItemsCHECK)
@@ -310,14 +310,14 @@ namespace UnsignedAnnie
         
         public static void ControlTibbers()
         {
-            if(Annie.Pet != null)
+            if(Program.Tibbers != null)
             {
                 AIHeroClient enemy = ObjectManager.Get<AIHeroClient>()
                     .OrderBy(a => a.Health)
                     .Where(a => !a.IsDead
                     && !a.IsInvulnerable
                     && a.IsEnemy
-                    && a.Distance(Annie.Pet) <= 1500).FirstOrDefault();
+                    && a.Distance(Program.Tibbers) <= 1500).FirstOrDefault();
 
                 if (enemy != null)
                     Player.IssueOrder(GameObjectOrder.AutoAttackPet, enemy);
@@ -328,7 +328,7 @@ namespace UnsignedAnnie
                         .Where(a => !a.IsDead
                         && !a.IsInvulnerable
                         && a.IsEnemy
-                        && a.Distance(Annie.Pet) <= 1500).FirstOrDefault();
+                        && a.Distance(Program.Tibbers) <= 1500).FirstOrDefault();
 
                     if (turret != null)
                         Player.IssueOrder(GameObjectOrder.AutoAttackPet, turret);
@@ -339,7 +339,7 @@ namespace UnsignedAnnie
                             .Where(a => !a.IsDead
                             && !a.IsInvulnerable
                             && a.IsEnemy
-                            && a.Distance(Annie.Pet) <= 1500).FirstOrDefault();
+                            && a.Distance(Program.Tibbers) <= 1500).FirstOrDefault();
 
                         if (minion != null)
                             Player.IssueOrder(GameObjectOrder.AutoAttackPet, minion);
@@ -350,12 +350,30 @@ namespace UnsignedAnnie
 
         public static void AutoUlt()
         {
-            if(GetBestRLocationUnits(GameObjectType.AIHeroClient) >= 4)
+            if(GetBestRLocationUnits(GameObjectType.AIHeroClient) >= 4 && Program.R.IsReady())
             {
                 Vector3 pos = GetBestRLocation(GameObjectType.AIHeroClient);
                 if(pos != Vector3.Zero)
                 {
-
+                    if(Program.PassiveStacks == 4)
+                    {
+                        Program.R.Cast(pos);
+                    }
+                    else if(Program.PassiveStacks == 3 && Program.E.IsReady())
+                    {
+                        Program.E.Cast();
+                    }
+                    else if(Program.PassiveStacks == 3 && Program.W.IsReady())
+                    {
+                        Vector3 position = GetBestWLocation(GameObjectType.AIHeroClient);
+                        Program.W.Cast(position);
+                    }
+                    else if (Program.PassiveStacks == 3 && Program.Q.IsReady())
+                    {
+                        AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.Q.Range, GameObjectType.AIHeroClient);
+                        if (enemy != null)
+                            Program.Q.Cast(enemy);
+                    }
                 }
             }
         }
@@ -364,7 +382,8 @@ namespace UnsignedAnnie
         {
             int mostUnits = 0;
             Vector3 bestPos = Vector3.Zero;
-            PredictionResult[] prediction = Prediction.Position.PredictConeSpellAoe(ObjectManager.Get<Obj_AI_Base>()
+            PredictionResult[] prediction = Prediction.Position.PredictConeSpellAoe(
+                ObjectManager.Get<Obj_AI_Base>()
                     .Where(a => !a.IsDead
                     && !a.IsInvulnerable
                     && a.Type == type)
@@ -377,9 +396,6 @@ namespace UnsignedAnnie
                     bestPos = pr.CastPosition;
                 }
             }
-
-            //Chat.Print("Units: " + mostUnits);
-
             return bestPos;
         }
         

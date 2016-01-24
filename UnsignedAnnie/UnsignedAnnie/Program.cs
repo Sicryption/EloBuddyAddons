@@ -16,6 +16,17 @@ namespace UnsignedAnnie
         public static Spell.Active E;
         public static Spell.Targeted R;
         public static Spell.Targeted Ignite;
+        public static Obj_AI_Base Tibbers;
+        public static int PassiveStacks
+        {
+            get
+            {
+                int stacks = 0;
+                if(_Player.HasBuff("pyromania"))
+                    stacks = _Player.GetBuff("pyromania").Count;
+                return stacks;
+            } 
+        }
         public static AIHeroClient _Player { get { return ObjectManager.Player; } }
         public static int Mana { get { return (int)_Player.Mana; } }
         private static void Main(string[] args)
@@ -91,8 +102,20 @@ namespace UnsignedAnnie
             
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
-            Obj_AI_Base.OnBuffGain += OnBuffGain;
-            Obj_AI_Base.OnBuffLose += OnBuffLose;
+            Obj_AI_Base.OnCreate += OnCreate;
+            Obj_AI_Base.OnDelete += OnDelete;
+        }
+
+        private static void OnCreate(GameObject ob, EventArgs args)
+        {
+            if(ob.Name == "tibbers" && ob.IsAlly)
+                Tibbers = (Obj_AI_Base)ob;
+        }
+
+        private static void OnDelete(GameObject ob, EventArgs args)
+        {
+            if (ob.Name == "tibbers" && ob.IsAlly)
+                Tibbers = null;
         }
 
         private static void Drawing_OnDraw(EventArgs args)
@@ -152,17 +175,6 @@ namespace UnsignedAnnie
             {
                 AnnieFunctions.ControlTibbers();
             }
-        }
-
-        static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs buff)
-        {
-            //if (sender.IsMe && buff.Buff.Name == "yasuoq3w")
-            //    Q = new Spell.Skillshot(SpellSlot.Q, 1000, SkillShotType.Linear);
-        }
-        static void OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs buff)
-        {
-            //if (sender.IsMe && buff.Buff.Name == "yasuoq3w")
-            //    Q = new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear);
         }
     }
 }
