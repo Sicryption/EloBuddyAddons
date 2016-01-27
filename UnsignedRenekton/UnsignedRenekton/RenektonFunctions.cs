@@ -160,8 +160,9 @@ namespace UnsignedRenekton
                     Obj_AI_Base enemy = GetEnemyKS(Abilities.Slice, GameObjectType.AIHeroClient);
                     if (enemy != null)
                     {
-                        Vector2 dashPos = Renekton.ServerPosition.Extend(enemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                        Program.E.Cast(dashPos.To3DWorld());
+                        //Vector2 dashPos = Renekton.ServerPosition.Extend(enemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                        //Program.E.Cast(dashPos.To3DWorld());
+                        Program.E.Cast(enemy);
                     }
                 }
                 if (Program.E.Name == "renektondice")
@@ -169,8 +170,9 @@ namespace UnsignedRenekton
                     Obj_AI_Base enemy = GetEnemyKS(Abilities.Dice, GameObjectType.AIHeroClient);
                     if (enemy != null)
                     {
-                        Vector2 dashPos = Renekton.ServerPosition.Extend(enemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                        Program.E.Cast(dashPos.To3DWorld());
+                        //Vector2 dashPos = Renekton.ServerPosition.Extend(enemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                        //Program.E.Cast(dashPos.To3DWorld());
+                        Program.E.Cast(enemy);
                     }
                 }
             }
@@ -202,34 +204,38 @@ namespace UnsignedRenekton
                         Obj_AI_Base minion = GetEnemyKS(Abilities.Slice, GameObjectType.obj_AI_Minion);
                         if (minion != null)
                         {
-                            Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                            Program.E.Cast(dashPos.To3DWorld());
+                            //Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                            //Program.E.Cast(dashPos.To3DWorld());
+                            Program.E.Cast(minion);
                         }
                         else
                         {
                             Obj_AI_Base minion2 = GetEnemy(Abilities.Slice, GameObjectType.obj_AI_Minion);
                             if (minion != null)
                             {
-                                Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                                Program.E.Cast(dashPos.To3DWorld());
+                                //Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                               // Program.E.Cast(dashPos.To3DWorld());
+                                Program.E.Cast(minion2);
                             }
                         }
                     }
                     if (Program.E.Name == "renektondice")
                     {
-                        Obj_AI_Base minion = GetEnemyKS(Abilities.Dice, GameObjectType.obj_AI_Minion);
+                        Obj_AI_Base minion = GetEnemyKS(Abilities.Slice, GameObjectType.obj_AI_Minion);
                         if (minion != null)
                         {
-                            Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                            Program.E.Cast(dashPos.To3DWorld());
+                            //Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                            //Program.E.Cast(dashPos.To3DWorld());
+                            Program.E.Cast(minion);
                         }
                         else
                         {
-                            Obj_AI_Base minion2 = GetEnemy(Abilities.Dice, GameObjectType.obj_AI_Minion);
+                            Obj_AI_Base minion2 = GetEnemy(Abilities.Slice, GameObjectType.obj_AI_Minion);
                             if (minion != null)
                             {
-                                Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                                Program.E.Cast(dashPos.To3DWorld());
+                                //Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                                // Program.E.Cast(dashPos.To3DWorld());
+                                Program.E.Cast(minion2);
                             }
                         }
                     }
@@ -268,8 +274,9 @@ namespace UnsignedRenekton
                     beginningComboPosition = Renekton.Position;
                     if (comboEnemy != null)
                     {
-                        Vector2 dashPos = Renekton.ServerPosition.Extend(comboEnemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                        Program.E.Cast(dashPos.To3DWorld());
+                        //Vector2 dashPos = Renekton.ServerPosition.Extend(comboEnemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                        //Program.E.Cast(dashPos.To3DWorld());
+                        Program.E.Cast(beginningComboPosition);
                     }
                 }
                 if (WReady && !Renekton.HasBuffOfType(BuffType.Blind))
@@ -282,11 +289,14 @@ namespace UnsignedRenekton
                 else if (Program.E.Name == "renektondice" && EReady && !WReady && Renekton.CanMove)
                 {
                     if (beginningComboPosition.Distance(Renekton.Position) >= Program.E.Range)
-                        Renekton.Position.Extend(beginningComboPosition, Program.E.Range);
+                    {
+                        Program.E.Cast(Renekton.Position.Extend(beginningComboPosition, Program.E.Range).To3DWorld());
+                    }
                     else
                     {
-                        Vector2 dashPos = Renekton.ServerPosition.Extend(beginningComboPosition, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                        Program.E.Cast(dashPos.To3DWorld());
+                        //Vector2 dashPos = Renekton.ServerPosition.Extend(beginningComboPosition, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                        //Program.E.Cast(dashPos.To3DWorld());
+                        Program.E.Cast(beginningComboPosition);
                     }
                     inFullCombo = false;
                     beginningComboPosition = Vector3.Zero;
@@ -322,8 +332,9 @@ namespace UnsignedRenekton
                     AIHeroClient enemy = (AIHeroClient)GetEnemy(Abilities.Slice, GameObjectType.AIHeroClient);
                     if (enemy != null)
                     {
-                        Vector2 dashPos = Renekton.ServerPosition.Extend(enemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                        Program.E.Cast(dashPos.To3DWorld());
+                        //Vector2 dashPos = Renekton.ServerPosition.Extend(enemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                        //Program.E.Cast(dashPos.To3DWorld());
+                        Program.E.Cast(enemy);
                     }
                 }
             }
@@ -367,8 +378,8 @@ namespace UnsignedRenekton
                 {
                     beginningComboPosition = Renekton.Position;
 
-                    Vector2 dashPos = Renekton.ServerPosition.Extend(comboEnemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                    Program.E.Cast(dashPos.To3DWorld());
+                    //Vector2 dashPos = Renekton.ServerPosition.Extend(comboEnemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                    Program.E.Cast(beginningComboPosition);
                 }
                 if (WReady && !Renekton.HasBuffOfType(BuffType.Blind))
                 {
@@ -381,7 +392,7 @@ namespace UnsignedRenekton
                 }
                 else if (Program.E.Name == "renektondice" && EReady && !WReady && Renekton.CanMove)
                 {
-                    Vector2 dashPos = Renekton.ServerPosition.Extend(comboEnemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                    Vector2 dashPos = Renekton.ServerPosition.Extend(comboEnemy, Program.E.Range);
                     Program.E.Cast(dashPos.To3DWorld());
                     inFullCombo = false;
                     beginningComboPosition = Vector3.Zero;
@@ -418,8 +429,8 @@ namespace UnsignedRenekton
                     
                     if (enemy != null)
                     {
-                        Vector2 dashPos = Renekton.ServerPosition.Extend(enemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
-                        Program.E.Cast(dashPos.To3DWorld());
+                        //Vector2 dashPos = Renekton.ServerPosition.Extend(enemy, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
+                        Program.E.Cast(enemy);
                     }
                 }
             }
