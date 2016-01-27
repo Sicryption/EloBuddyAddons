@@ -7,17 +7,14 @@ using SharpDX;
 
 namespace UnsignedEvade
 {
-    public static class SpellDatabase
+    static class SpellDatabase
     {
-        static List<SpellInfo> SpellList = new List<SpellInfo>();
+        public static List<SpellInfo> SpellList = new List<SpellInfo>();
         static SpellInfo[] SpellInfoList = new SpellInfo[]
         {
             #region Aatrox
             #endregion
             #region Ahri
-            new SpellInfo("Ahri", "AhriOrbofDeception", SkillShotType.Linear, SpellSlot.Q, 1000, 250, 2500, 400, 2500, 100),
-            new SpellInfo("Ahri", "AhriOrbReturn", SkillShotType.Linear, SpellSlot.Q, 1000, 250, 2600, 60, 60, 100),
-            new SpellInfo("Ahri", "AhriSeduce", SkillShotType.Linear, SpellSlot.E, 1000, 250, 1550, 1550, 1550, 60)
             #endregion
             #region Akali
             #endregion
@@ -54,9 +51,21 @@ namespace UnsignedEvade
             #region Diana
             #endregion
             #region DrMundo
+            new SpellInfo()
+            {
+                ChampionName = "DrMundo",
+                SpellName = "InfectedCleaverMissile",
+                SkillshotType = SkillShotType.Linear,
+                Slot = SpellSlot.Q,
+                Range = 1050,
+                Delay = 250,
+                MissileSpeed = 2000,
+                Width = 60,
+                CollisionCount = 1
+            }
             #endregion
             #region Draven
-            #endregion
+            #endregion  
             #region Ekko
             #endregion
             #region Elise
@@ -273,7 +282,7 @@ namespace UnsignedEvade
             #endregion
         };
 
-        static SpellDatabase()
+        public static void Initialize()
         {
             foreach (SpellInfo spell in SpellInfoList)
                 SpellList.Add(spell);

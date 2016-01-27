@@ -11,26 +11,13 @@ namespace UnsignedEvade
             MissileMinSpeed,
             MissileSpeed,
             Radius,
-            Range;
-        public bool CanHitMultipleMinions,
-            CanHitMultipleEnemies;
+            Width,
+            Range,
+            CollisionCount;
         public string ChampionName,
             MissileName,
             SpellName;
         public SpellSlot Slot;
         public SkillShotType SkillshotType;
-
-        //Targeted
-        public SpellInfo()
-        {
-
-        }
-
-        //Skillshot
-        public SpellInfo(string championName, string spellName, SkillShotType SkillShotType, SpellSlot slot, int range, int delay = 0, 
-            int missileMaxSpeed = 0, int missileMinSpeed = 0, int missileSpeed = 0, int radius = 0)
-        {
-
-        }
     }
 }

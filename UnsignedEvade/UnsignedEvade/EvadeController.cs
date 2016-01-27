@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using EloBuddy;
 using EloBuddy.SDK;
 using EloBuddy.SDK.Enumerations;
@@ -11,9 +12,6 @@ namespace UnsignedEvade
 {
     class EvadeController
     {
-        public static void SpellCreated(Obj_AI_Base enemy, GameObjectProcessSpellCastEventArgs args)
-        {
 
-        }
     }
 }
