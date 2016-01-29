@@ -12,6 +12,7 @@ namespace UnsignedYasuo
     {
         public static Menu ComboMenu, DrawingsMenu, KSMenu, LaneClear, LastHit, Harass, menu;
         public static Spell.Skillshot Q;
+        public static int EQRange = 375;
         public static Spell.SpellBase W;
         public static Spell.Targeted E;
         public static Spell.Active R;
@@ -27,30 +28,30 @@ namespace UnsignedYasuo
             if (Player.Instance.ChampionName != "Yasuo")
                 return;
 
-            //Hacks.AntiAFK = true;
-            Bootstrap.Init(null);
-
             Q = new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear);
             //W = new Spell.Skillshot(SpellSlot.W, 400, SkillShotType.Linear);
             E = new Spell.Targeted(SpellSlot.E, 475);
             R = new Spell.Active(SpellSlot.R);// range 1200
 
             menu = MainMenu.AddMenu("Unsigned Yasuo", "UnsignedYasuo");
+            menu.Add("ABOUT", new Label("This Addon was designed by Chaos"));
 
             ComboMenu = menu.AddSubMenu("Combo", "combomenu");
 
             ComboMenu.AddGroupLabel("Combo Settings");
-            ComboMenu.Add("QU", new CheckBox("Use Q"));
-            ComboMenu.Add("EU", new CheckBox("Use E"));
-            ComboMenu.Add("RU", new CheckBox("Use R"));
-            ComboMenu.Add("IU", new CheckBox("Use Items"));
+            ComboMenu.Add("CQ", new CheckBox("Use Q"));
+            ComboMenu.Add("CE", new CheckBox("Use E"));
+            ComboMenu.Add("CEQ", new CheckBox("Use EQ"));
+            ComboMenu.Add("CR", new CheckBox("Use R"));
+            ComboMenu.Add("CI", new CheckBox("Use Items"));
+            ComboMenu.Add("CEUT", new CheckBox("E Under Turret", false));
 
             LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
             LaneClear.AddGroupLabel("Lane Clear Settings");
             LaneClear.Add("LCQ", new CheckBox("Use Q"));
             LaneClear.Add("LCE", new CheckBox("Use E"));
             LaneClear.Add("LCEQ", new CheckBox("Use EQ"));
-            LaneClear.Add("LCEUT", new CheckBox("E Under Turret"));
+            LaneClear.Add("LCEUT", new CheckBox("E Under Turret", false));
             LaneClear.Add("LCI", new CheckBox("Use Items (Hydra/Timat)"));
 
             Harass = menu.AddSubMenu("Harass", "harass");
@@ -58,28 +59,33 @@ namespace UnsignedYasuo
             Harass.Add("HQ", new CheckBox("Use Q"));
             Harass.Add("HE", new CheckBox("Use E"));
             Harass.Add("HEQ", new CheckBox("Use EQ"));
+            Harass.Add("HEUT", new CheckBox("E Under Turret", false));
+            Harass.Add("HI", new CheckBox("Use Items (Hydra/Timat)"));
 
             LastHit = menu.AddSubMenu("Last Hit", "lasthitmenu");
             LastHit.AddGroupLabel("Last Hit Settings");
             LastHit.Add("LHQ", new CheckBox("Use Q"));
             LastHit.Add("LHE", new CheckBox("Use E"));
             LastHit.Add("LHEQ", new CheckBox("Use EQ"));
-            LastHit.Add("LHEUT", new CheckBox("E Under Turret"));
+            LastHit.Add("LHEUT", new CheckBox("E Under Turret", false));
 
-            /*KSMenu = menu.AddSubMenu("Kill Steal", "ksmenu");
+            KSMenu = menu.AddSubMenu("Kill Steal", "ksmenu");
 
             KSMenu.AddGroupLabel("Kill Steal Settings");
             KSMenu.Add("EnableKS", new CheckBox("KS"));
             KSMenu.Add("KSQ", new CheckBox("KS with Q"));
             KSMenu.Add("KS3Q", new CheckBox("KS with 3rd Q"));
             KSMenu.Add("KSE", new CheckBox("KS with E"));
-            KSMenu.Add("KSEQ", new CheckBox("KS with EQ"));*/
+            KSMenu.Add("KSEQ", new CheckBox("KS with EQ"));
+            KSMenu.Add("KSI", new CheckBox("KS with Ignite"));
+            KSMenu.Add("KSEUT", new CheckBox("E Under Turret", false));
 
             DrawingsMenu = menu.AddSubMenu("Drawings", "drawingsmenu");
 
             DrawingsMenu.AddGroupLabel("Drawings Settings");
             DrawingsMenu.Add("DQ", new CheckBox("Draw Q"));
             DrawingsMenu.Add("DE", new CheckBox("Draw E"));
+            DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
 
             Spellbook spell = _Player.Spellbook;
             SpellDataInst Sum1 = spell.GetSpell(SpellSlot.Summoner1);
@@ -97,46 +103,36 @@ namespace UnsignedYasuo
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            if (Program.DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue)
-            {
+            if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && E.IsLearned)
                 Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.BlueViolet);
-            }
-
-            if (Program.DrawingsMenu["DE"].Cast<CheckBox>().CurrentValue)
-            {
+            if (DrawingsMenu["DE"].Cast<CheckBox>().CurrentValue && E.IsLearned)
                 Drawing.DrawCircle(_Player.Position, E.Range, System.Drawing.Color.BlueViolet);
-            }
 
+            if (DrawingsMenu["DT"].Cast<CheckBox>().CurrentValue)
+            {
+                foreach (Obj_AI_Turret t in EntityManager.Turrets.Enemies)
+                {
+                    Drawing.DrawCircle(t.Position, 875, System.Drawing.Color.BlueViolet);
+                }
+            }
         }
 
         private static void Game_OnTick(EventArgs args)
         {
             YasuoFunctions.GetQType();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
-            {
                 YasuoFunctions.Combo();
-            }
-            /*if (Program.KSMenu["EnableKS"].Cast<CheckBox>().CurrentValue)
-            {
+            if (KSMenu["EnableKS"].Cast<CheckBox>().CurrentValue)
                 YasuoFunctions.KS();
-            }*/
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LastHit))
-            {
                 YasuoFunctions.LastHit();
-            }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))
-            {
                 YasuoFunctions.Harrass();
-            }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear) ||
                 Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear))
-            {
                 YasuoFunctions.LaneClear();
-            }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
-            {
                 YasuoFunctions.Flee();
-            }
         }
 
         static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs buff)
