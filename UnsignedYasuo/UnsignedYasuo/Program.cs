@@ -61,6 +61,9 @@ namespace UnsignedYasuo
             Harass.Add("HEQ", new CheckBox("Use EQ"));
             Harass.Add("HEUT", new CheckBox("E Under Turret", false));
             Harass.Add("HI", new CheckBox("Use Items (Hydra/Timat)"));
+            Harass.AddGroupLabel("Auto-Harass Settings");
+            Harass.Add("AHQ", new CheckBox("Auto-Harass with Q"));
+            Harass.Add("AH3Q", new CheckBox("Auto-Harass with 3rd Q", false));
 
             LastHit = menu.AddSubMenu("Last Hit", "lasthitmenu");
             LastHit.AddGroupLabel("Last Hit Settings");
@@ -120,6 +123,7 @@ namespace UnsignedYasuo
         private static void Game_OnTick(EventArgs args)
         {
             YasuoFunctions.GetQType();
+            YasuoFunctions.AutoHarrass();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                 YasuoFunctions.Combo();
             if (KSMenu["EnableKS"].Cast<CheckBox>().CurrentValue)

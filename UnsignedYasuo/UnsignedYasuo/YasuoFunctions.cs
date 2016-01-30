@@ -48,7 +48,7 @@ namespace UnsignedYasuo
             LaneClear,
             Harass
         }
-        
+
         public static Obj_AI_Base GetEnemy(GameObjectType type, AttackSpell spell, bool EUNDERTURRET = false)
         {
             float range = 0;
@@ -85,8 +85,8 @@ namespace UnsignedYasuo
             && a.Distance(_Player) <= range
             && !a.IsDead
             && !a.IsInvulnerable
-            && 
-            ((AttackSpell.Q == spell && !IsDashing) 
+            &&
+            ((AttackSpell.Q == spell && !IsDashing)
             || (AttackSpell.DashQ == spell && IsDashing)
             || AttackSpell.Q != spell)
             && a.IsValidTarget(range)).FirstOrDefault();
@@ -126,7 +126,7 @@ namespace UnsignedYasuo
                     && !a.IsInvulnerable
                     && a.IsValidTarget(range)
                     &&
-                    ((spell == AttackSpell.Q && a.Health <= YasuoCalcs.Q(a) && !IsDashing) || 
+                    ((spell == AttackSpell.Q && a.Health <= YasuoCalcs.Q(a) && !IsDashing) ||
                     (spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a)) ||
                     (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && a.Distance(YasuoCalcs.GetDashingEnd(a)) <= Program.EQRange) ||
                     (spell == AttackSpell.Ignite && a.Health <= YasuoCalcs.Ignite(a)))).FirstOrDefault();
@@ -134,7 +134,7 @@ namespace UnsignedYasuo
         }
 
         public static AIHeroClient _Player { get { return ObjectManager.Player; } }
-        
+
         //complete
         public static void LastHit()
         {
@@ -145,8 +145,8 @@ namespace UnsignedYasuo
 
             bool QREADY = Program.Q.IsReady();
             bool EREADY = Program.E.IsReady();
-            
-            if(EQCHECK && EREADY && QREADY)
+
+            if (EQCHECK && EREADY && QREADY)
             {
                 Obj_AI_Base enemy = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.E, EUNDERTURRET);
 
@@ -161,7 +161,7 @@ namespace UnsignedYasuo
             {
                 Obj_AI_Base enemy = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.E, EUNDERTURRET);
 
-                if(enemy != null)
+                if (enemy != null)
                     Program.E.Cast(enemy);
             }
 
@@ -230,7 +230,7 @@ namespace UnsignedYasuo
             bool QREADY = Program.Q.IsReady();
             bool EREADY = Program.E.IsReady();
             bool EUNDERTURRET = Program.KSMenu["KSEUT"].Cast<CheckBox>().CurrentValue;
-            
+
             if (IgniteCheck && Program.Ignite != null && Program.Ignite.IsReady())
             {
                 var igniteEnemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.Ignite);
@@ -255,15 +255,18 @@ namespace UnsignedYasuo
                 }
             }
 
-            if(EREADY && ECHECK)
+            if (EREADY && ECHECK)
             {
                 var enemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.E, EUNDERTURRET);
 
                 if (enemy != null)
+                {
                     Program.E.Cast(enemy);
+                    Chat.Print("dashed with ks e");
+                }
             }
 
-            if(QREADY && EREADY && EQCHECK)
+            if (QREADY && EREADY && EQCHECK)
             {
                 var enemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.EQ, EUNDERTURRET);
                 if (enemy != null && YasuoCalcs.ShouldEQ(enemy))
@@ -273,7 +276,7 @@ namespace UnsignedYasuo
                 }
             }
         }
-        
+
         //complete
         public static void Harrass()
         {
@@ -310,7 +313,7 @@ namespace UnsignedYasuo
                     Program.Q.Cast(enemy.Position);
             }
         }
-        
+
         //complete
         public static void Combo()
         {
@@ -346,14 +349,12 @@ namespace UnsignedYasuo
                     if (enemy != null)
                     {
                         //if can auto attack, don't e, instead auto attack
-                        if (_Player.IsInAutoAttackRange(enemy))
-                            return;
                         //if e'ing gets player in auto attack range. e
-                        else if (YasuoCalcs.GetDashingEnd(enemy).Distance(enemy) <= _Player.GetAutoAttackRange())
+                        if (!_Player.IsInAutoAttackRange(enemy) && YasuoCalcs.GetDashingEnd(enemy).Distance(enemy) <= _Player.GetAutoAttackRange())
                         {
                             Program.E.Cast(enemy);
 
-                            if (YasuoCalcs.GetDashingEnd(enemy).Distance(enemy) <= 375 && QREADY && QCHECK)
+                            if (YasuoCalcs.GetDashingEnd(enemy).Distance(enemy) <= 375 && EQCHECK && QREADY && QCHECK)
                                 Program.Q.Cast(enemy);
                         }
                     }
@@ -363,7 +364,7 @@ namespace UnsignedYasuo
                         enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.NONE);
 
                         //if enemy in sight range, this is a double check
-                        if(enemy != null)
+                        if (enemy != null)
                         {
                             Obj_AI_Base dashEnemy = YasuoCalcs.GetBestDashMinionToChampion(enemy, EUNDERTURRET);
 
@@ -385,10 +386,7 @@ namespace UnsignedYasuo
                     Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
 
                     if (enemy != null)
-                    {
-                        Chat.Print("try cast q");
                         Program.Q.Cast(enemy.Position);
-                    }
                 }
                 #endregion
             }
@@ -404,7 +402,7 @@ namespace UnsignedYasuo
                     YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos) <= _Player.Distance(Game.CursorPos) &&
                     _Player.IsFacing(a) &&
                     a.Distance(_Player) <= Program.E.Range).OrderByDescending(a => a.Distance(Game.CursorPos)).FirstOrDefault();
-                
+
                 if (fleeObject != null)
                     Program.E.Cast(fleeObject);
             }
@@ -415,16 +413,16 @@ namespace UnsignedYasuo
         {
             InventorySlot[] items = _Player.InventoryItems;
 
-            foreach(InventorySlot item in items)
+            foreach (InventorySlot item in items)
             {
-                if(item.CanUseItem())
+                if (item.CanUseItem())
                 {
                     if ((item.Id == ItemId.Blade_of_the_Ruined_King || item.Id == ItemId.Bilgewater_Cutlass) &&
                         (mode == Mode.Combo || mode == Mode.Harass))
                     {
                         var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.BilgewaterCutlass);
 
-                        if(enemy != null)
+                        if (enemy != null)
                             item.Cast(enemy);
                     }
 
@@ -451,6 +449,20 @@ namespace UnsignedYasuo
                         || _Player.HasBuffOfType(BuffType.Taunt)))
                         item.Cast();
                 }
+            }
+        }
+
+        public static void AutoHarrass()
+        {
+            bool QCHECK = Program.Harass["AHQ"].Cast<CheckBox>().CurrentValue;
+            bool Q3CHECK = Program.Harass["AH3Q"].Cast<CheckBox>().CurrentValue;
+            var QRange = Program.Q.Range;
+            if ((QRange == 1000 && Q3CHECK) || (QRange == 475 && QCHECK))
+            {
+                var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
+
+                if (enemy != null)
+                    Program.Q.Cast(enemy.Position);
             }
         }
 
