@@ -47,7 +47,6 @@ namespace UnsignedYasuo
                 missile.SpellCaster.IsEnemy &&
                 missile.SpellCaster.Type == GameObjectType.AIHeroClient)
             {
-                Chat.Print(missile.SData.Name + " has been created");
                 ProjectileList.Add(missile);
             }
         }
@@ -64,7 +63,6 @@ namespace UnsignedYasuo
                 missile.SpellCaster.Type == GameObjectType.AIHeroClient &&
                 ProjectileList.Contains(missile))
             {
-                Chat.Print(missile.SData.Name + " has been destroyed");
                 ProjectileList.Remove(missile);
             }
         }
@@ -76,7 +74,6 @@ namespace UnsignedYasuo
                     foreach (SpellInfo info in EnemyProjectileInformation)
                         if (ShouldWindWall(missile, info) && CollisionCheck(missile, info))
                         {
-                            Chat.Print("try to wind wall");
                             Program.W.Cast(_Player.Position.Extend(missile.Position, Program.W.Range).To3DWorld());
                         }
         }
