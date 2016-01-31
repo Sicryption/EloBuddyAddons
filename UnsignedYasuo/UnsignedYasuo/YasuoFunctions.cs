@@ -262,7 +262,6 @@ namespace UnsignedYasuo
                 if (enemy != null)
                 {
                     Program.E.Cast(enemy);
-                    Chat.Print("dashed with ks e");
                 }
             }
 
