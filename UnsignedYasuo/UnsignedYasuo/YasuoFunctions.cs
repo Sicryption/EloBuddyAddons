@@ -425,7 +425,7 @@ namespace UnsignedYasuo
                             item.Cast(enemy);
                     }
 
-                    if (item.Id == ItemId.Tiamat || item.Id == ItemId.Ravenous_Hydra || item.Id == ItemId.Titanic_Hydra)
+                    if (item.Id == ItemId.Tiamat_Melee_Only || item.Id == ItemId.Ravenous_Hydra_Melee_Only || item.Id == ItemId.Tiamat_Melee_Only)
                     {
                         var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.BilgewaterCutlass);
 

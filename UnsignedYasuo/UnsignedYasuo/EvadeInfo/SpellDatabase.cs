@@ -253,47 +253,60 @@ namespace UnsignedEvade
                 MissileSpeed = 1600,
                 Width = 60,
                 CollisionCount = 1
+            },
+            new SpellInfo()
+            {
+                ChampionName = "Urgot",
+                SpellName = "UrgotPlasmaGrenade",
+                MissileName = "UrgotPlasmaGrenadeBoom",
+                SkillshotType = SkillShotType.Linear,
+                Slot = SpellSlot.E,
+                Range = 1100,
+                Delay = 250,
+                MissileSpeed = 1500,
+                Width = 60,
+                CollisionCount = 1
             }
-            #endregion
-            #region Varus
-            #endregion
-            #region Vayne
-            #endregion
-            #region Veigar
-            #endregion
-            #region VelKoz
-            #endregion
-            #region Vi
-            #endregion
-            #region Viktor
-            #endregion
-            #region Vladimir
-            #endregion
-            #region Volibear
-            #endregion
-            #region Warwick
-            #endregion
-            #region Wukong
-            #endregion
-            #region Xerath
-            #endregion
-            #region XinZhao
-            #endregion
-            #region Yasuo
-            #endregion
-            #region Yorick
-            #endregion
-            #region Zac
-            #endregion
-            #region Zed
-            #endregion
-            #region Ziggs
-            #endregion
-            #region Zilean
-            #endregion
-            #region Zyra
-            #endregion
-        };
+        #endregion
+        #region Varus
+        #endregion
+        #region Vayne
+        #endregion
+        #region Veigar
+        #endregion
+        #region VelKoz
+        #endregion
+        #region Vi
+        #endregion
+        #region Viktor
+        #endregion
+        #region Vladimir
+        #endregion
+        #region Volibear
+        #endregion
+        #region Warwick
+        #endregion
+        #region Wukong
+        #endregion
+        #region Xerath
+        #endregion
+        #region XinZhao
+        #endregion
+        #region Yasuo
+        #endregion
+        #region Yorick
+        #endregion
+        #region Zac
+        #endregion
+        #region Zed
+        #endregion
+        #region Ziggs
+        #endregion
+        #region Zilean
+        #endregion
+        #region Zyra
+        #endregion
+    };
 
         public static void Initialize()
         {

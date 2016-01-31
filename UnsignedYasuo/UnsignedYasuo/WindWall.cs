@@ -18,6 +18,13 @@ namespace UnsignedYasuo
         public static readonly Random Random = new Random(DateTime.Now.Millisecond);
         public static AIHeroClient _Player = Program._Player;
         public static Menu WindWallMenu;
+        public static bool DebugMode
+        {
+            get
+            {
+                return WindWallMenu.Get<CheckBox>("WWD").CurrentValue;
+            }
+        }
 
         public static void GameOnTick()
         {
@@ -28,6 +35,7 @@ namespace UnsignedYasuo
         {
             WindWallMenu = Program.menu.AddSubMenu("Wind Wall Menu", "WWM");
             WindWallMenu.Add("WW", new CheckBox("Auto-Use Wind Wall (BETA)"));
+            WindWallMenu.Add("WWD", new CheckBox("Debug"));
             WindWallMenu.AddGroupLabel("Enemy Skillshot Toggles");
             foreach (AIHeroClient client in EntityManager.Heroes.Enemies)
                 foreach (SpellInfo info in SpellDatabase.SpellList)
@@ -48,6 +56,8 @@ namespace UnsignedYasuo
                 missile.SpellCaster.Type == GameObjectType.AIHeroClient)
             {
                 ProjectileList.Add(missile);
+                if (DebugMode)
+                    Chat.Print("Projectile: " + missile.SData.Name + " has been created.");
             }
         }
 
@@ -63,6 +73,8 @@ namespace UnsignedYasuo
                 missile.SpellCaster.Type == GameObjectType.AIHeroClient &&
                 ProjectileList.Contains(missile))
             {
+                if (DebugMode)
+                    Chat.Print("Projectile: " + missile.SData.Name + " has been destroyed.");
                 ProjectileList.Remove(missile);
             }
         }
@@ -74,6 +86,8 @@ namespace UnsignedYasuo
                     foreach (SpellInfo info in EnemyProjectileInformation)
                         if (ShouldWindWall(missile, info) && CollisionCheck(missile, info))
                         {
+                            if(DebugMode)
+                                Chat.Print("Attempt to windwall");
                             Program.W.Cast(_Player.Position.Extend(missile.Position, Program.W.Range).To3DWorld());
                         }
         }
