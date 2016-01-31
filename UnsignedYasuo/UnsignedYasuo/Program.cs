@@ -102,17 +102,24 @@ namespace UnsignedYasuo
                 Ignite = new Spell.Targeted(SpellSlot.Summoner2, 600);
 
             Game.OnTick += Game_OnTick;
+            Game.OnTick += WindWall.GameOnTick;
+            Game.OnUpdate += WindWall.GameOnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             Obj_AI_Base.OnBuffGain += OnBuffGain;
             Obj_AI_Base.OnBuffLose += OnBuffLose;
             Obj_AI_Base.OnCreate += WindWall.OnCreate;
             Obj_AI_Base.OnDelete += WindWall.OnDelete;
+            Obj_AI_Base.OnUpdatePosition += WindWall.OnUpdate;
             UnsignedEvade.SpellDatabase.Initialize();
             WindWall.OnGameLoad();
         }
 
         private static void Drawing_OnDraw(EventArgs args)
         {
+
+            if (_Player.IsDead)
+                return;
+
             if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
                 Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.BlueViolet);
             if (DrawingsMenu["DE"].Cast<CheckBox>().CurrentValue && E.IsLearned)
@@ -123,24 +130,21 @@ namespace UnsignedYasuo
                 Drawing.DrawCircle(_Player.Position, 1200, System.Drawing.Color.BlueViolet);
 
             if (DrawingsMenu["DT"].Cast<CheckBox>().CurrentValue)
-            {
                 foreach (Obj_AI_Turret t in EntityManager.Turrets.Enemies)
-                {
                     Drawing.DrawCircle(t.Position, 875, System.Drawing.Color.BlueViolet);
-                }
-            }
         }
 
         private static void Game_OnTick(EventArgs args)
         {
+            if (_Player.IsDead)
+                return;
+
             YasuoFunctions.GetQType();
             YasuoFunctions.AutoHarrass();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                 YasuoFunctions.Combo();
             if (KSMenu["EnableKS"].Cast<CheckBox>().CurrentValue)
                 YasuoFunctions.KS();
-            if (WindWall.WindWallMenu["WW"].Cast<CheckBox>().CurrentValue)
-                WindWall.GameOnTick();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LastHit))
                 YasuoFunctions.LastHit();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))

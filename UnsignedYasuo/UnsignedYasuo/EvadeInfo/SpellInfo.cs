@@ -7,8 +7,6 @@ namespace UnsignedEvade
     class SpellInfo
     {
         public int Delay,
-            MissileMaxSpeed,
-            MissileMinSpeed,
             MissileSpeed,
             Width,
             Range,
@@ -17,6 +15,6 @@ namespace UnsignedEvade
             MissileName,
             SpellName;
         public SpellSlot Slot;
-        public SkillShotType SkillshotType;
+        public SpellDatabase.ProjectileType ProjectileType;
     }
 }
