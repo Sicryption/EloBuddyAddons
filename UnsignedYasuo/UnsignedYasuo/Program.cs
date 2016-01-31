@@ -29,7 +29,7 @@ namespace UnsignedYasuo
                 return;
 
             Q = new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear);
-            //W = new Spell.Skillshot(SpellSlot.W, 400, SkillShotType.Linear);
+            W = new Spell.Skillshot(SpellSlot.W, 400, SkillShotType.Linear);
             E = new Spell.Targeted(SpellSlot.E, 475);
             R = new Spell.Active(SpellSlot.R);// range 1200
 
@@ -102,6 +102,10 @@ namespace UnsignedYasuo
             Drawing.OnDraw += Drawing_OnDraw;
             Obj_AI_Base.OnBuffGain += OnBuffGain;
             Obj_AI_Base.OnBuffLose += OnBuffLose;
+            Obj_AI_Base.OnCreate += WindWall.OnCreate;
+            Obj_AI_Base.OnDelete += WindWall.OnDelete;
+            UnsignedEvade.SpellDatabase.Initialize();
+            WindWall.OnGameLoad();
         }
 
         private static void Drawing_OnDraw(EventArgs args)
@@ -128,6 +132,8 @@ namespace UnsignedYasuo
                 YasuoFunctions.Combo();
             if (KSMenu["EnableKS"].Cast<CheckBox>().CurrentValue)
                 YasuoFunctions.KS();
+            if (WindWall.WindWallMenu["WW"].Cast<CheckBox>().CurrentValue)
+                WindWall.GameOnTick();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LastHit))
                 YasuoFunctions.LastHit();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))

@@ -456,7 +456,7 @@ namespace UnsignedYasuo
             bool QCHECK = Program.Harass["AHQ"].Cast<CheckBox>().CurrentValue;
             bool Q3CHECK = Program.Harass["AH3Q"].Cast<CheckBox>().CurrentValue;
             var QRange = Program.Q.Range;
-            if ((QRange == 1000 && Q3CHECK) || (QRange == 475 && QCHECK))
+            if ((QRange == 1000 && Q3CHECK) || (QRange == 475 && QCHECK) && !IsDashing)
             {
                 var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
 
