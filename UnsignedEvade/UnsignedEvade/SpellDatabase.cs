@@ -62,7 +62,7 @@ namespace UnsignedEvade
                 MissileSpeed = 2000,
                 Width = 60,
                 CollisionCount = 1
-            }
+            },
             #endregion
             #region Draven
             #endregion  
@@ -241,6 +241,18 @@ namespace UnsignedEvade
             #region Udyr
             #endregion
             #region Urgot
+            new SpellInfo()
+            {
+                ChampionName = "Urgot",
+                SpellName = "UrgotHeatseekingLineMissile",
+                SkillshotType = SkillShotType.Linear,
+                Slot = SpellSlot.Q,
+                Range = 1000,
+                Delay = 125,
+                MissileSpeed = 1600,
+                Width = 60,
+                CollisionCount = 1
+            }
             #endregion
             #region Varus
             #endregion

@@ -43,7 +43,6 @@ namespace UnsignedEvade
                 missile.SpellCaster.IsEnemy &&
                 missile.SpellCaster.Type == GameObjectType.AIHeroClient)
             {
-                Chat.Print(missile.SData.Name + " has been added");
                 DrawingArray.Add(missile);
             }
         }
@@ -90,23 +89,18 @@ namespace UnsignedEvade
             {
                 foreach (SpellInfo info in SpellDatabase.SpellList)
                 {
-                    bool willHitPlayer = Prediction.Position.Collision.LinearMissileCollision(_Player, missile.StartPosition.WorldToGrid(), 
-                        Geometry.CalculateEndPosition(missile, info).WorldToGrid(),
-                        info.MissileSpeed, info.Width, info.Delay);
-
-                    //issue
-                    if(willHitPlayer)
+                    if(CollisionCheck(missile, info))
                     {
-                        Chat.Print("KAAP");
-                        Spell.Active flash = new Spell.Active(SpellSlot.Summoner1);
-                        if (flash.IsReady())
-                        {
-                            Chat.Print("KAA2P");
-                            flash.Cast(missile.StartPosition);
-                        }
+                        Chat.Print("ok");
                     }
                 }
             }
+        }   
+        public static bool CollisionCheck(MissileClient missile, SpellInfo info)
+        {
+            return Prediction.Position.Collision.LinearMissileCollision(
+                _Player, missile.StartPosition.To2D(), missile.StartPosition.To2D().Extend(missile.EndPosition, info.Range), 
+                info.MissileSpeed, info.Width, info.Delay);
         }
     }
 }
