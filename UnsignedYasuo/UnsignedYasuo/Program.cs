@@ -51,6 +51,7 @@ namespace UnsignedYasuo
             LaneClear.Add("LCQ", new CheckBox("Use Q"));
             LaneClear.Add("LCE", new CheckBox("Use E"));
             LaneClear.Add("LCEQ", new CheckBox("Use EQ"));
+            LaneClear.Add("LCELH", new CheckBox("Only E for Last Hit"));
             LaneClear.Add("LCEUT", new CheckBox("E Under Turret", false));
             LaneClear.Add("LCI", new CheckBox("Use Items (Hydra/Timat)"));
 
@@ -87,7 +88,9 @@ namespace UnsignedYasuo
 
             DrawingsMenu.AddGroupLabel("Drawings Settings");
             DrawingsMenu.Add("DQ", new CheckBox("Draw Q"));
+            DrawingsMenu.Add("DW", new CheckBox("Draw W"));
             DrawingsMenu.Add("DE", new CheckBox("Draw E"));
+            DrawingsMenu.Add("DR", new CheckBox("Draw R"));
             DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
 
             Spellbook spell = _Player.Spellbook;
@@ -110,10 +113,14 @@ namespace UnsignedYasuo
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && E.IsLearned)
+            if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
                 Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.BlueViolet);
             if (DrawingsMenu["DE"].Cast<CheckBox>().CurrentValue && E.IsLearned)
                 Drawing.DrawCircle(_Player.Position, E.Range, System.Drawing.Color.BlueViolet);
+            if (DrawingsMenu["DW"].Cast<CheckBox>().CurrentValue && W.IsLearned)
+                Drawing.DrawCircle(_Player.Position, W.Range, System.Drawing.Color.BlueViolet);
+            if (DrawingsMenu["DR"].Cast<CheckBox>().CurrentValue && R.IsLearned)
+                Drawing.DrawCircle(_Player.Position, 1200, System.Drawing.Color.BlueViolet);
 
             if (DrawingsMenu["DT"].Cast<CheckBox>().CurrentValue)
             {

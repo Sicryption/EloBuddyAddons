@@ -18,10 +18,14 @@ namespace UnsignedYasuo
             return yo.CalculateDamageOnUnit(target, DamageType.Physical,
                 (float)(new double[] { 0, 20, 40, 60, 80, 100 }[Program.Q.Level] + yo.TotalAttackDamage));
         }
-        public static float E(Obj_AI_Base target)
+        public static double E(Obj_AI_Base target)
         {
+            double dmgModifier = 1;
+            if (yo.HasBuff("yasuodashscalar"))
+                dmgModifier += yo.GetBuff("yasuodashscalar").Count * 0.25f;
+
             return yo.CalculateDamageOnUnit(target, DamageType.Magical,
-                (float)(new[] { 0, 70, 90, 110, 130, 150 }[Program.E.Level] + (0.6 * yo.FlatMagicDamageMod)));
+                (50 + (20 * Program.E.Level)) + (0.6f * yo.FlatMagicDamageMod));
         }
         public static float Ignite(Obj_AI_Base target)
         {

@@ -34,8 +34,10 @@ namespace UnsignedYasuo
         public static void OnGameLoad()
         {
             WindWallMenu = Program.menu.AddSubMenu("Wind Wall Menu", "WWM");
-            WindWallMenu.Add("WW", new CheckBox("Auto-Use Wind Wall (BETA)"));
+            WindWallMenu.Add("WW", new CheckBox("Auto-Use Wind Wall"));
             WindWallMenu.Add("WWD", new CheckBox("Debug"));
+            WindWallMenu.Add("WWCN", new CheckBox("Use Champion Names"));
+            WindWallMenu.Get<CheckBox>("WWCN").OnValueChange += ToggleNameFormat;
             WindWallMenu.AddGroupLabel("Enemy Skillshot Toggles");
             foreach (AIHeroClient client in EntityManager.Heroes.Enemies)
                 foreach (SpellInfo info in SpellDatabase.SpellList)
@@ -43,9 +45,10 @@ namespace UnsignedYasuo
                     if (info.ChampionName == client.ChampionName)
                     {
                         EnemyProjectileInformation.Add(info);
-                        WindWallMenu.Add("WW" + info.SpellName, new CheckBox(info.SpellName));
+                        WindWallMenu.Add("WWBN" + info.SpellName, new CheckBox(info.SpellName));
                     }
                 }
+            ToggleNameFormat(WindWallMenu.Get<CheckBox>("WWCN"), null);
         }
 
         public static void OnCreate(GameObject obj, EventArgs args)
@@ -57,7 +60,13 @@ namespace UnsignedYasuo
             {
                 ProjectileList.Add(missile);
                 if (DebugMode)
-                    Chat.Print("Projectile: " + missile.SData.Name + " has been created.");
+                {
+                    //string spellName = missile.SpellCaster.Spellbook.GetSpell(SpellSlot.R).Name;
+                    string misName = missile.SData.Name;
+
+                    Chat.Print("Projectile: " + misName + " has been created.");// Spell Name: " + spellName);
+                    //Chat.Print("Projectile: " + misName + " has been created. Spell Name: " + spellName);
+                }
             }
         }
 
@@ -94,9 +103,11 @@ namespace UnsignedYasuo
 
         public static bool CollisionCheck(MissileClient missile, SpellInfo info)
         {
-            return Prediction.Position.Collision.LinearMissileCollision(
+            bool variable =  Prediction.Position.Collision.LinearMissileCollision(
                 _Player, missile.StartPosition.To2D(), missile.StartPosition.To2D().Extend(missile.EndPosition, info.Range),
                 info.MissileSpeed, info.Width, info.Delay);
+
+            return variable;
         }
 
         public static bool ShouldWindWall(MissileClient missile, SpellInfo info)
@@ -105,15 +116,31 @@ namespace UnsignedYasuo
             //projectile came from ally
             //if enemy is not a champion
             //if projectile name = info's spell name
+            //if player is out of range by 1.5x the amount (just so you dont walk into it)
             if (!missile.SpellCaster.IsEnemy ||
                 missile.SpellCaster.Type != GameObjectType.AIHeroClient ||
-                missile.SData.Name != info.SpellName)
+                missile.SData.Name != info.MissileName ||
+                missile.Distance(_Player) >= info.Range * 1.5f)
                 return false;
 
             //check if checkbox for spell is enabled
-            if (WindWallMenu.Get<CheckBox>("WW" + info.SpellName) != null)
-                return WindWallMenu.Get<CheckBox>("WW" + info.SpellName).CurrentValue;
+            if (WindWallMenu.Get<CheckBox>("WWBN" + info.SpellName) != null)
+                return WindWallMenu.Get<CheckBox>("WWBN" + info.SpellName).CurrentValue;
             return false;
+        }
+
+        private static void ToggleNameFormat(ValueBase sender, EventArgs args)
+        {
+            if (sender.Cast<CheckBox>().CurrentValue)
+            {
+                foreach(SpellInfo info in EnemyProjectileInformation)
+                    WindWallMenu.Get<CheckBox>("WWBN" + info.SpellName).DisplayName = info.ChampionName + "'s " + info.Slot.ToString();
+            }
+            else
+            {
+                foreach (SpellInfo info in EnemyProjectileInformation)
+                    WindWallMenu.Get<CheckBox>("WWBN" + info.SpellName).DisplayName = info.MissileName;
+            }
         }
     }
 }

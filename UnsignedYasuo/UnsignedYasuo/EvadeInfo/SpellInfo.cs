@@ -10,7 +10,6 @@ namespace UnsignedEvade
             MissileMaxSpeed,
             MissileMinSpeed,
             MissileSpeed,
-            Radius,
             Width,
             Range,
             CollisionCount;

@@ -89,7 +89,7 @@ namespace UnsignedYasuo
             ((AttackSpell.Q == spell && !IsDashing)
             || (AttackSpell.DashQ == spell && IsDashing)
             || AttackSpell.Q != spell)
-            && a.IsValidTarget(range)).FirstOrDefault();
+            && a.IsValidTarget(range)).OrderByDescending(a => a.HealthPercent).FirstOrDefault();
         }
 
         public static Obj_AI_Base GetEnemyKS(GameObjectType type, AttackSpell spell, bool EUNDERTURRET = false)
@@ -115,7 +115,7 @@ namespace UnsignedYasuo
                     &&
                     ((spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a)) ||
                     (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && a.Distance(YasuoCalcs.GetDashingEnd(a)) <= Program.EQRange)
-                    )).FirstOrDefault();
+                    )).OrderByDescending(a => a.HealthPercent).FirstOrDefault();
             }
             else
             {
@@ -181,8 +181,9 @@ namespace UnsignedYasuo
             bool ECHECK = Program.LaneClear["LCE"].Cast<CheckBox>().CurrentValue;
             bool EQCHECK = Program.LaneClear["LCEQ"].Cast<CheckBox>().CurrentValue;
             bool EUNDERTURRET = Program.LaneClear["LCEUT"].Cast<CheckBox>().CurrentValue;
+            bool ELastHit = Program.LaneClear["LCELH"].Cast<CheckBox>().CurrentValue;
             bool ITEMSCHECK = Program.LaneClear["LCI"].Cast<CheckBox>().CurrentValue;
-
+            
             bool QREADY = Program.Q.IsReady();
             bool EREADY = Program.E.IsReady();
 
@@ -192,13 +193,18 @@ namespace UnsignedYasuo
 
             if (ECHECK && EREADY)
             {
-                Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.E, EUNDERTURRET);
+                Obj_AI_Base target = null;
+
+                if (ELastHit)
+                    target = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.E, EUNDERTURRET);
+                else
+                    target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.E, EUNDERTURRET);
 
                 if (target != null)
                     Program.E.Cast(target);
             }
 
-            if (EQCHECK && EREADY && QREADY)
+            if (!ELastHit && EREADY && QREADY && EQCHECK)
             {
                 Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.EQ, EUNDERTURRET);
 
