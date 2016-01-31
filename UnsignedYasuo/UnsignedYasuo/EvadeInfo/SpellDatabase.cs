@@ -31,7 +31,7 @@ namespace UnsignedEvade
             #region Ahri
             new SpellInfo()
                 {
-                    ChampionName = "Aatrox",
+                    ChampionName = "Ahri",
                     SpellName = "AhriOrbofDeception",
                     MissileName = "AhriOrbMissile",
                     SkillshotType = SkillShotType.Linear,
@@ -44,7 +44,7 @@ namespace UnsignedEvade
                 },
             new SpellInfo()
                 {
-                    ChampionName = "Aatrox",
+                    ChampionName = "Ahri",
                     SpellName = "AhriOrbReturn",
                     MissileName = "AhriOrbReturn",
                     SkillshotType = SkillShotType.Linear,
@@ -57,7 +57,7 @@ namespace UnsignedEvade
                 },
             new SpellInfo()
                 {
-                    ChampionName = "Aatrox",
+                    ChampionName = "Ahri",
                     SpellName = "AhriSeduce",
                     MissileName = "AhriSeduceMissile",
                     SkillshotType = SkillShotType.Linear,
