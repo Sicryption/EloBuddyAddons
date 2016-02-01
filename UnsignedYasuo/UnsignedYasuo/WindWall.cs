@@ -57,6 +57,7 @@ namespace UnsignedYasuo
                     }
                 }
             ToggleNameFormat(WindWallMenu.Get<CheckBox>("WWCN"), null);
+            ToggleUpdateFormat(WindWallMenu.Get<CheckBox>("WWGOT"), null);
         }
 
         public static void OnCreate(GameObject obj, EventArgs args)

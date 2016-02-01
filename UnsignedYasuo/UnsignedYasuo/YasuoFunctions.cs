@@ -9,9 +9,9 @@ using EloBuddy.SDK.Enumerations;
 using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
+using SharpDX;
 
 /*
-Add Wind Wall
 Add slider for enemies to ult
 */
 
@@ -145,15 +145,22 @@ namespace UnsignedYasuo
 
             bool QREADY = Program.Q.IsReady();
             bool EREADY = Program.E.IsReady();
+            
+            if (QCHECK && QREADY && !IsDashing)
+            {
+                Obj_AI_Minion minion = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
+
+                CastQ(minion);
+            }
 
             if (EQCHECK && EREADY && QREADY)
             {
-                Obj_AI_Base enemy = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.E, EUNDERTURRET);
+                Obj_AI_Base enemy = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.EQ, EUNDERTURRET);
 
                 if (enemy != null)
                 {
                     Program.E.Cast(enemy);
-                    Program.Q.Cast(enemy.Position);
+                    CastQ(enemy);
                 }
             }
 
@@ -163,14 +170,6 @@ namespace UnsignedYasuo
 
                 if (enemy != null)
                     Program.E.Cast(enemy);
-            }
-
-            if (QCHECK && QREADY && !IsDashing)
-            {
-                Obj_AI_Minion minion = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
-
-                if (minion != null)
-                    Program.Q.Cast(minion.Position);
             }
         }
 
@@ -190,6 +189,14 @@ namespace UnsignedYasuo
 
             if (ITEMSCHECK)
                 UseItemsAndIgnite(Mode.LaneClear);
+
+
+            if (QCHECK && QREADY && !IsDashing)
+            {
+                Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.Q);
+
+                CastQ(target);
+            }
 
             if (ECHECK && EREADY)
             {
@@ -211,16 +218,8 @@ namespace UnsignedYasuo
                 if (target != null)
                 {
                     Program.E.Cast(target);
-                    Program.Q.Cast(target.Position);
+                    CastQ(target);
                 }
-            }
-
-            if (QCHECK && QREADY)
-            {
-                Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.Q);
-
-                if (target != null)
-                    Program.Q.Cast(target.Position);
             }
         }
 
@@ -256,8 +255,7 @@ namespace UnsignedYasuo
                 {
                     var enemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.Q);
 
-                    if (enemy != null)
-                        Program.Q.Cast(enemy.Position);
+                    CastQ(enemy);
                 }
             }
 
@@ -266,9 +264,7 @@ namespace UnsignedYasuo
                 var enemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.E, EUNDERTURRET);
 
                 if (enemy != null)
-                {
                     Program.E.Cast(enemy);
-                }
             }
 
             if (QREADY && EREADY && EQCHECK)
@@ -277,7 +273,7 @@ namespace UnsignedYasuo
                 if (enemy != null && YasuoCalcs.ShouldEQ(enemy))
                 {
                     Program.E.Cast(enemy);
-                    Program.Q.Cast(enemy.Position);
+                    CastQ(enemy);
                 }
             }
         }
@@ -297,6 +293,13 @@ namespace UnsignedYasuo
 
             if (ITEMSCHECK)
                 UseItemsAndIgnite(Mode.Harass);
+            
+            if (QCHECK && QREADY && !IsDashing)
+            {
+                Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
+
+                CastQ(enemy);
+            }
 
             if (ECHECK && EREADY)
             {
@@ -306,16 +309,8 @@ namespace UnsignedYasuo
                 {
                     Program.E.Cast(target);
                     if (YasuoCalcs.GetDashingEnd(target).Distance(target) <= 375 && QREADY && EQCHECK)
-                        Program.Q.Cast(target);
+                        CastQ(target);
                 }
-            }
-
-            if (QCHECK && QREADY && !IsDashing)
-            {
-                Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
-
-                if (enemy != null)
-                    Program.Q.Cast(enemy.Position);
             }
         }
 
@@ -340,6 +335,16 @@ namespace UnsignedYasuo
                 if (ITEMSCHECK)
                     UseItemsAndIgnite(Mode.Combo);
 
+                #region Q
+                if (QCHECK && QREADY && !IsDashing)
+                {
+                    Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
+
+                    if (enemy != null)
+                        CastQ(enemy);
+                }
+                #endregion
+
                 #region R
                 if (YasuoCalcs.GetEnemiesKnockedUp() >= 3 || YasuoCalcs.GetEnemiesKnockedUp() == _Player.CountEnemiesInRange(1200))
                     Program.R.Cast();
@@ -360,7 +365,7 @@ namespace UnsignedYasuo
                             Program.E.Cast(enemy);
 
                             if (YasuoCalcs.GetDashingEnd(enemy).Distance(enemy) <= 375 && EQCHECK && QREADY && QCHECK)
-                                Program.Q.Cast(enemy);
+                                CastQ(enemy);
                         }
                     }
                     //no enemy in e range, dash to minions to get closer
@@ -378,22 +383,13 @@ namespace UnsignedYasuo
                             {
                                 Program.E.Cast(dashEnemy);
                                 if (YasuoCalcs.GetDashingEnd(dashEnemy).Distance(enemy) <= 375 && QREADY && EQCHECK)
-                                    Program.Q.Cast(dashEnemy);
+                                    CastQ(dashEnemy);
                             }
                         }
                     }
                 }
                 #endregion
 
-                #region Q
-                if (QCHECK && QREADY && !IsDashing)
-                {
-                    Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
-
-                    if (enemy != null)
-                        Program.Q.Cast(enemy.Position);
-                }
-                #endregion
             }
         }
 
@@ -456,7 +452,7 @@ namespace UnsignedYasuo
                 }
             }
         }
-
+        
         //complete
         public static void AutoHarrass()
         {
@@ -467,8 +463,7 @@ namespace UnsignedYasuo
             {
                 var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
 
-                if (enemy != null)
-                    Program.Q.Cast(enemy.Position);
+                CastQ(enemy);
             }
         }
 
@@ -480,6 +475,17 @@ namespace UnsignedYasuo
                 return new Spell.Skillshot(SpellSlot.Q, 375, SkillShotType.Linear);
             else
                 return new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear);
+        }
+
+        public static void CastQ(Obj_AI_Base target)
+        {
+            if (!Program.Q.IsReady() || target == null)
+                return;
+
+            if (Program.Q.GetPrediction(target).HitChance >= Program.QHitChance)
+                Program.Q.Cast(target.Position);
+            else if (Program.QHitChance == HitChance.Unknown)
+                Program.Q.Cast(target.Position);
         }
     }
 }

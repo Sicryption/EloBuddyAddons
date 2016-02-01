@@ -17,6 +17,7 @@ namespace UnsignedYasuo
         public static Spell.Targeted E;
         public static Spell.Active R;
         public static Spell.Targeted Ignite;
+        public static HitChance QHitChance = HitChance.Unknown;
         public static AIHeroClient _Player { get { return ObjectManager.Player; } }
         private static void Main(string[] args)
         {
@@ -35,6 +36,7 @@ namespace UnsignedYasuo
 
             menu = MainMenu.AddMenu("Unsigned Yasuo", "UnsignedYasuo");
             menu.Add("ABOUT", new Label("This Addon was designed by Chaos"));
+            menu.Add("QHitChance", new Slider("Q Hit Chance: Medium", 2, 0, 3));
 
             ComboMenu = menu.AddSubMenu("Combo", "combomenu");
 
@@ -110,13 +112,15 @@ namespace UnsignedYasuo
             Obj_AI_Base.OnCreate += WindWall.OnCreate;
             Obj_AI_Base.OnDelete += WindWall.OnDelete;
             Obj_AI_Base.OnUpdatePosition += WindWall.OnUpdate;
+            menu.Get<Slider>("QHitChance").OnValueChange += OnHitChanceSliderChange;
             UnsignedEvade.SpellDatabase.Initialize();
             WindWall.OnGameLoad();
+
+            OnHitChanceSliderChange(menu.Get<Slider>("QHitChance"), null);
         }
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-
             if (_Player.IsDead)
                 return;
 
@@ -165,6 +169,33 @@ namespace UnsignedYasuo
         {
             if (sender.IsMe && buff.Buff.Name == "yasuoq3w")
                 Q =  new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear);
+        }
+
+        static void OnHitChanceSliderChange(ValueBase sender, EventArgs args)
+        {
+            Slider slider = sender.Cast<Slider>();
+            int value = slider.CurrentValue;
+
+            if (value == 0)
+            {
+                slider.DisplayName = "Q Hit Chance: Any";
+                QHitChance = HitChance.Unknown;
+            }
+            else if (value == 1)
+            {
+                slider.DisplayName = "Q Hit Chance: " + HitChance.Low.ToString();
+                QHitChance = HitChance.Low;
+            }
+            else if (value == 2)
+            {
+                slider.DisplayName = "Q Hit Chance: " + HitChance.Medium.ToString();
+                QHitChance = HitChance.Medium;
+            }
+            else if (value == 3)
+            {
+                slider.DisplayName = "Q Hit Chance: " + HitChance.High.ToString();
+                QHitChance = HitChance.High;
+            }
         }
     }
 }
