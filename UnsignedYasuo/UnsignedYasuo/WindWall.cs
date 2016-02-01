@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using EloBuddy;
 using EloBuddy.SDK;
 using UnsignedEvade;
@@ -33,7 +34,7 @@ namespace UnsignedYasuo
         }
         public static void GameOnUpdate(EventArgs args)
         {
-            if(WindWallMenu["WW"].Cast<CheckBox>().CurrentValue && !WindWallMenu.Get<CheckBox>("WWGOT").CurrentValue)
+            if (WindWallMenu["WW"].Cast<CheckBox>().CurrentValue && !WindWallMenu.Get<CheckBox>("WWGOT").CurrentValue)
                 TryWindWall();
         }
         
@@ -113,7 +114,7 @@ namespace UnsignedYasuo
                 ProjectileList.Add(missile);
             }
         }
-
+        
         private static void TryWindWall()
         {
             if (Program.W.IsReady() && Program.W.IsLearned)
@@ -123,6 +124,7 @@ namespace UnsignedYasuo
                         {
                             if (DebugMode)
                                 Chat.Print("Attempt to windwall");
+
                             Program.W.Cast(_Player.Position.Extend(missile.Position, Program.W.Range).To3DWorld());
                         }
         }
@@ -141,14 +143,20 @@ namespace UnsignedYasuo
             //checks if:
             //if projectile name = info's spell name
             //if player is within W range (therefore W will force block it)
-            
+
             if (missile.SpellCaster.Name != "Diana")
                 if (missile.SData.Name != info.MissileName ||
-                    missile.Distance(_Player) >= Program.W.Range)
+                    missile.Distance(_Player) >= Program.W.Range * 2)
                     return false;
-            else if (missile.SpellCaster.Name == "Diana" &&
-                !missile.SData.Name.Contains(info.MissileName))
-                return false;
+                else if (missile.SpellCaster.Name == "Diana" &&
+                    !missile.SData.Name.Contains(info.MissileName))
+                    return false;
+
+            //checks if channeling ability is too close to player
+            if (info.RequiresChannel)
+                //if enemy skillshot is far enough away and E is ready continue. else return false
+                if (!HandleChannelingSpells(missile, info))
+                    return false;
 
             //check if checkbox for spell is enabled
             if (WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName) != null)
@@ -156,6 +164,34 @@ namespace UnsignedYasuo
             return false;
         }
 
+        public static bool HandleChannelingSpells(MissileClient missile, SpellInfo info)
+        {
+            if (missile.StartPosition.Distance(_Player) <= Program.W.Range
+                && Program.E.IsReady())
+            {
+                var target = FindEnemyToBlockChannelingSpell(missile, info);
+                if (target != null)
+                    Program.E.Cast(target);
+                return false;
+            }
+            else if (!Program.E.IsReady())
+                return false;
+            else
+                return true;
+        }
+
+        public static Obj_AI_Base FindEnemyToBlockChannelingSpell(MissileClient missile, SpellInfo info)
+        {
+            Obj_AI_Base target = ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
+                && a.Distance(_Player) <= Program.E.Range
+                && !a.IsDead
+                && !a.IsInvulnerable
+                && !a.HasBuff("YasuoDashWrapper")
+                && !YasuoCalcs.IsUnderTurret(YasuoCalcs.GetDashingEnd(a))
+                && YasuoCalcs.GetDashingEnd(a).Distance(missile.StartPosition) >= Program.W.Range).FirstOrDefault();
+
+            return target;
+        }
         private static void ToggleNameFormat(ValueBase sender, EventArgs args)
         {
             if (sender.Cast<CheckBox>().CurrentValue)

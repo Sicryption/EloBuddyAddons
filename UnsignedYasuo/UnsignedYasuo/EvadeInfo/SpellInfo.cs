@@ -11,6 +11,7 @@ namespace UnsignedEvade
             Width,
             Range,
             CollisionCount;
+        public bool RequiresChannel = false;
         public string ChampionName,
             MissileName,
             SpellName;
