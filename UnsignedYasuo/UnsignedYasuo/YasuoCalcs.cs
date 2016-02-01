@@ -39,10 +39,10 @@ namespace UnsignedYasuo
                 return true;
             return false;
         }
-        public static bool IsUnderTurret(Vector2 position)
+        public static bool IsUnderTurret(Vector3 position)
         {
             Obj_AI_Turret closestTurret = ObjectManager.Get<Obj_AI_Turret>().Where(a =>
-                a.Distance(position) <= 875).FirstOrDefault();
+                a.Distance(position) <= Program.TurretRange).FirstOrDefault();
 
             if (closestTurret == null)
                 return false;
@@ -74,26 +74,12 @@ namespace UnsignedYasuo
 
             return minion;
         }
-
-        public static Vector2 GetDashingEnd(Obj_AI_Base target)
+        public static Vector3 GetDashingEnd(Obj_AI_Base target)
         {
             if (!target.IsValidTarget())
-            {
-                return Vector2.Zero;
-            }
+                return Vector3.Zero;
 
-            var baseX = Program._Player.Position.X;
-            var baseY = Program._Player.Position.Y;
-            var targetX = target.Position.X;
-            var targetY = target.Position.Y;
-
-            var vector = new Vector2(targetX - baseX, targetY - baseY);
-            var sqrt = Math.Sqrt(vector.X * vector.X + vector.Y * vector.Y);
-
-            var x = (float)(baseX + (Program.E.Range * (vector.X / sqrt)));
-            var y = (float)(baseY + (Program.E.Range * (vector.Y / sqrt)));
-
-            return new Vector2(x, y);
+            return yo.Position.Extend(target, Program.E.Range).To3D();
         }
     }
 }

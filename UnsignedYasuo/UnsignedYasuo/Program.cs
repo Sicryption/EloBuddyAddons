@@ -12,12 +12,22 @@ namespace UnsignedYasuo
     {
         public static Menu ComboMenu, DrawingsMenu, KSMenu, LaneClear, LastHit, Harass, menu;
         public static Spell.Skillshot Q;
-        public static int EQRange = 375;
         public static Spell.SpellBase W;
         public static Spell.Targeted E;
         public static Spell.Active R;
         public static Spell.Targeted Ignite;
         public static HitChance QHitChance = HitChance.Unknown;
+        public static int EQRange = 375;
+        public static int TurretRange
+        {
+            get
+            {
+                if (menu.Get<CheckBox>("BTR").CurrentValue)
+                    return 875 + 100;
+                else
+                    return 875;
+            }
+        }
         public static AIHeroClient _Player { get { return ObjectManager.Player; } }
         private static void Main(string[] args)
         {
@@ -36,6 +46,7 @@ namespace UnsignedYasuo
 
             menu = MainMenu.AddMenu("Unsigned Yasuo", "UnsignedYasuo");
             menu.Add("ABOUT", new Label("This Addon was designed by Chaos"));
+            menu.Add("BTR", new CheckBox("Extend Turret Range (safety precaution)", false));
             menu.Add("QHitChance", new Slider("Q Hit Chance: Medium", 2, 0, 3));
 
             ComboMenu = menu.AddSubMenu("Combo", "combomenu");
@@ -135,7 +146,7 @@ namespace UnsignedYasuo
 
             if (DrawingsMenu["DT"].Cast<CheckBox>().CurrentValue)
                 foreach (Obj_AI_Turret t in EntityManager.Turrets.Enemies)
-                    Drawing.DrawCircle(t.Position, 875, System.Drawing.Color.BlueViolet);
+                    Drawing.DrawCircle(t.Position, TurretRange, System.Drawing.Color.BlueViolet);
         }
 
         private static void Game_OnTick(EventArgs args)
