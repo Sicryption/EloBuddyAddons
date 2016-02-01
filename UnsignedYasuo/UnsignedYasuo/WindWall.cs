@@ -46,14 +46,14 @@ namespace UnsignedYasuo
             WindWallMenu.Add("WWCN", new CheckBox("Use Champion Names"));
             WindWallMenu.Get<CheckBox>("WWCN").OnValueChange += ToggleNameFormat;
             WindWallMenu.Get<CheckBox>("WWGOT").OnValueChange += ToggleUpdateFormat;
-            WindWallMenu.AddGroupLabel("Enemy Skillshot Toggles");
+            WindWallMenu.AddGroupLabel("Enemy Projectile Toggles");
             foreach (AIHeroClient client in EntityManager.Heroes.Enemies)
                 foreach (SpellInfo info in SpellDatabase.SpellList)
                 {
                     if (info.ChampionName == client.ChampionName)
                     {
                         EnemyProjectileInformation.Add(info);
-                        WindWallMenu.Add("WWBN" + info.SpellName, new CheckBox(info.SpellName));
+                        WindWallMenu.Add("WWBN" + info.MissileName, new CheckBox(info.SpellName));
                     }
                 }
             ToggleNameFormat(WindWallMenu.Get<CheckBox>("WWCN"), null);
@@ -63,18 +63,19 @@ namespace UnsignedYasuo
         {
             var missile = obj as MissileClient;
             if (missile != null &&
+                missile.SpellCaster != null &&
                 missile.SpellCaster.IsEnemy &&
                 missile.SpellCaster.Type == GameObjectType.AIHeroClient)
             {
                 ProjectileList.Add(missile);
                 if (DebugMode)
                 {
-                    //string spellName = missile.SpellCaster.Spellbook.GetSpell(SpellSlot.E).Name;
-                    //string spellName2 = missile.SpellCaster.Spellbook.GetSpell(SpellSlot.W).Name;
+                    //Spellbook SpellBook = missile.SpellCaster.Spellbook;
                     string misName = missile.SData.Name;
 
                     Chat.Print("Projectile: " + misName + " has been created.");// Spell Name: " + spellName);
-                    //Chat.Print("Projectile: " + misName + " has been created. Spell Name: " + spellName + ", " + spellName2);
+                    //Chat.Print("Q Name: " + SpellBook.GetSpell(SpellSlot.Q).Name + ", W Name: " + SpellBook.GetSpell(SpellSlot.W).Name);
+                    //Chat.Print("E Name: " + SpellBook.GetSpell(SpellSlot.E).Name + ", R Name: " + SpellBook.GetSpell(SpellSlot.R).Name);
 
                 }
             }
@@ -102,6 +103,7 @@ namespace UnsignedYasuo
         {
             var missile = obj as MissileClient;
             if (missile != null &&
+                missile.SpellCaster != null &&
                 missile.SpellCaster.IsEnemy &&
                 missile.SpellCaster.Type == GameObjectType.AIHeroClient &&
                 ProjectileList.Contains(missile))
@@ -118,7 +120,7 @@ namespace UnsignedYasuo
                     foreach (SpellInfo info in EnemyProjectileInformation)
                         if (ShouldWindWall(missile, info) && CollisionCheck(missile, info))
                         {
-                            if(DebugMode)
+                            if (DebugMode)
                                 Chat.Print("Attempt to windwall");
                             Program.W.Cast(_Player.Position.Extend(missile.Position, Program.W.Range).To3DWorld());
                         }
@@ -136,34 +138,31 @@ namespace UnsignedYasuo
         public static bool ShouldWindWall(MissileClient missile, SpellInfo info)
         {
             //checks if:
-            //projectile came from ally
-            //if enemy is not a champion
             //if projectile name = info's spell name
-            //if player is out of range by 1.5x the amount (just so you dont walk into it)
-            if (!missile.SpellCaster.IsEnemy ||
-                missile.SpellCaster.Type != GameObjectType.AIHeroClient ||
-                missile.SData.Name != info.MissileName ||
-                missile.Distance(_Player) >= Program.W.Range)
+            //if player is within W range (therefore W will force block it)
+            
+            if (missile.SpellCaster.Name != "Diana")
+                if (missile.SData.Name != info.MissileName ||
+                    missile.Distance(_Player) >= Program.W.Range)
+                    return false;
+            else if (missile.SpellCaster.Name == "Diana" &&
+                !missile.SData.Name.Contains(info.MissileName))
                 return false;
 
             //check if checkbox for spell is enabled
-            if (WindWallMenu.Get<CheckBox>("WWBN" + info.SpellName) != null)
-                return WindWallMenu.Get<CheckBox>("WWBN" + info.SpellName).CurrentValue;
+            if (WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName) != null)
+                return WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).CurrentValue;
             return false;
         }
 
         private static void ToggleNameFormat(ValueBase sender, EventArgs args)
         {
             if (sender.Cast<CheckBox>().CurrentValue)
-            {
                 foreach(SpellInfo info in EnemyProjectileInformation)
-                    WindWallMenu.Get<CheckBox>("WWBN" + info.SpellName).DisplayName = info.ChampionName + "'s " + info.Slot.ToString();
-            }
+                    WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).DisplayName = info.ChampionName + "'s " + info.Slot.ToString();
             else
-            {
                 foreach (SpellInfo info in EnemyProjectileInformation)
-                    WindWallMenu.Get<CheckBox>("WWBN" + info.SpellName).DisplayName = info.MissileName;
-            }
+                    WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).DisplayName = info.MissileName;
         }
         private static void ToggleUpdateFormat(ValueBase sender, EventArgs args)
         {
