@@ -166,7 +166,7 @@ namespace UnsignedYasuo
 
         public static bool HandleChannelingSpells(MissileClient missile, SpellInfo info)
         {
-            if (missile.StartPosition.Distance(_Player) <= Program.W.Range
+            if (missile.SpellCaster.Position.Distance(_Player) <= Program.W.Range
                 && Program.E.IsReady())
             {
                 var target = FindEnemyToBlockChannelingSpell(missile, info);
