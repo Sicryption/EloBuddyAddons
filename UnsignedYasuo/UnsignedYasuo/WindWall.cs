@@ -10,6 +10,10 @@ using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using SharpDX;
 
+/*
+Windwall then E if it blocks circular channeling abilities
+E away from linear skillshots
+    */
 namespace UnsignedYasuo
 {
     class WindWall
@@ -43,7 +47,7 @@ namespace UnsignedYasuo
             WindWallMenu = Program.menu.AddSubMenu("Wind Wall Menu", "WWM");
             WindWallMenu.Add("WW", new CheckBox("Auto-Use Wind Wall"));
             WindWallMenu.Add("WWGOT", new CheckBox("GameOnTick (Increased FPS)"));
-            WindWallMenu.Add("WWD", new CheckBox("Debug"));
+            WindWallMenu.Add("WWD", new CheckBox("Debug", false));
             WindWallMenu.Add("WWCN", new CheckBox("Use Champion Names"));
             WindWallMenu.Get<CheckBox>("WWCN").OnValueChange += ToggleNameFormat;
             WindWallMenu.Get<CheckBox>("WWGOT").OnValueChange += ToggleUpdateFormat;
@@ -125,7 +129,10 @@ namespace UnsignedYasuo
                             if (DebugMode)
                                 Chat.Print("Attempt to windwall");
 
-                            Program.W.Cast(_Player.Position.Extend(missile.Position, Program.W.Range).To3DWorld());
+                            if (info.ChannelType == SpellDatabase.ChannelType.None)
+                                Program.W.Cast(_Player.Position.Extend(missile.Position, Program.W.Range).To3DWorld());
+                            else
+                                Program.W.Cast(_Player.Position.Extend(missile.StartPosition, Program.W.Range).To3DWorld());
                         }
         }
 
@@ -146,14 +153,19 @@ namespace UnsignedYasuo
 
             if (missile.SpellCaster.Name != "Diana")
                 if (missile.SData.Name != info.MissileName ||
-                    missile.Distance(_Player) >= Program.W.Range * 2)
+                    missile.IsInRange(_Player, Program.W.Range * 2))
                     return false;
                 else if (missile.SpellCaster.Name == "Diana" &&
                     !missile.SData.Name.Contains(info.MissileName))
                     return false;
 
+            //checks if the ability is a lock on projectile and the target is me
+            if (info.ProjectileType == SpellDatabase.ProjectileType.LockOnProjectile
+                && missile.Target != _Player)
+                return false;
+
             //checks if channeling ability is too close to player
-            if (info.RequiresChannel)
+            if (info.ChannelType != SpellDatabase.ChannelType.None)
                 //if enemy skillshot is far enough away and E is ready continue. else return false
                 if (!HandleChannelingSpells(missile, info))
                     return false;
@@ -166,9 +178,19 @@ namespace UnsignedYasuo
 
         public static bool HandleChannelingSpells(MissileClient missile, SpellInfo info)
         {
-            if (missile.SpellCaster.Position.Distance(_Player) <= Program.W.Range
+            //returning if player should windwall
+
+
+            //
+            if (missile.SpellCaster.Position.IsInRange(_Player, Program.W.Range)
                 && Program.E.IsReady())
             {
+                if ((info.ChannelType == SpellDatabase.ChannelType.Linear
+                    || info.ChannelType == SpellDatabase.ChannelType.Cone)
+                    && missile.SpellCaster.IsInRange(_Player, Program.E.Range)
+                    && !missile.SpellCaster.HasBuff("YasuoDashWrapper"))
+                    Program.E.Cast(missile.SpellCaster);
+
                 var target = FindEnemyToBlockChannelingSpell(missile, info);
                 if (target != null)
                     Program.E.Cast(target);
@@ -176,6 +198,7 @@ namespace UnsignedYasuo
             }
             else if (!Program.E.IsReady())
                 return false;
+            //outside of Wind Wall range, so it will be blocked
             else
                 return true;
         }
@@ -183,12 +206,12 @@ namespace UnsignedYasuo
         public static Obj_AI_Base FindEnemyToBlockChannelingSpell(MissileClient missile, SpellInfo info)
         {
             Obj_AI_Base target = ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                && a.Distance(_Player) <= Program.E.Range
+                && a.IsInRange(_Player, Program.E.Range)
                 && !a.IsDead
                 && !a.IsInvulnerable
                 && !a.HasBuff("YasuoDashWrapper")
                 && !YasuoCalcs.IsUnderTurret(YasuoCalcs.GetDashingEnd(a))
-                && YasuoCalcs.GetDashingEnd(a).Distance(missile.StartPosition) >= Program.W.Range).FirstOrDefault();
+                && YasuoCalcs.GetDashingEnd(a).IsInRange(missile.StartPosition, Program.W.Range)).FirstOrDefault();
 
             return target;
         }

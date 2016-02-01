@@ -13,6 +13,8 @@ using SharpDX;
 
 /*
 Add slider for enemies to ult
+fix ks with ignite
+fix e to minions and champion under turret in combo
 */
 
 namespace UnsignedYasuo
@@ -71,7 +73,7 @@ namespace UnsignedYasuo
             {
                 return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
                     && a.Type == type
-                    && a.Distance(_Player) <= range
+                    && a.IsInRange(_Player, range)
                     && !a.IsDead
                     && !a.IsInvulnerable
                     && a.IsValidTarget(range)
@@ -82,14 +84,16 @@ namespace UnsignedYasuo
 
             return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
             && a.Type == type
-            && a.Distance(_Player) <= range
+            && a.IsInRange(_Player, range)
             && !a.IsDead
             && !a.IsInvulnerable
             &&
             ((AttackSpell.Q == spell && !IsDashing)
             || (AttackSpell.DashQ == spell && IsDashing)
+            || (spell == AttackSpell.E && !a.HasBuff("YasuoDashWrapper")) 
+            || (spell == AttackSpell.EQ && !a.HasBuff("YasuoDashWrapper") && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange))
             || AttackSpell.Q != spell)
-            && a.IsValidTarget(range)).OrderByDescending(a => a.HealthPercent).FirstOrDefault();
+            && a.IsValidTarget(range)).OrderBy(a => a.HealthPercent).FirstOrDefault();
         }
 
         public static Obj_AI_Base GetEnemyKS(GameObjectType type, AttackSpell spell, bool EUNDERTURRET = false)
@@ -102,11 +106,11 @@ namespace UnsignedYasuo
             else if (spell == AttackSpell.Ignite)
                 range = Program.Ignite.Range;
 
-            if (spell == AttackSpell.E || spell == AttackSpell.EQ && !EUNDERTURRET)
+            if ((spell == AttackSpell.E || spell == AttackSpell.EQ) && !EUNDERTURRET)
             {
                 return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
                     && a.Type == type
-                    && a.Distance(_Player) <= range
+                    && a.IsInRange(_Player, range)
                     && !a.IsDead
                     && !a.IsInvulnerable
                     && a.IsValidTarget(range)
@@ -114,21 +118,21 @@ namespace UnsignedYasuo
                     && !YasuoCalcs.IsUnderTurret(YasuoCalcs.GetDashingEnd(a))
                     &&
                     ((spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a)) ||
-                    (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && a.Distance(YasuoCalcs.GetDashingEnd(a)) <= Program.EQRange)
-                    )).OrderByDescending(a => a.HealthPercent).FirstOrDefault();
+                    (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange))
+                    )).OrderBy(a => a.HealthPercent).FirstOrDefault();
             }
             else
             {
                 return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
                     && a.Type == type
-                    && a.Distance(_Player) <= range
+                    && a.IsInRange(_Player, range)
                     && !a.IsDead
                     && !a.IsInvulnerable
                     && a.IsValidTarget(range)
                     &&
                     ((spell == AttackSpell.Q && a.Health <= YasuoCalcs.Q(a) && !IsDashing) ||
-                    (spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a)) ||
-                    (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && a.Distance(YasuoCalcs.GetDashingEnd(a)) <= Program.EQRange) ||
+                    (spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a) && !a.HasBuff("YasuoDashWrapper")) ||
+                    (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && !a.HasBuff("YasuoDashWrapper") && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange)) ||
                     (spell == AttackSpell.Ignite && a.Health <= YasuoCalcs.Ignite(a)))).FirstOrDefault();
             }
         }
@@ -308,7 +312,7 @@ namespace UnsignedYasuo
                 if (target != null)
                 {
                     Program.E.Cast(target);
-                    if (YasuoCalcs.GetDashingEnd(target).Distance(target) <= 375 && QREADY && EQCHECK)
+                    if (YasuoCalcs.GetDashingEnd(target).IsInRange(target, 375) && QREADY && EQCHECK)
                         CastQ(target);
                 }
             }
@@ -360,11 +364,12 @@ namespace UnsignedYasuo
                     {
                         //if can auto attack, don't e, instead auto attack
                         //if e'ing gets player in auto attack range. e
-                        if (!_Player.IsInAutoAttackRange(enemy) && YasuoCalcs.GetDashingEnd(enemy).Distance(enemy) <= _Player.GetAutoAttackRange())
+                        if (!_Player.IsInAutoAttackRange(enemy) 
+                            && YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, _Player.GetAutoAttackRange()))
                         {
                             Program.E.Cast(enemy);
 
-                            if (YasuoCalcs.GetDashingEnd(enemy).Distance(enemy) <= 375 && EQCHECK && QREADY && QCHECK)
+                            if (YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, Program.EQRange) && EQCHECK && QREADY)
                                 CastQ(enemy);
                         }
                     }
@@ -382,7 +387,7 @@ namespace UnsignedYasuo
                             if (dashEnemy != null)
                             {
                                 Program.E.Cast(dashEnemy);
-                                if (YasuoCalcs.GetDashingEnd(dashEnemy).Distance(enemy) <= 375 && QREADY && EQCHECK)
+                                if (YasuoCalcs.GetDashingEnd(dashEnemy).IsInRange(enemy, Program.EQRange) && QREADY && EQCHECK)
                                     CastQ(dashEnemy);
                             }
                         }
@@ -401,8 +406,8 @@ namespace UnsignedYasuo
                 Obj_AI_Base fleeObject = ObjectManager.Get<Obj_AI_Base>().Where(a =>
                     !a.IsDead &&
                     YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos) <= _Player.Distance(Game.CursorPos) &&
-                    _Player.IsFacing(a) &&
-                    a.Distance(_Player) <= Program.E.Range).OrderByDescending(a => a.Distance(Game.CursorPos)).FirstOrDefault();
+                    !a.HasBuff("YasuoDashWrapper") &&
+                    a.IsInRange(_Player, Program.E.Range)).OrderBy(a => a.Distance(Game.CursorPos)).FirstOrDefault();
 
                 if (fleeObject != null)
                     Program.E.Cast(fleeObject);
@@ -469,12 +474,25 @@ namespace UnsignedYasuo
 
         public static Spell.Skillshot GetQType()
         {
-            if (_Player.HasBuff("yasuoq3w"))
-                return new Spell.Skillshot(SpellSlot.Q, 1000, SkillShotType.Linear);
+            if (_Player.HasBuff("yasuoq3w") && !IsDashing)
+                return new Spell.Skillshot(SpellSlot.Q, 1000, SkillShotType.Linear)
+                {
+                    Width = 55,
+                    CastDelay = 400,
+                    Speed = int.MaxValue,
+                    AllowedCollisionCount = int.MaxValue
+                };
+
             else if (IsDashing)
-                return new Spell.Skillshot(SpellSlot.Q, 375, SkillShotType.Linear);
+                return new Spell.Skillshot(SpellSlot.Q, 375, SkillShotType.Circular);
             else
-                return new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear);
+                return new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear)
+                {
+                    CastDelay = 500,
+                    Width = 90,
+                    Speed = 1500,
+                    AllowedCollisionCount = int.MaxValue
+                };
         }
 
         public static void CastQ(Obj_AI_Base target)

@@ -27,9 +27,9 @@ namespace UnsignedYasuo
             return yo.CalculateDamageOnUnit(target, DamageType.Magical,
                 (50 + (20 * Program.E.Level)) + (0.6f * yo.FlatMagicDamageMod));
         }
-        public static float Ignite(Obj_AI_Base target)
+        public static double Ignite(Obj_AI_Base target)
         {
-            return ((10 + (4 * Program._Player.Level)) * 5) - ((target.HPRegenRate / 2) * 5);
+            return ((10 + (4 * yo.Level)) * 5) - ((target.HPRegenRate / 2) * 5);
         }
         public static bool ShouldEQ(Obj_AI_Base target)
         {
@@ -41,8 +41,9 @@ namespace UnsignedYasuo
         }
         public static bool IsUnderTurret(Vector3 position)
         {
-            Obj_AI_Turret closestTurret = ObjectManager.Get<Obj_AI_Turret>().Where(a =>
-                a.Distance(position) <= Program.TurretRange).FirstOrDefault();
+            Obj_AI_Turret closestTurret = EntityManager.Turrets.Enemies.Where(a =>
+                a.IsInRange(position, Program.TurretRange)
+                && !a.IsDead).OrderBy(a => a.Distance(position)).FirstOrDefault();
 
             if (closestTurret == null)
                 return false;
@@ -55,7 +56,7 @@ namespace UnsignedYasuo
             List<AIHeroClient> enemies = EntityManager.Heroes.Enemies;
             foreach (AIHeroClient enemy in enemies)
             {
-                if (yo.Distance(enemy) <= 1200)
+                if (yo.IsInRange(enemy, 1200))
                 {
                     enemiesIR++;
                     if (enemy.HasBuffOfType(BuffType.Knockup))
@@ -67,9 +68,9 @@ namespace UnsignedYasuo
         public static Obj_AI_Base GetBestDashMinionToChampion(Obj_AI_Base target, bool EUNDERTURRET)
         {
             Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
-                a.Distance(yo) <= Program.E.Range
+                a.IsInRange(yo, Program.E.Range)
                 && GetDashingEnd(a).Distance(target) < yo.Distance(target)
-                && ((IsUnderTurret(GetDashingEnd(a)) && EUNDERTURRET) || !EUNDERTURRET)
+                && ((!IsUnderTurret(GetDashingEnd(a)) && !EUNDERTURRET) || EUNDERTURRET)
                 ).OrderBy(a => GetDashingEnd(a).Distance(target)).FirstOrDefault();
 
             return minion;

@@ -15,7 +15,15 @@ namespace UnsignedEvade
             LinearSkillshot,
             CircularSkillshot,
             ArcSkillshot,
-            LockOnProjectile
+            LockOnProjectile,
+            ConeSkillshot
+        }
+        public enum ChannelType
+        {
+            Cone,
+            Linear,
+            Circular,
+            None
         }
 
         public static List<SpellInfo> SpellList = new List<SpellInfo>();
@@ -924,7 +932,7 @@ namespace UnsignedEvade
                     SpellName = "KatarinaR",
                     MissileName = "KatarinaRMis",
                     ProjectileType = ProjectileType.LockOnProjectile,
-                    RequiresChannel = true,
+                    ChannelType = ChannelType.Circular,
                     Slot = SpellSlot.R,
                     Range = 1050,
                     Delay = 250,
@@ -1155,7 +1163,7 @@ namespace UnsignedEvade
                     SpellName = "LucianRMis",
                     MissileName = "lucianrmissileoffhand",
                     ProjectileType = ProjectileType.LinearSkillshot,
-                    RequiresChannel = true,
+                    ChannelType = ChannelType.Linear,
                     Slot = SpellSlot.R,
                     Range = 1400,
                     Delay = 500,
@@ -1287,8 +1295,8 @@ namespace UnsignedEvade
                     ChampionName = "MissFortune",
                     SpellName = "MissFortuneBulletTime",
                     MissileName = "missfortunebullets",
-                    ProjectileType = ProjectileType.LockOnProjectile,
-                    RequiresChannel = true,
+                    ProjectileType = ProjectileType.ConeSkillshot,
+                    ChannelType = ChannelType.Cone,
                     Slot = SpellSlot.R,
                     Range = 1050,
                     Delay = 250,
@@ -1301,8 +1309,8 @@ namespace UnsignedEvade
                     ChampionName = "MissFortune",
                     SpellName = "MissFortuneBulletTime",
                     MissileName = "missfortunebulletsclone",
-                    ProjectileType = ProjectileType.LockOnProjectile,
-                    RequiresChannel = true,
+                    ProjectileType = ProjectileType.ConeSkillshot,
+                    ChannelType = ChannelType.Cone,
                     Slot = SpellSlot.R,
                     Range = 1050,
                     Delay = 250,
@@ -1733,6 +1741,7 @@ namespace UnsignedEvade
                     SpellName = "SwainMetaNuke",
                     MissileName = "SwainMetamorphism",
                     ProjectileType = ProjectileType.LockOnProjectile,
+                    ChannelType = ChannelType.Circular,
                     Slot = SpellSlot.R,
                     Range = 950,
                     Delay = 250,

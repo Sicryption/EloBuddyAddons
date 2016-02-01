@@ -154,7 +154,7 @@ namespace UnsignedYasuo
             if (_Player.IsDead)
                 return;
 
-            YasuoFunctions.GetQType();
+            Q = YasuoFunctions.GetQType();
             YasuoFunctions.AutoHarrass();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                 YasuoFunctions.Combo();

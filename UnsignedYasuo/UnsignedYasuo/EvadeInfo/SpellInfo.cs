@@ -11,11 +11,11 @@ namespace UnsignedEvade
             Width,
             Range,
             CollisionCount;
-        public bool RequiresChannel = false;
         public string ChampionName,
             MissileName,
             SpellName;
         public SpellSlot Slot;
         public SpellDatabase.ProjectileType ProjectileType;
+        public SpellDatabase.ChannelType ChannelType = SpellDatabase.ChannelType.None;
     }
 }
