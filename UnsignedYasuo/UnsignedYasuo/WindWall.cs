@@ -76,11 +76,11 @@ namespace UnsignedYasuo
                 ProjectileList.Add(missile);
                 if (DebugMode)
                 {
-                    //Spellbook SpellBook = missile.SpellCaster.Spellbook;
+                    Spellbook SpellBook = missile.SpellCaster.Spellbook;
                     string misName = missile.SData.Name;
 
                     Chat.Print("Projectile: " + misName + " has been created.");// Spell Name: " + spellName);
-                    //Chat.Print("Q Name: " + SpellBook.GetSpell(SpellSlot.Q).Name + ", W Name: " + SpellBook.GetSpell(SpellSlot.W).Name);
+                    Chat.Print("Q Name: " + SpellBook.GetSpell(SpellSlot.Q).Name + ", W Name: " + SpellBook.GetSpell(SpellSlot.W).Name);
                     //Chat.Print("E Name: " + SpellBook.GetSpell(SpellSlot.E).Name + ", R Name: " + SpellBook.GetSpell(SpellSlot.R).Name);
 
                 }

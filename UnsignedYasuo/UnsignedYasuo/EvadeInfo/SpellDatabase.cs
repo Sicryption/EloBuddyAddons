@@ -2093,6 +2093,19 @@ namespace UnsignedEvade
                     ProjectileType = ProjectileType.LinearSkillshot,
                     Slot = SpellSlot.W,
                     Range = 1200,
+                    Delay = 125,
+                    MissileSpeed = 1700,
+                    Width = 88,
+                    CollisionCount = 0
+                },
+            new SpellInfo()
+                {
+                    ChampionName = "Velkoz",
+                    SpellName = "VelkozE",
+                    MissileName = "VelkozEMissile",
+                    ProjectileType = ProjectileType.CircularSkillshot,
+                    Slot = SpellSlot.E,
+                    Range = 1200,
                     Delay = 250,
                     MissileSpeed = 1700,
                     Width = 88,

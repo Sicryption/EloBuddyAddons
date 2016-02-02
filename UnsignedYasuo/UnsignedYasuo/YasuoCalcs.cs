@@ -12,24 +12,24 @@ namespace UnsignedYasuo
 
     class YasuoCalcs
     {
-        private static AIHeroClient yo { get { return ObjectManager.Player; } }
+        private static AIHeroClient _Player = Program._Player;
         public static double Q(Obj_AI_Base target)
         {
-            return yo.CalculateDamageOnUnit(target, DamageType.Physical,
-                (float)(new double[] { 0, 20, 40, 60, 80, 100 }[Program.Q.Level] + yo.TotalAttackDamage));
+            return _Player.CalculateDamageOnUnit(target, DamageType.Physical,
+                (float)(new double[] { 0, 20, 40, 60, 80, 100 }[Program.Q.Level] + _Player.TotalAttackDamage));
         }
         public static double E(Obj_AI_Base target)
         {
             double dmgModifier = 1;
-            if (yo.HasBuff("yasuodashscalar"))
-                dmgModifier += yo.GetBuff("yasuodashscalar").Count * 0.25f;
+            if (_Player.HasBuff("yasuodashscalar"))
+                dmgModifier += _Player.GetBuff("yasuodashscalar").Count * 0.25f;
 
-            return yo.CalculateDamageOnUnit(target, DamageType.Magical,
-                (50 + (20 * Program.E.Level)) + (0.6f * yo.FlatMagicDamageMod));
+            return _Player.CalculateDamageOnUnit(target, DamageType.Magical,
+                (50 + (20 * Program.E.Level)) + (0.6f * _Player.FlatMagicDamageMod));
         }
-        public static double Ignite(Obj_AI_Base target)
+        public static float Ignite(Obj_AI_Base target)
         {
-            return ((10 + (4 * yo.Level)) * 5) - ((target.HPRegenRate / 2) * 5);
+            return ((10 + (4 * Program._Player.Level)) * 5) - ((target.HPRegenRate / 2) * 5);
         }
         public static bool ShouldEQ(Obj_AI_Base target)
         {
@@ -49,17 +49,18 @@ namespace UnsignedYasuo
                 return false;
             return true;
         }
-        public static bool IsInFountain(Obj_AI_Base self)
+        public static bool IsInFountain(Vector3 position, GameObjectTeam team)
         {
             float fountainRange = 1050;
-            Vector3 vec3 = (self.Team == GameObjectTeam.Order) ? new Vector3(363, 426, 182) : new Vector3(14340, 14390, 172);
-            return self.IsVisible && self.IsInRange(vec3, fountainRange);
+            Vector3 vec3 = (team == GameObjectTeam.Order) ? new Vector3(363, 426, 182) : new Vector3(14340, 14390, 172);
+
+            return position.IsInRange(vec3, fountainRange);
         }
         public static bool ERequirements(Obj_AI_Base unit, bool EUNDERTURRET)
         {
 
             //not in fountain
-            if (!IsInFountain(unit) &&
+            if (!IsInFountain(GetDashingEnd(unit), unit.Team) &&
                 //can be e'd
                 !unit.HasBuff("YasuoDashWrapper") &&
                 ((!IsUnderTurret(GetDashingEnd(unit)) && !EUNDERTURRET) || EUNDERTURRET)
@@ -75,7 +76,7 @@ namespace UnsignedYasuo
             List<AIHeroClient> enemies = EntityManager.Heroes.Enemies;
             foreach (AIHeroClient enemy in enemies)
             {
-                if (yo.IsInRange(enemy, Program.R.Range))
+                if (_Player.IsInRange(enemy, Program.R.Range))
                 {
                     enemiesIR++;
                     if (enemy.HasBuffOfType(BuffType.Knockup))
@@ -90,7 +91,7 @@ namespace UnsignedYasuo
             List<AIHeroClient> enemies = EntityManager.Heroes.Enemies;
             foreach (AIHeroClient enemy in enemies)
             {
-                if (yo.IsInRange(enemy, range))
+                if (_Player.IsInRange(enemy, range))
                     enemiesIR++;
             }
             return enemiesIR;
@@ -98,9 +99,9 @@ namespace UnsignedYasuo
         public static Obj_AI_Base GetBestDashMinionToChampion(Obj_AI_Base target, bool EUNDERTURRET)
         {
             Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
-                a.IsInRange(yo, Program.E.Range)
+                a.IsInRange(_Player, Program.E.Range)
                 && a != target
-                && GetDashingEnd(a).Distance(target) < yo.Distance(target)
+                && GetDashingEnd(a).Distance(target) < _Player.Distance(target)
                 && ((!IsUnderTurret(GetDashingEnd(a)) && !EUNDERTURRET) || EUNDERTURRET)
                 ).OrderBy(a => GetDashingEnd(a).Distance(target)).FirstOrDefault();
 
@@ -111,9 +112,9 @@ namespace UnsignedYasuo
             if (target == null)
                 return null;
             Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
-                a.IsInRange(yo, Program.E.Range)
+                a.IsInRange(_Player, Program.E.Range)
                 && a != target
-                && GetDashingEnd(a).IsInRange(target, yo.GetAutoAttackRange())
+                && GetDashingEnd(a).IsInRange(target, _Player.GetAutoAttackRange())
                 && ((!IsUnderTurret(GetDashingEnd(a)) && !EUNDERTURRET) || EUNDERTURRET)
                 ).OrderBy(a => GetDashingEnd(a).Distance(target)).FirstOrDefault();
 
@@ -124,7 +125,7 @@ namespace UnsignedYasuo
             if (!target.IsValidTarget())
                 return Vector3.Zero;
 
-            return yo.Position.Extend(target, Program.E.Range).To3D();
+            return _Player.Position.Extend(target, Program.E.Range).To3D();
         }
     }
 }
