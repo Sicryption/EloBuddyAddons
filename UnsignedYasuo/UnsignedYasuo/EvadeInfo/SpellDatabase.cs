@@ -190,7 +190,7 @@ namespace UnsignedEvade
                 {
                     ChampionName = "Bard",
                     SpellName = "BardQ",
-                    MissileName = "BardQMissile",
+                    MissileName = "bardqmissile",
                     ProjectileType = ProjectileType.LinearSkillshot,
                     CCType = BuffType.Stun,
                     Slot = SpellSlot.Q,
@@ -543,7 +543,7 @@ namespace UnsignedEvade
                 {
                     ChampionName = "Ezreal",
                     SpellName = "EzrealTrueshotBarrage",
-                    MissileName = "EzrealTrueShotBarrage",
+                    MissileName = "EzrealTrueshotBarrage",
                     ProjectileType = ProjectileType.LinearSkillshot,
                     Slot = SpellSlot.R,
                     Range = 20000,
@@ -2236,7 +2236,7 @@ namespace UnsignedEvade
                 {
                     ChampionName = "Yasuo",
                     SpellName = "yasuoq3w",
-                    MissileName = "yasuoq3w",
+                    MissileName = "yasuoq3mis",
                     ProjectileType = ProjectileType.LinearSkillshot,
                     CCType = BuffType.Knockup,
                     Slot = SpellSlot.Q,
