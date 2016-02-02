@@ -49,6 +49,16 @@ namespace UnsignedYasuo
                 return false;
             return true;
         }
+        public static bool IsInFountain(Obj_AI_Base self)
+        {
+            float fountainRange = 1050;
+            Vector3 vec3 = (self.Team == GameObjectTeam.Order) ? new Vector3(363, 426, 182) : new Vector3(14340, 14390, 172);
+            return self.IsVisible && self.IsInRange(vec3, fountainRange);
+        }
+        public static bool ERequirements(Obj_AI_Base unit, bool EUNDERTURRET)
+        {
+            return !IsInFountain(unit) && !unit.HasBuff("YasuoDashWrapper") && (!IsUnderTurret(GetDashingEnd(unit)) || !EUNDERTURRET);
+        }
         public static int GetEnemiesKnockedUp()
         {
             int enemiesKU = 0;
@@ -56,7 +66,7 @@ namespace UnsignedYasuo
             List<AIHeroClient> enemies = EntityManager.Heroes.Enemies;
             foreach (AIHeroClient enemy in enemies)
             {
-                if (yo.IsInRange(enemy, 1200))
+                if (yo.IsInRange(enemy, Program.R.Range))
                 {
                     enemiesIR++;
                     if (enemy.HasBuffOfType(BuffType.Knockup))

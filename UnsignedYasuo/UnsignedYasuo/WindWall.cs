@@ -11,8 +11,10 @@ using EloBuddy.SDK.Menu.Values;
 using SharpDX;
 
 /*
-Windwall then E if it blocks circular channeling abilities (only if channel is a circular ability)
 E away from linear skillshots
+Don't E to enemy if you can E to minion to get in aa range
+Item Toggles (QSS Specifically)
+Add is cc in spell info
     */
 namespace UnsignedYasuo
 {

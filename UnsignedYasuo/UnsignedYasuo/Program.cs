@@ -5,6 +5,7 @@ using EloBuddy.SDK.Enumerations;
 using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
+using SharpDX;
 
 namespace UnsignedYasuo
 {
@@ -42,7 +43,10 @@ namespace UnsignedYasuo
             Q = new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear);
             W = new Spell.Skillshot(SpellSlot.W, 400, SkillShotType.Linear);
             E = new Spell.Targeted(SpellSlot.E, 475);
-            R = new Spell.Active(SpellSlot.R);// range 1200
+            R = new Spell.Active(SpellSlot.R)
+            {
+                Range = 1200
+            };
 
             menu = MainMenu.AddMenu("Unsigned Yasuo", "UnsignedYasuo");
             menu.Add("ABOUT", new Label("This Addon was designed by Chaos"));
@@ -58,6 +62,12 @@ namespace UnsignedYasuo
             ComboMenu.Add("CR", new CheckBox("Use R"));
             ComboMenu.Add("CI", new CheckBox("Use Items"));
             ComboMenu.Add("CEUT", new CheckBox("E Under Turret", false));
+            ComboMenu.AddGroupLabel("Ult Settings - First two are relative to enemies in vision");
+            ComboMenu.Add("UltAEIV", new CheckBox("Ult if all enemies are knocked Up"));
+            ComboMenu.Add("UltHEIV", new CheckBox("Ult if 1/2 enemies are knocked Up"));
+            ComboMenu.Add("UltLH", new CheckBox("Ult if less than 10% Health", false));
+            ComboMenu.Add("UltREnemies", new Slider("Enemies Knocked-Up", 3, 0, 5));
+
 
             LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
             LaneClear.AddGroupLabel("Lane Clear Settings");
@@ -134,7 +144,7 @@ namespace UnsignedYasuo
         {
             if (_Player.IsDead)
                 return;
-
+            
             if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
                 Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.BlueViolet);
             if (DrawingsMenu["DE"].Cast<CheckBox>().CurrentValue && E.IsLearned)
@@ -142,7 +152,7 @@ namespace UnsignedYasuo
             if (DrawingsMenu["DW"].Cast<CheckBox>().CurrentValue && W.IsLearned)
                 Drawing.DrawCircle(_Player.Position, W.Range, System.Drawing.Color.BlueViolet);
             if (DrawingsMenu["DR"].Cast<CheckBox>().CurrentValue && R.IsLearned)
-                Drawing.DrawCircle(_Player.Position, 1200, System.Drawing.Color.BlueViolet);
+                Drawing.DrawCircle(_Player.Position, Program.R.Range, System.Drawing.Color.BlueViolet);
 
             if (DrawingsMenu["DT"].Cast<CheckBox>().CurrentValue)
                 foreach (Obj_AI_Turret t in EntityManager.Turrets.Enemies)

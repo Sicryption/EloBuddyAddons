@@ -12,9 +12,7 @@ using EloBuddy.SDK.Menu.Values;
 using SharpDX;
 
 /*
-Add slider for enemies to ult
 fix ks with ignite
-fix e to minions and champion under turret in combo
 */
 
 namespace UnsignedYasuo
@@ -38,11 +36,11 @@ namespace UnsignedYasuo
             Q,
             E,
             EQ,
+            R,
             DashQ,
             Ignite,
             Hydra,
-            BilgewaterCutlass,
-            NONE
+            BilgewaterCutlass
         }
         public enum Mode
         {
@@ -61,39 +59,25 @@ namespace UnsignedYasuo
             else if (spell == AttackSpell.Ignite)
                 range = Program.Ignite.Range;
             //is in sight range
-            else if (spell == AttackSpell.NONE)
-                range = 1200;
+            else if (spell == AttackSpell.R)
+                range = Program.R.Range;
             else if (spell == AttackSpell.Hydra)
                 range = 400;
             else if (spell == AttackSpell.BilgewaterCutlass)
                 range = 550;
 
-
-            if ((spell == AttackSpell.E || spell == AttackSpell.EQ) && !EUNDERTURRET)
-            {
-                return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                    && a.Type == type
-                    && a.IsInRange(_Player, range)
-                    && !a.IsDead
-                    && !a.IsInvulnerable
-                    && a.IsValidTarget(range)
-                    && !a.HasBuff("YasuoDashWrapper")
-                    && !YasuoCalcs.IsUnderTurret(YasuoCalcs.GetDashingEnd(a))
-                    ).FirstOrDefault();
-            }
-
             return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-            && a.Type == type
-            && a.IsInRange(_Player, range)
-            && !a.IsDead
-            && !a.IsInvulnerable
-            &&
-            ((AttackSpell.Q == spell && !IsDashing)
-            || (AttackSpell.DashQ == spell && IsDashing)
-            || (spell == AttackSpell.E && !a.HasBuff("YasuoDashWrapper")) 
-            || (spell == AttackSpell.EQ && !a.HasBuff("YasuoDashWrapper") && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange))
-            || AttackSpell.Q != spell)
-            && a.IsValidTarget(range)).OrderBy(a => a.HealthPercent).FirstOrDefault();
+                && a.Type == type
+                && a.IsInRange(_Player, range)
+                && !a.IsDead
+                && !a.IsInvulnerable
+                &&
+                ((AttackSpell.Q == spell && !IsDashing)
+                || (AttackSpell.DashQ == spell && IsDashing)
+                || (spell == AttackSpell.E && YasuoCalcs.ERequirements(a, EUNDERTURRET)) 
+                || (spell == AttackSpell.EQ && YasuoCalcs.ERequirements(a, EUNDERTURRET) && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange))
+                || AttackSpell.Q != spell)
+                && a.IsValidTarget(range)).OrderBy(a => a.HealthPercent).FirstOrDefault();
         }
 
         public static Obj_AI_Base GetEnemyKS(GameObjectType type, AttackSpell spell, bool EUNDERTURRET = false)
@@ -106,35 +90,17 @@ namespace UnsignedYasuo
             else if (spell == AttackSpell.Ignite)
                 range = Program.Ignite.Range;
 
-            if ((spell == AttackSpell.E || spell == AttackSpell.EQ) && !EUNDERTURRET)
-            {
-                return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                    && a.Type == type
-                    && a.IsInRange(_Player, range)
-                    && !a.IsDead
-                    && !a.IsInvulnerable
-                    && a.IsValidTarget(range)
-                    && !a.HasBuff("YasuoDashWrapper")
-                    && !YasuoCalcs.IsUnderTurret(YasuoCalcs.GetDashingEnd(a))
-                    &&
-                    ((spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a)) ||
-                    (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange))
-                    )).OrderBy(a => a.HealthPercent).FirstOrDefault();
-            }
-            else
-            {
-                return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                    && a.Type == type
-                    && a.IsInRange(_Player, range)
-                    && !a.IsDead
-                    && !a.IsInvulnerable
-                    && a.IsValidTarget(range)
-                    &&
-                    ((spell == AttackSpell.Q && a.Health <= YasuoCalcs.Q(a) && !IsDashing) ||
-                    (spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a) && !a.HasBuff("YasuoDashWrapper")) ||
-                    (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && !a.HasBuff("YasuoDashWrapper") && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange)) ||
-                    (spell == AttackSpell.Ignite && a.Health <= YasuoCalcs.Ignite(a)))).FirstOrDefault();
-            }
+            return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
+                && a.Type == type
+                && a.IsInRange(_Player, range)
+                && !a.IsDead
+                && !a.IsInvulnerable
+                && a.IsValidTarget(range)
+                &&
+                ((spell == AttackSpell.Q && a.Health <= YasuoCalcs.Q(a) && !IsDashing) ||
+                (spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a) && YasuoCalcs.ERequirements(a, EUNDERTURRET)) ||
+                (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && YasuoCalcs.ERequirements(a, EUNDERTURRET) && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange)) ||
+                (spell == AttackSpell.Ignite && a.Health <= YasuoCalcs.Ignite(a)))).FirstOrDefault();
         }
 
         public static AIHeroClient _Player { get { return ObjectManager.Player; } }
@@ -321,7 +287,7 @@ namespace UnsignedYasuo
         //complete
         public static void Combo()
         {
-            if (_Player.CountEnemiesInRange(1200) >= 1)
+            if (_Player.CountEnemiesInRange(Program.R.Range) >= 1)
             {
                 #region variables
                 bool QCHECK = Program.ComboMenu["CQ"].Cast<CheckBox>().CurrentValue;
@@ -329,6 +295,10 @@ namespace UnsignedYasuo
                 bool EQCHECK = Program.ComboMenu["CEQ"].Cast<CheckBox>().CurrentValue;
                 bool RCHECK = Program.ComboMenu["CR"].Cast<CheckBox>().CurrentValue;
                 bool ITEMSCHECK = Program.ComboMenu["CI"].Cast<CheckBox>().CurrentValue;
+                bool UltIfAllEnemiesKU = Program.ComboMenu["UltAEIV"].Cast<CheckBox>().CurrentValue;
+                bool UltIfHalfEnemiesKU = Program.ComboMenu["UltHEIV"].Cast<CheckBox>().CurrentValue;
+                bool UltIf10Health = Program.ComboMenu["UltLH"].Cast<CheckBox>().CurrentValue;
+                int UltEnemiesKnockedUp = Program.ComboMenu["UltREnemies"].Cast<Slider>().CurrentValue;
 
                 bool QREADY = Program.Q.IsReady();
                 bool EREADY = Program.E.IsReady();
@@ -350,8 +320,20 @@ namespace UnsignedYasuo
                 #endregion
 
                 #region R
-                if (YasuoCalcs.GetEnemiesKnockedUp() >= 3 || YasuoCalcs.GetEnemiesKnockedUp() == _Player.CountEnemiesInRange(1200))
-                    Program.R.Cast();
+                if (Program.R.IsReady())
+                {
+                    int enemiesKnockedUp = YasuoCalcs.GetEnemiesKnockedUp();
+                    int enemiesInVision = _Player.CountEnemiesInRange(Program.R.Range);
+
+                    if (UltIfAllEnemiesKU && enemiesKnockedUp >= enemiesInVision)
+                        Program.R.Cast();
+                    else if (UltIfHalfEnemiesKU && enemiesKnockedUp >= enemiesInVision / 2)
+                        Program.R.Cast();
+                    else if (enemiesKnockedUp >= UltEnemiesKnockedUp)
+                        Program.R.Cast();
+                    else if (UltIf10Health && _Player.HealthPercent == 10 && enemiesKnockedUp >= 1)
+                        Program.R.Cast();
+                }
                 #endregion
 
                 #region E
@@ -376,7 +358,8 @@ namespace UnsignedYasuo
                     //no enemy in e range, dash to minions to get closer
                     else
                     {
-                        enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.NONE);
+                        //R range is same as Vision Range
+                        enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.R);
 
                         //if enemy in sight range, this is a double check
                         if (enemy != null)
