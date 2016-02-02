@@ -532,7 +532,7 @@ namespace UnsignedYasuo
 
         public static void CastQ(Obj_AI_Base target)
         {
-            if (!Program.Q.IsReady() || target == null)
+            if (!Program.Q.IsReady() || target == null || target.Position == Vector3.Zero)
                 return;
 
             if (IsDashing)
