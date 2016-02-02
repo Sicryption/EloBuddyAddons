@@ -11,10 +11,6 @@ using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using SharpDX;
 
-/*
-fix ks with ignite
-*/
-
 namespace UnsignedYasuo
 {
     class YasuoFunctions
@@ -77,9 +73,9 @@ namespace UnsignedYasuo
                 &&
                 ((AttackSpell.Q == spell && !IsDashing)
                 || (AttackSpell.DashQ == spell && IsDashing)
-                || (spell == AttackSpell.E && YasuoCalcs.ERequirements(a, EUNDERTURRET)) 
+                || (spell == AttackSpell.E && YasuoCalcs.ERequirements(a, EUNDERTURRET))
                 || (spell == AttackSpell.EQ && YasuoCalcs.ERequirements(a, EUNDERTURRET) && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange))
-                || AttackSpell.Q != spell)
+                || (AttackSpell.Q != spell && AttackSpell.E != spell && AttackSpell.EQ != spell && AttackSpell.DashQ != spell))
                 && a.IsValidTarget(range)).OrderBy(a => a.HealthPercent).FirstOrDefault();
         }
 
@@ -104,7 +100,10 @@ namespace UnsignedYasuo
                 &&
                 ((spell == AttackSpell.Q && a.Health <= YasuoCalcs.Q(a) && !IsDashing) ||
                 (spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a) && YasuoCalcs.ERequirements(a, EUNDERTURRET)) ||
-                (spell == AttackSpell.EQ && a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && YasuoCalcs.ERequirements(a, EUNDERTURRET) && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange)) ||
+                (spell == AttackSpell.EQ && 
+                        a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && 
+                        YasuoCalcs.ERequirements(a, EUNDERTURRET) && 
+                        a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange)) ||
                 (spell == AttackSpell.Ignite && a.Health <= YasuoCalcs.Ignite(a)))).FirstOrDefault();
         }
 
@@ -466,8 +465,8 @@ namespace UnsignedYasuo
                         && _Player.CountEnemiesInRange(Program.Q.Range) >= 1)
                         item.Cast();
 
-                    if ((item.Id == ItemId.Quicksilver_Sash && useQSS)
-                        || (item.Id == ItemId.Mercurial_Scimitar && useMercScim)
+                    if (((item.Id == ItemId.Quicksilver_Sash && useQSS)
+                        || (item.Id == ItemId.Mercurial_Scimitar && useMercScim))
                         && 
                         ((_Player.HasBuffOfType(BuffType.Blind) && QSSBlind)
                         || (_Player.HasBuffOfType(BuffType.Charm) && QSSCharm)

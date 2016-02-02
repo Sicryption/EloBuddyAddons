@@ -11,9 +11,9 @@ using EloBuddy.SDK.Menu.Values;
 using SharpDX;
 
 /*
-E away from linear skillshots
-Add is cc in spell info
-    */
+    E away from linear skillshots
+    Add is cc in spell info
+*/
 namespace UnsignedYasuo
 {
     class WindWall

@@ -57,7 +57,16 @@ namespace UnsignedYasuo
         }
         public static bool ERequirements(Obj_AI_Base unit, bool EUNDERTURRET)
         {
-            return !IsInFountain(unit) && !unit.HasBuff("YasuoDashWrapper") && (!IsUnderTurret(GetDashingEnd(unit)) || !EUNDERTURRET);
+
+            //not in fountain
+            if (!IsInFountain(unit) &&
+                //can be e'd
+                !unit.HasBuff("YasuoDashWrapper") &&
+                ((!IsUnderTurret(GetDashingEnd(unit)) && !EUNDERTURRET) || EUNDERTURRET)
+                )
+                return true;
+
+            return false;
         }
         public static int GetEnemiesKnockedUp()
         {
@@ -99,6 +108,8 @@ namespace UnsignedYasuo
         }
         public static Obj_AI_Base GetBestDashEnemyToChampionWithinAARange(Obj_AI_Base target, bool EUNDERTURRET)
         {
+            if (target == null)
+                return null;
             Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
                 a.IsInRange(yo, Program.E.Range)
                 && a != target
