@@ -58,7 +58,6 @@ namespace UnsignedYasuo
         }
         public static bool ERequirements(Obj_AI_Base unit, bool EUNDERTURRET)
         {
-
             //not in fountain
             if (!IsInFountain(GetDashingEnd(unit), unit.Team) &&
                 //can be e'd

@@ -158,12 +158,12 @@ namespace UnsignedYasuo
 
             OnHitChanceSliderChange(menu.Get<Slider>("QHitChance"), null);
         }
-
+        
         private static void Drawing_OnDraw(EventArgs args)
         {
             if (_Player.IsDead)
                 return;
-            
+
             if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
                 Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.BlueViolet);
             if (DrawingsMenu["DE"].Cast<CheckBox>().CurrentValue && E.IsLearned)

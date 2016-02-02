@@ -333,10 +333,12 @@ namespace UnsignedYasuo
                         Program.R.Cast();
                     else if (UltIfHalfEnemiesKU && enemiesKnockedUp >= enemiesInVision / 2)
                         Program.R.Cast();
-                    else if (enemiesKnockedUp >= UltEnemiesKnockedUp)
+                    else if (UltEnemiesKnockedUp != 0 && enemiesKnockedUp >= UltEnemiesKnockedUp)
                         Program.R.Cast();
-                    else if (UltIf10Health && _Player.HealthPercent == 10 && enemiesKnockedUp >= 1)
+                    else if (UltIf10Health && _Player.HealthPercent <= 10 && enemiesKnockedUp >= 1)
                         Program.R.Cast();
+                    
+
                 }
                 #endregion
 

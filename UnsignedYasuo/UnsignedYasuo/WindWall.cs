@@ -30,7 +30,15 @@ namespace UnsignedYasuo
                 return WindWallMenu.Get<CheckBox>("WWD").CurrentValue;
             }
         }
-        
+
+        enum CCTypeComboBoxOptions
+        {
+            BlockAll = 0,
+            BlockCC = 1,
+            BlockCCExcludingSlows = 2,
+            Custom = 3
+        }
+
         public static void GameOnTick(EventArgs args)
         {
             if (WindWallMenu["WW"].Cast<CheckBox>().CurrentValue && WindWallMenu.Get<CheckBox>("WWGOT").CurrentValue)
@@ -49,8 +57,11 @@ namespace UnsignedYasuo
             WindWallMenu.Add("WWGOT", new CheckBox("GameOnTick (Increased FPS)"));
             WindWallMenu.Add("WWD", new CheckBox("Debug", false));
             WindWallMenu.Add("WWCN", new CheckBox("Use Champion Names"));
+            WindWallMenu.AddSeparator(1);
+            WindWallMenu.Add("WWCC", new ComboBox("Spells To Block: ", 0, new string[] { "Block All", "Block CC", "Block CC but Slows", "Custom" }));
             WindWallMenu.Get<CheckBox>("WWCN").OnValueChange += ToggleNameFormat;
             WindWallMenu.Get<CheckBox>("WWGOT").OnValueChange += ToggleUpdateFormat;
+            WindWallMenu.Get<ComboBox>("WWCC").OnValueChange += ToggleBlockFormat;
             WindWallMenu.AddGroupLabel("Enemy Projectile Toggles");
             foreach (AIHeroClient client in EntityManager.Heroes.Enemies)
                 foreach (SpellInfo info in SpellDatabase.SpellList)
@@ -58,11 +69,12 @@ namespace UnsignedYasuo
                     if (info.ChampionName == client.ChampionName)
                     {
                         EnemyProjectileInformation.Add(info);
-                        WindWallMenu.Add("WWBN" + info.MissileName, new CheckBox(info.SpellName));
+                        WindWallMenu.Add("WWBN" + info.MissileName, new CheckBox(info.SpellName)).IsVisible = false;
                     }
                 }
             ToggleNameFormat(WindWallMenu.Get<CheckBox>("WWCN"), null);
             ToggleUpdateFormat(WindWallMenu.Get<CheckBox>("WWGOT"), null);
+            ToggleBlockFormat(WindWallMenu.Get<ComboBox>("WWCC"), null);
         }
 
         public static void OnCreate(GameObject obj, EventArgs args)
@@ -81,7 +93,7 @@ namespace UnsignedYasuo
 
                     Chat.Print("Projectile: " + misName + " has been created.");// Spell Name: " + spellName);
                     Chat.Print("Q Name: " + SpellBook.GetSpell(SpellSlot.Q).Name + ", W Name: " + SpellBook.GetSpell(SpellSlot.W).Name);
-                    //Chat.Print("E Name: " + SpellBook.GetSpell(SpellSlot.E).Name + ", R Name: " + SpellBook.GetSpell(SpellSlot.R).Name);
+                    Chat.Print("E Name: " + SpellBook.GetSpell(SpellSlot.E).Name + ", R Name: " + SpellBook.GetSpell(SpellSlot.R).Name);
 
                 }
             }
@@ -158,14 +170,12 @@ namespace UnsignedYasuo
                 else if (missile.SpellCaster.Name == "Diana" &&
                     !missile.SData.Name.Contains(info.MissileName))
                     return false;
-
+           
             //doesnt seem to work
             //checks if the ability is a lock on projectile and the target is me
             if (info.ProjectileType == SpellDatabase.ProjectileType.LockOnProjectile
                 && missile.Target != _Player)
                 return false;
-
-
 
             //checks if channeling ability is too close to player
             if (info.ChannelType != SpellDatabase.ChannelType.None)
@@ -173,9 +183,10 @@ namespace UnsignedYasuo
                 if (!HandleChannelingSpells(missile, info))
                     return false;
 
+            CheckBox toggleBox = WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName);
             //check if checkbox for spell is enabled
-            if (WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName) != null)
-                return WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).CurrentValue;
+            if ((toggleBox != null && toggleBox.IsVisible) || WindWallMenu.Get<ComboBox>("WWCC").CurrentValue == (int)CCTypeComboBoxOptions.BlockAll)
+                return toggleBox.CurrentValue;
             return false;
         }
 
@@ -248,6 +259,32 @@ namespace UnsignedYasuo
                 sender.DisplayName = "GameOnTick (Increased FPS)";
             else
                 sender.DisplayName = "GameOnUpdate (Increased Performance)";
+        }
+        private static void ToggleBlockFormat(ValueBase sender, EventArgs args)
+        {
+            int value = sender.Cast<ComboBox>().CurrentValue;
+            if (value == (int)CCTypeComboBoxOptions.Custom)
+                foreach (SpellInfo info in EnemyProjectileInformation)
+                    WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).IsVisible = true;
+            else if (value == (int)CCTypeComboBoxOptions.BlockAll)
+                foreach (SpellInfo info in EnemyProjectileInformation)
+                    WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).IsVisible = false;
+            else if (value == (int)CCTypeComboBoxOptions.BlockCC)
+                foreach (SpellInfo info in EnemyProjectileInformation)
+                {
+                    if(info.CCType != BuffType.Internal)
+                        WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).IsVisible = true;
+                    else
+                        WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).IsVisible = false;
+                }
+            else if (value == (int)CCTypeComboBoxOptions.BlockCCExcludingSlows)
+                foreach (SpellInfo info in EnemyProjectileInformation)
+                {
+                    if (info.CCType != BuffType.Internal && info.CCType != BuffType.Slow)
+                        WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).IsVisible = true;
+                    else
+                        WindWallMenu.Get<CheckBox>("WWBN" + info.MissileName).IsVisible = false;
+                }
         }
     }
 }

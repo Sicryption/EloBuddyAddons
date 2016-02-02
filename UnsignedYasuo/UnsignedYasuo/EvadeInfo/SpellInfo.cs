@@ -17,5 +17,6 @@ namespace UnsignedEvade
         public SpellSlot Slot;
         public SpellDatabase.ProjectileType ProjectileType;
         public SpellDatabase.ChannelType ChannelType = SpellDatabase.ChannelType.None;
+        public BuffType CCType = BuffType.Internal;
     }
 }
