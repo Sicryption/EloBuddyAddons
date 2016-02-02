@@ -75,11 +75,34 @@ namespace UnsignedYasuo
             }
             return enemiesKU;
         }
+        public static int GetEnemyHeroesInRange(float range)
+        {
+            int enemiesIR = 0;
+            List<AIHeroClient> enemies = EntityManager.Heroes.Enemies;
+            foreach (AIHeroClient enemy in enemies)
+            {
+                if (yo.IsInRange(enemy, range))
+                    enemiesIR++;
+            }
+            return enemiesIR;
+        }
         public static Obj_AI_Base GetBestDashMinionToChampion(Obj_AI_Base target, bool EUNDERTURRET)
         {
             Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
                 a.IsInRange(yo, Program.E.Range)
+                && a != target
                 && GetDashingEnd(a).Distance(target) < yo.Distance(target)
+                && ((!IsUnderTurret(GetDashingEnd(a)) && !EUNDERTURRET) || EUNDERTURRET)
+                ).OrderBy(a => GetDashingEnd(a).Distance(target)).FirstOrDefault();
+
+            return minion;
+        }
+        public static Obj_AI_Base GetBestDashEnemyToChampionWithinAARange(Obj_AI_Base target, bool EUNDERTURRET)
+        {
+            Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
+                a.IsInRange(yo, Program.E.Range)
+                && a != target
+                && GetDashingEnd(a).IsInRange(target, yo.GetAutoAttackRange())
                 && ((!IsUnderTurret(GetDashingEnd(a)) && !EUNDERTURRET) || EUNDERTURRET)
                 ).OrderBy(a => GetDashingEnd(a).Distance(target)).FirstOrDefault();
 

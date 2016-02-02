@@ -12,8 +12,6 @@ using SharpDX;
 
 /*
 E away from linear skillshots
-Don't E to enemy if you can E to minion to get in aa range
-Item Toggles (QSS Specifically)
 Add is cc in spell info
     */
 namespace UnsignedYasuo

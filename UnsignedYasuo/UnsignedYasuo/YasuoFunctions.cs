@@ -37,6 +37,7 @@ namespace UnsignedYasuo
             E,
             EQ,
             R,
+            AA,
             DashQ,
             Ignite,
             Hydra,
@@ -65,6 +66,8 @@ namespace UnsignedYasuo
                 range = 400;
             else if (spell == AttackSpell.BilgewaterCutlass)
                 range = 550;
+            else if (spell == AttackSpell.AA)
+                range = _Player.GetAutoAttackRange();
 
             return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
                 && a.Type == type
@@ -89,6 +92,8 @@ namespace UnsignedYasuo
                 range = Program.Q.Range;
             else if (spell == AttackSpell.Ignite)
                 range = Program.Ignite.Range;
+            else if (spell == AttackSpell.AA)
+                range = _Player.GetAutoAttackRange();
 
             return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
                 && a.Type == type
@@ -336,42 +341,54 @@ namespace UnsignedYasuo
                 }
                 #endregion
 
+
                 #region E
+                //if e is ready and menu allows for it to be used
                 if (ECHECK && EREADY)
                 {
                     Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.E, EUNDERTURRET);
-
-                    //enemy in range
-                    if (enemy != null)
+                    Obj_AI_Base EnemyToDashCloserToChampion = YasuoCalcs.GetBestDashEnemyToChampionWithinAARange(enemy, EUNDERTURRET);
+                    //if number of enemies in Auto Attack range is 0, but there are champions yas could dash to, find 
+                    if (_Player.CountEnemiesInRange(_Player.GetAutoAttackRange()) == 0
+                        && YasuoCalcs.GetEnemyHeroesInRange(Program.E.Range) >= 1
+                        && EnemyToDashCloserToChampion != null)
+                        Program.E.Cast(EnemyToDashCloserToChampion);
+                    //if there isnt any champions to auto, and no enemies will bring you into auto attack range, E to enemy
+                    else if(_Player.CountEnemiesInRange(_Player.GetAutoAttackRange()) == 0)
                     {
-                        //if can auto attack, don't e, instead auto attack
-                        //if e'ing gets player in auto attack range. e
-                        if (!_Player.IsInAutoAttackRange(enemy) 
-                            && YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, _Player.GetAutoAttackRange()))
-                        {
-                            Program.E.Cast(enemy);
 
-                            if (YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, Program.EQRange) && EQCHECK && QREADY)
-                                CastQ(enemy);
-                        }
-                    }
-                    //no enemy in e range, dash to minions to get closer
-                    else
-                    {
-                        //R range is same as Vision Range
-                        enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.R);
-
-                        //if enemy in sight range, this is a double check
+                        //enemy in range
                         if (enemy != null)
                         {
-                            Obj_AI_Base dashEnemy = YasuoCalcs.GetBestDashMinionToChampion(enemy, EUNDERTURRET);
-
-                            //there is something to dash too
-                            if (dashEnemy != null)
+                            //if can auto attack, don't e, instead auto attack
+                            //if e'ing gets player in auto attack range. e
+                            if (!_Player.IsInAutoAttackRange(enemy)
+                                && YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, _Player.GetAutoAttackRange()))
                             {
-                                Program.E.Cast(dashEnemy);
-                                if (YasuoCalcs.GetDashingEnd(dashEnemy).IsInRange(enemy, Program.EQRange) && QREADY && EQCHECK)
-                                    CastQ(dashEnemy);
+                                Program.E.Cast(enemy);
+
+                                if (YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, Program.EQRange) && EQCHECK && QREADY)
+                                    CastQ(enemy);
+                            }
+                        }
+                        //no enemy in e range, dash to minions to get closer
+                        else
+                        {
+                            //R range is same as Vision Range
+                            enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.R);
+
+                            //if enemy in sight range, this is a double check
+                            if (enemy != null)
+                            {
+                                Obj_AI_Base dashEnemy = YasuoCalcs.GetBestDashMinionToChampion(enemy, EUNDERTURRET);
+
+                                //there is something to dash too
+                                if (dashEnemy != null)
+                                {
+                                    Program.E.Cast(dashEnemy);
+                                    if (YasuoCalcs.GetDashingEnd(dashEnemy).IsInRange(enemy, Program.EQRange) && QREADY && EQCHECK)
+                                        CastQ(dashEnemy);
+                                }
                             }
                         }
                     }
