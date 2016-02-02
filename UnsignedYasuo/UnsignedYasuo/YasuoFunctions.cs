@@ -406,7 +406,26 @@ namespace UnsignedYasuo
             {
                 if (item.CanUseItem())
                 {
-                    if ((item.Id == ItemId.Blade_of_the_Ruined_King || item.Id == ItemId.Bilgewater_Cutlass) &&
+                    bool useTiamat = Program.Items.Get<CheckBox>("ItemsT").CurrentValue;
+                    bool useRavenous = Program.Items.Get<CheckBox>("ItemsRH").CurrentValue;
+                    bool useTitanic = Program.Items.Get<CheckBox>("ItemsTH").CurrentValue;
+                    bool useCutlass = Program.Items.Get<CheckBox>("ItemsBC").CurrentValue;
+                    bool useYoumuus = Program.Items.Get<CheckBox>("ItemsY").CurrentValue;
+                    bool useBORK = Program.Items.Get<CheckBox>("ItemsBORK").CurrentValue;
+                    bool useQSS = Program.Items.Get<CheckBox>("ItemsQSS").CurrentValue;
+                    bool useMercScim = Program.Items.Get<CheckBox>("ItemsMS").CurrentValue;
+                    bool QSSBlind = Program.Items.Get<CheckBox>("QSSBlind").CurrentValue;
+                    bool QSSCharm = Program.Items.Get<CheckBox>("QSSCharm").CurrentValue;
+                    bool QSSFear = Program.Items.Get<CheckBox>("QSSFear").CurrentValue;
+                    bool QSSKB = Program.Items.Get<CheckBox>("QSSKB").CurrentValue;
+                    bool QSSSilence = Program.Items.Get<CheckBox>("QSSSilence").CurrentValue;
+                    bool QSSSlow = Program.Items.Get<CheckBox>("QSSSlow").CurrentValue;
+                    bool QSSSnare = Program.Items.Get<CheckBox>("QSSSnare").CurrentValue;
+                    bool QSSStun = Program.Items.Get<CheckBox>("QSSStun").CurrentValue;
+                    bool QSSTaunt = Program.Items.Get<CheckBox>("QSSTaunt").CurrentValue;
+
+                    if (((item.Id == ItemId.Blade_of_the_Ruined_King && useBORK) 
+                        || (item.Id == ItemId.Bilgewater_Cutlass && useCutlass)) &&
                         (mode == Mode.Combo || mode == Mode.Harass))
                     {
                         var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.BilgewaterCutlass);
@@ -415,7 +434,9 @@ namespace UnsignedYasuo
                             item.Cast(enemy);
                     }
 
-                    if (item.Id == ItemId.Tiamat_Melee_Only || item.Id == ItemId.Ravenous_Hydra_Melee_Only || item.Id == ItemId.Tiamat_Melee_Only)
+                    if ((item.Id == ItemId.Tiamat_Melee_Only && useTiamat)
+                        || (item.Id == ItemId.Ravenous_Hydra_Melee_Only && useRavenous)
+                        || (item.Id == ItemId.Titanic_Hydra && useTitanic))
                     {
                         var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.BilgewaterCutlass);
 
@@ -423,19 +444,23 @@ namespace UnsignedYasuo
                             item.Cast();
                     }
 
-                    if (item.Id == ItemId.Youmuus_Ghostblade
+                    if ((item.Id == ItemId.Youmuus_Ghostblade && useYoumuus)
                         && (mode == Mode.Combo || mode == Mode.Harass)
                         && _Player.CountEnemiesInRange(Program.Q.Range) >= 1)
                         item.Cast();
 
-                    if (item.Id == ItemId.Quicksilver_Sash || item.Id == ItemId.Mercurial_Scimitar
-                        && (_Player.HasBuffOfType(BuffType.Charm)
-                        || _Player.HasBuffOfType(BuffType.Blind)
-                        || _Player.HasBuffOfType(BuffType.Fear)
-                        || _Player.HasBuffOfType(BuffType.Silence)
-                        || _Player.HasBuffOfType(BuffType.Snare)
-                        || _Player.HasBuffOfType(BuffType.Stun)
-                        || _Player.HasBuffOfType(BuffType.Taunt)))
+                    if ((item.Id == ItemId.Quicksilver_Sash && useQSS)
+                        || (item.Id == ItemId.Mercurial_Scimitar && useMercScim)
+                        && 
+                        ((_Player.HasBuffOfType(BuffType.Blind) && QSSBlind)
+                        || (_Player.HasBuffOfType(BuffType.Charm) && QSSCharm)
+                        || (_Player.HasBuffOfType(BuffType.Fear) && QSSFear)
+                        || (_Player.HasBuffOfType(BuffType.Knockback) && QSSKB)
+                        || (_Player.HasBuffOfType(BuffType.Silence) && QSSSilence)
+                        || (_Player.HasBuffOfType(BuffType.Slow) && QSSSlow)
+                        || (_Player.HasBuffOfType(BuffType.Snare) && QSSSnare)
+                        || (_Player.HasBuffOfType(BuffType.Stun) && QSSStun)
+                        || (_Player.HasBuffOfType(BuffType.Taunt) && QSSTaunt)))
                         item.Cast();
                 }
             }

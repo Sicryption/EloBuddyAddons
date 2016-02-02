@@ -11,7 +11,7 @@ namespace UnsignedYasuo
 {
     internal class Program
     {
-        public static Menu ComboMenu, DrawingsMenu, KSMenu, LaneClear, LastHit, Harass, menu;
+        public static Menu ComboMenu, DrawingsMenu, KSMenu, LaneClear, LastHit, Harass, Items, menu;
         public static Spell.Skillshot Q;
         public static Spell.SpellBase W;
         public static Spell.Targeted E;
@@ -97,7 +97,6 @@ namespace UnsignedYasuo
             LastHit.Add("LHEUT", new CheckBox("E Under Turret", false));
 
             KSMenu = menu.AddSubMenu("Kill Steal", "ksmenu");
-
             KSMenu.AddGroupLabel("Kill Steal Settings");
             KSMenu.Add("EnableKS", new CheckBox("KS"));
             KSMenu.Add("KSQ", new CheckBox("KS with Q"));
@@ -108,13 +107,33 @@ namespace UnsignedYasuo
             KSMenu.Add("KSEUT", new CheckBox("E Under Turret", false));
 
             DrawingsMenu = menu.AddSubMenu("Drawings", "drawingsmenu");
-
             DrawingsMenu.AddGroupLabel("Drawings Settings");
             DrawingsMenu.Add("DQ", new CheckBox("Draw Q"));
             DrawingsMenu.Add("DW", new CheckBox("Draw W"));
             DrawingsMenu.Add("DE", new CheckBox("Draw E"));
             DrawingsMenu.Add("DR", new CheckBox("Draw R"));
             DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
+
+            Items = menu.AddSubMenu("Items", "itemsmenu");
+            Items.AddGroupLabel("Item Settings");
+            Items.Add("ItemsT", new CheckBox("Use Tiamat"));
+            Items.Add("ItemsRH", new CheckBox("Use Ravenous Hydra"));
+            Items.Add("ItemsTH", new CheckBox("Use Titanic Hydra"));
+            Items.Add("ItemsBC", new CheckBox("Use Bilgewater Cutlass"));
+            Items.Add("ItemsBORK", new CheckBox("Use Blade of the Ruined King"));
+            Items.Add("ItemsY", new CheckBox("Use Youmuus"));
+            Items.Add("ItemsQSS", new CheckBox("Use Quick Silversash"));
+            Items.Add("ItemsMS", new CheckBox("Use Mercurial Scimitar"));
+            Items.AddGroupLabel("QSS/Merc Scimitar Settings");
+            Items.Add("QSSBlind", new CheckBox("Blind"));
+            Items.Add("QSSCharm", new CheckBox("Charm"));
+            Items.Add("QSSFear", new CheckBox("Fear"));
+            Items.Add("QSSKB", new CheckBox("Knockback"));
+            Items.Add("QSSSilence", new CheckBox("Silence"));
+            Items.Add("QSSSlow", new CheckBox("Slow"));
+            Items.Add("QSSSnare", new CheckBox("Snare"));
+            Items.Add("QSSStun", new CheckBox("Stun"));
+            Items.Add("QSSTaunt", new CheckBox("Taunt"));
 
             Spellbook spell = _Player.Spellbook;
             SpellDataInst Sum1 = spell.GetSpell(SpellSlot.Summoner1);
