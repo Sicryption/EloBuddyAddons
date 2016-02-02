@@ -329,9 +329,9 @@ namespace UnsignedYasuo
                     int enemiesKnockedUp = YasuoCalcs.GetEnemiesKnockedUp();
                     int enemiesInVision = _Player.CountEnemiesInRange(Program.R.Range);
 
-                    if (UltIfAllEnemiesKU && enemiesKnockedUp >= enemiesInVision)
+                    if (UltIfAllEnemiesKU && enemiesKnockedUp >= enemiesInVision && enemiesInVision != 0)
                         Program.R.Cast();
-                    else if (UltIfHalfEnemiesKU && enemiesKnockedUp >= enemiesInVision / 2)
+                    else if (UltIfHalfEnemiesKU && enemiesKnockedUp >= enemiesInVision / 2 && enemiesInVision != 0)
                         Program.R.Cast();
                     else if (UltEnemiesKnockedUp != 0 && enemiesKnockedUp >= UltEnemiesKnockedUp)
                         Program.R.Cast();
@@ -419,6 +419,9 @@ namespace UnsignedYasuo
         public static void UseItemsAndIgnite(Mode mode)
         {
             InventorySlot[] items = _Player.InventoryItems;
+            GameObjectType type = GameObjectType.AIHeroClient;
+            if (mode == Mode.LaneClear)
+                type = GameObjectType.obj_AI_Minion;
 
             foreach (InventorySlot item in items)
             {
@@ -446,7 +449,7 @@ namespace UnsignedYasuo
                         || (item.Id == ItemId.Bilgewater_Cutlass && useCutlass)) &&
                         (mode == Mode.Combo || mode == Mode.Harass))
                     {
-                        var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.BilgewaterCutlass);
+                        var enemy = GetEnemy(type, AttackSpell.BilgewaterCutlass);
 
                         if (enemy != null)
                             item.Cast(enemy);
@@ -456,7 +459,7 @@ namespace UnsignedYasuo
                         || (item.Id == ItemId.Ravenous_Hydra_Melee_Only && useRavenous)
                         || (item.Id == ItemId.Titanic_Hydra && useTitanic))
                     {
-                        var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.BilgewaterCutlass);
+                        var enemy = GetEnemy(type, AttackSpell.Hydra);
 
                         if (enemy != null)
                             item.Cast();
@@ -474,11 +477,14 @@ namespace UnsignedYasuo
                         || (_Player.HasBuffOfType(BuffType.Charm) && QSSCharm)
                         || (_Player.HasBuffOfType(BuffType.Fear) && QSSFear)
                         || (_Player.HasBuffOfType(BuffType.Knockback) && QSSKB)
-                        || (_Player.HasBuffOfType(BuffType.Silence) && QSSSilence)
+                        //not standing on raka silence
+                        || (_Player.HasBuffOfType(BuffType.Silence) && QSSSilence && !_Player.HasBuff("sorakaepacify"))
                         || (_Player.HasBuffOfType(BuffType.Slow) && QSSSlow)
                         || (_Player.HasBuffOfType(BuffType.Snare) && QSSSnare)
                         || (_Player.HasBuffOfType(BuffType.Stun) && QSSStun)
-                        || (_Player.HasBuffOfType(BuffType.Taunt) && QSSTaunt)))
+                        || (_Player.HasBuffOfType(BuffType.Taunt) && QSSTaunt))
+                        //not being knocked back by dragon
+                        && !_Player.HasBuff("moveawaycollision"))
                         item.Cast();
                 }
             }
@@ -487,7 +493,7 @@ namespace UnsignedYasuo
         //complete
         public static void AutoHarrass()
         {
-            if (_Player.IsUnderHisturret())
+            if (_Player.IsUnderEnemyturret())
                 return;
 
             bool QCHECK = Program.Harass["AHQ"].Cast<CheckBox>().CurrentValue;
@@ -529,7 +535,9 @@ namespace UnsignedYasuo
             if (!Program.Q.IsReady() || target == null)
                 return;
 
-            if (Program.Q.GetPrediction(target).HitChance >= Program.QHitChance)
+            if (IsDashing)
+                Program.Q.Cast(target.Position);
+            else if (Program.Q.GetPrediction(target).HitChance >= Program.QHitChance)
                 Program.Q.Cast(target.Position);
             else if (Program.QHitChance == HitChance.Unknown)
                 Program.Q.Cast(target.Position);

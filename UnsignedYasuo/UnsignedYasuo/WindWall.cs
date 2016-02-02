@@ -150,7 +150,7 @@ namespace UnsignedYasuo
         public static bool CollisionCheck(MissileClient missile, SpellInfo info)
         {
             bool variable =  Prediction.Position.Collision.LinearMissileCollision(
-                _Player, missile.Position.To2D(), missile.StartPosition.To2D().Extend(missile.EndPosition, info.Range),
+                _Player, missile.StartPosition.To2D(), missile.StartPosition.To2D().Extend(missile.EndPosition, info.Range),
                 info.MissileSpeed, info.Width, info.Delay);
 
             return variable;

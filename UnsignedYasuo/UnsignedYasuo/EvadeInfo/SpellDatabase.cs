@@ -557,8 +557,8 @@ namespace UnsignedEvade
             new SpellInfo()
                 {
                     ChampionName = "FiddleSticks",
-                    SpellName = "DarkWind",
-                    MissileName = "DarkWind",
+                    SpellName = "FiddlesticksDarkWind",
+                    MissileName = "FiddlesticksDarkWind",
                     ProjectileType = ProjectileType.LockOnProjectile,
                     CCType = BuffType.Silence,
                     Slot = SpellSlot.E,
@@ -2267,7 +2267,6 @@ namespace UnsignedEvade
                     CollisionCount = 0
                 },
             #endregion
-            //Fix Ziggs Ult
             #region Ziggs
             new SpellInfo()
                 {
@@ -2285,7 +2284,7 @@ namespace UnsignedEvade
             new SpellInfo()
                 {
                     ChampionName = "Ziggs",
-                    SpellName = "ZiggsQBounce1",
+                    SpellName = "ZiggsQ",
                     MissileName = "ZiggsQSpell2",
                     ProjectileType = ProjectileType.LinearSkillshot,
                     Slot = SpellSlot.Q,
@@ -2298,7 +2297,7 @@ namespace UnsignedEvade
             new SpellInfo()
                 {
                     ChampionName = "Ziggs",
-                    SpellName = "ZiggsQBounce2",
+                    SpellName = "ZiggsQ",
                     MissileName = "ZiggsQSpell3",
                     ProjectileType = ProjectileType.LinearSkillshot,
                     Slot = SpellSlot.Q,
@@ -2314,38 +2313,38 @@ namespace UnsignedEvade
                     SpellName = "ZiggsW",
                     MissileName = "ZiggsW",
                     ProjectileType = ProjectileType.CircularSkillshot,
+                    CCType = BuffType.Knockup,
                     Slot = SpellSlot.W,
                     Range = 1000,
                     Delay = 250,
                     MissileSpeed = 1750,
-                    Width = 275,
+                    Width = 50,
                     CollisionCount = 0
                 },
             new SpellInfo()
                 {
                     ChampionName = "Ziggs",
                     SpellName = "ZiggsE",
-                    MissileName = "ZiggsE",
+                    MissileName = "ziggse2",
                     ProjectileType = ProjectileType.CircularSkillshot,
-                    CCType = BuffType.Knockup,
                     Slot = SpellSlot.E,
                     Range = 900,
                     Delay = 500,
                     MissileSpeed = 1750,
-                    Width = 235,
+                    Width = 50,
                     CollisionCount = 0
                 },
             new SpellInfo()
                 {
                     ChampionName = "Ziggs",
                     SpellName = "ZiggsR",
-                    MissileName = "ZiggsR",
+                    MissileName = "ziggsrboom",
                     ProjectileType = ProjectileType.CircularSkillshot,
                     Slot = SpellSlot.R,
                     Range = 5300,
                     Delay = 500,
                     MissileSpeed = 5000,
-                    Width = 500,
+                    Width = 50,
                     CollisionCount = 0
                 },
             #endregion

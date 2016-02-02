@@ -18,6 +18,7 @@ namespace UnsignedYasuo
         public static Spell.Active R;
         public static Spell.Targeted Ignite;
         public static HitChance QHitChance = HitChance.Unknown;
+        public static int PentaKills;
         public static int EQRange = 375;
         public static int TurretRange
         {
@@ -155,6 +156,7 @@ namespace UnsignedYasuo
             menu.Get<Slider>("QHitChance").OnValueChange += OnHitChanceSliderChange;
             UnsignedEvade.SpellDatabase.Initialize();
             WindWall.OnGameLoad();
+            PentaKills = _Player.PentaKills;
 
             OnHitChanceSliderChange(menu.Get<Slider>("QHitChance"), null);
         }
@@ -198,6 +200,11 @@ namespace UnsignedYasuo
                 YasuoFunctions.LaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
                 YasuoFunctions.Flee();
+            if (_Player.PentaKills > PentaKills)
+            {
+                Chat.Print("Nice Penta! Make sure to screenshot it and post it on the UnsignedYasuo thread to show off!");
+                PentaKills = _Player.PentaKills;
+            }
         }
 
         static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs buff)
