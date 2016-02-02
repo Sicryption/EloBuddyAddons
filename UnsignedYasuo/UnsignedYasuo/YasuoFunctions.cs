@@ -487,6 +487,9 @@ namespace UnsignedYasuo
         //complete
         public static void AutoHarrass()
         {
+            if (_Player.IsUnderHisturret())
+                return;
+
             bool QCHECK = Program.Harass["AHQ"].Cast<CheckBox>().CurrentValue;
             bool Q3CHECK = Program.Harass["AH3Q"].Cast<CheckBox>().CurrentValue;
             var QRange = Program.Q.Range;

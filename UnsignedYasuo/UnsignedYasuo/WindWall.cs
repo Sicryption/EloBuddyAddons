@@ -12,7 +12,6 @@ using SharpDX;
 
 /*
     E away from linear skillshots
-    Add is cc in spell info
 */
 namespace UnsignedYasuo
 {
