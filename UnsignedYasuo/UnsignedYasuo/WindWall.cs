@@ -182,23 +182,38 @@ namespace UnsignedYasuo
         public static bool HandleChannelingSpells(MissileClient missile, SpellInfo info)
         {
             //returning if player should windwall
-
-
-            //
+            
             if (missile.SpellCaster.Position.IsInRange(_Player, Program.W.Range)
                 && Program.E.IsReady())
             {
+                //if can dash though enemy to evade, do so
                 if ((info.ChannelType == SpellDatabase.ChannelType.Linear
                     || info.ChannelType == SpellDatabase.ChannelType.Cone)
                     && missile.SpellCaster.IsInRange(_Player, Program.E.Range)
                     && !missile.SpellCaster.HasBuff("YasuoDashWrapper"))
+                {
                     Program.E.Cast(missile.SpellCaster);
-
-                var target = FindEnemyToBlockChannelingSpell(missile, info);
-                if (target != null)
-                    Program.E.Cast(target);
+                    return false;
+                }
+                else if(info.ChannelType == SpellDatabase.ChannelType.Circular
+                    && missile.SpellCaster.IsInRange(_Player, Program.E.Range)
+                    && !missile.SpellCaster.HasBuff("YasuoDashWrapper"))
+                {
+                    Program.W.Cast(_Player.Position.Extend(missile.StartPosition, Program.W.Range).To3DWorld());
+                    Program.E.Cast(missile.SpellCaster);
+                    return false;
+                }
+                //if enemy is in w range and dashing through them is unavailalble or wont help, dash to nearby enemies to block it.
+                else
+                {
+                    var target = FindEnemyToBlockChannelingSpell(missile, info);
+                    if (target != null)
+                        Program.E.Cast(target);
+                }
+                
                 return false;
             }
+            //is e is not ready, it didnt block it so return no
             else if (!Program.E.IsReady())
                 return false;
             //outside of Wind Wall range, so it will be blocked
