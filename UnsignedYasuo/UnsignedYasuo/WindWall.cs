@@ -11,7 +11,7 @@ using EloBuddy.SDK.Menu.Values;
 using SharpDX;
 
 /*
-Windwall then E if it blocks circular channeling abilities
+Windwall then E if it blocks circular channeling abilities (only if channel is a circular ability)
 E away from linear skillshots
     */
 namespace UnsignedYasuo
@@ -153,16 +153,19 @@ namespace UnsignedYasuo
 
             if (missile.SpellCaster.Name != "Diana")
                 if (missile.SData.Name != info.MissileName ||
-                    missile.IsInRange(_Player, Program.W.Range * 2))
+                    !missile.IsInRange(_Player, Program.W.Range * 2))
                     return false;
                 else if (missile.SpellCaster.Name == "Diana" &&
                     !missile.SData.Name.Contains(info.MissileName))
                     return false;
 
+            //doesnt seem to work
             //checks if the ability is a lock on projectile and the target is me
             if (info.ProjectileType == SpellDatabase.ProjectileType.LockOnProjectile
                 && missile.Target != _Player)
                 return false;
+
+
 
             //checks if channeling ability is too close to player
             if (info.ChannelType != SpellDatabase.ChannelType.None)
