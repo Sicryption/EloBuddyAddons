@@ -126,6 +126,7 @@ namespace UnsignedYasuo
             Items.Add("ItemsY", new CheckBox("Use Youmuus"));
             Items.Add("ItemsQSS", new CheckBox("Use Quick Silversash"));
             Items.Add("ItemsMS", new CheckBox("Use Mercurial Scimitar"));
+            Items.Add("ItemsPotions", new CheckBox("Use Potions"));
             Items.AddGroupLabel("QSS/Merc Scimitar Settings");
             Items.Add("QSSBlind", new CheckBox("Blind"));
             Items.Add("QSSCharm", new CheckBox("Charm"));
@@ -136,6 +137,8 @@ namespace UnsignedYasuo
             Items.Add("QSSSnare", new CheckBox("Snare"));
             Items.Add("QSSStun", new CheckBox("Stun"));
             Items.Add("QSSTaunt", new CheckBox("Taunt"));
+            Items.AddGroupLabel("Potion Settings");
+            Items.Add("PotSlider", new Slider("Use Potion at Health Percent", 65, 1, 100));
 
             Spellbook spell = _Player.Spellbook;
             SpellDataInst Sum1 = spell.GetSpell(SpellSlot.Summoner1);
@@ -188,6 +191,7 @@ namespace UnsignedYasuo
 
             Q = YasuoFunctions.GetQType();
             YasuoFunctions.AutoHarrass();
+            YasuoFunctions.UseItemsAndIgnite(YasuoFunctions.Mode.PotionManager);
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                 YasuoFunctions.Combo();
             if (KSMenu["EnableKS"].Cast<CheckBox>().CurrentValue)

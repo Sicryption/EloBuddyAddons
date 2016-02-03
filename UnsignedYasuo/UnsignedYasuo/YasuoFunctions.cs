@@ -43,7 +43,8 @@ namespace UnsignedYasuo
         {
             Combo,
             LaneClear,
-            Harass
+            Harass,
+            PotionManager
         }
 
         public static Obj_AI_Base GetEnemy(GameObjectType type, AttackSpell spell, bool EUNDERTURRET = false)
@@ -455,6 +456,8 @@ namespace UnsignedYasuo
                     bool QSSSnare = Program.Items.Get<CheckBox>("QSSSnare").CurrentValue;
                     bool QSSStun = Program.Items.Get<CheckBox>("QSSStun").CurrentValue;
                     bool QSSTaunt = Program.Items.Get<CheckBox>("QSSTaunt").CurrentValue;
+                    bool usePotions = Program.Items.Get<CheckBox>("ItemsPotions").CurrentValue;
+                    int PotionPercent = Program.Items.Get<Slider>("PotSlider").CurrentValue;
 
                     if (((item.Id == ItemId.Blade_of_the_Ruined_King && useBORK) 
                         || (item.Id == ItemId.Bilgewater_Cutlass && useCutlass)) &&
@@ -496,6 +499,15 @@ namespace UnsignedYasuo
                         || (_Player.HasBuffOfType(BuffType.Taunt) && QSSTaunt))
                         //not being knocked back by dragon
                         && !_Player.HasBuff("moveawaycollision"))
+                        item.Cast();
+                    if((item.Id == ItemId.Health_Potion || item.Id == ItemId.Refillable_Potion || item.Id == ItemId.Hunters_Potion || item.Id == ItemId.Corrupting_Potion)
+                        &&
+                        usePotions &&
+                        _Player.HealthPercent <= PotionPercent &&
+                        !_Player.HasBuff("RegenerationPotion") &&
+                        !_Player.HasBuff("ItemCrystalFlask") &&
+                        !_Player.HasBuff("ItemCrystalFlaskJungle") &&
+                        !_Player.HasBuff("ItemDarkCrystalFlask"))
                         item.Cast();
                 }
             }
