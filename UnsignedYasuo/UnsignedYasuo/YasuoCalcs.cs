@@ -94,7 +94,7 @@ namespace UnsignedYasuo
                 return false;
 
             BuffInstance KnockUp = enemy.Buffs.Where(a => a.IsKnockup
-            //if the end time is less than or equal to the current time + 1 second
+            //if the end time is less than or equal to the current time + 0.25 of a second
                 && a.EndTime <= Game.Time + 0.25).FirstOrDefault();
 
             if (KnockUp != null)
