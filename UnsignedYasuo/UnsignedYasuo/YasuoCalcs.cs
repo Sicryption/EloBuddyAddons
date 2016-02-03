@@ -105,6 +105,10 @@ namespace UnsignedYasuo
             }
             return false;
         }
+        public static int RadiansToDegrees(float angle)
+        {
+            return (int)(angle * (180 / Math.PI));
+        }
         public static int GetEnemyHeroesInRange(float range)
         {
             int enemiesIR = 0;

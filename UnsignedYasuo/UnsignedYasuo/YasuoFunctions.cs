@@ -400,16 +400,29 @@ namespace UnsignedYasuo
         //complete
         public static void Flee()
         {
-            if (Program.E.IsReady())
+            if (Program.E.IsReady() && !IsDashing)
             {
                 Obj_AI_Base fleeObject = ObjectManager.Get<Obj_AI_Base>().Where(a =>
                     !a.IsDead &&
+                    a.IsEnemy &&
                     YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos) <= _Player.Distance(Game.CursorPos) &&
                     !a.HasBuff("YasuoDashWrapper") &&
                     a.IsInRange(_Player, Program.E.Range)).OrderBy(a => a.Distance(Game.CursorPos)).FirstOrDefault();
 
                 if (fleeObject != null)
-                    Program.E.Cast(fleeObject);
+                {
+                    int angle1 = YasuoCalcs.RadiansToDegrees(_Player.Position.AngleBetween(YasuoCalcs.GetDashingEnd(fleeObject)));
+                    int angle2 = YasuoCalcs.RadiansToDegrees(_Player.Position.AngleBetween(Game.CursorPos));
+
+                    //angle1 = 20 angle 2 = 40
+                    if (Math.Abs(angle1) - Math.Abs(angle2) >= 20 ||
+                        Math.Abs(angle2) - Math.Abs(angle1) >= 20)
+                    {
+                        Chat.Print(angle1 + ", " + angle2);
+
+                        Program.E.Cast(fleeObject);
+                    }
+                }
             }
         }
 
@@ -527,7 +540,7 @@ namespace UnsignedYasuo
                     AllowedCollisionCount = int.MaxValue
                 };
         }
-
+        
         public static void CastQ(Obj_AI_Base target)
         {
             if (!Program.Q.IsReady() || target == null || target.Position == Vector3.Zero)
