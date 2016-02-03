@@ -68,21 +68,42 @@ namespace UnsignedYasuo
 
             return false;
         }
-        public static int GetEnemiesKnockedUp()
+        public static int GetNumEnemiesKnockedUp()
         {
             int enemiesKU = 0;
-            int enemiesIR = 0;
             List<AIHeroClient> enemies = EntityManager.Heroes.Enemies;
             foreach (AIHeroClient enemy in enemies)
-            {
                 if (_Player.IsInRange(enemy, Program.R.Range))
-                {
-                    enemiesIR++;
                     if (enemy.HasBuffOfType(BuffType.Knockup))
                         enemiesKU++;
-                }
-            }
             return enemiesKU;
+        }
+        public static List<AIHeroClient> GetEnemiesKnockedUp()
+        {
+            List<AIHeroClient> enemiesKnockedUp = new List<AIHeroClient>();
+            List<AIHeroClient> enemies = EntityManager.Heroes.Enemies;
+                foreach (AIHeroClient enemy in enemies)
+                    if (_Player.IsInRange(enemy, Program.R.Range))
+                        if (enemy.HasBuffOfType(BuffType.Knockup))
+                            enemiesKnockedUp.Add(enemy);
+            return enemiesKnockedUp;
+        }
+        public static bool IsLastKnockUpSecond(AIHeroClient enemy)
+        {
+            if (enemy == null)
+                return false;
+
+            BuffInstance KnockUp = enemy.Buffs.Where(a => a.IsKnockup
+            //if the end time is less than or equal to the current time + 1 second
+                && a.EndTime <= Game.Time + 0.25).FirstOrDefault();
+
+            if (KnockUp != null)
+            {
+                Chat.Print("Returned true");
+                Chat.Print(KnockUp.EndTime + ", " + Game.Time);
+                return true;
+            }
+            return false;
         }
         public static int GetEnemyHeroesInRange(float range)
         {

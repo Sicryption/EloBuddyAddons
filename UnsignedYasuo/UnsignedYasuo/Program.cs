@@ -64,6 +64,7 @@ namespace UnsignedYasuo
             ComboMenu.Add("CI", new CheckBox("Use Items"));
             ComboMenu.Add("CEUT", new CheckBox("E Under Turret", false));
             ComboMenu.AddGroupLabel("Ult Settings - First two are relative to enemies in vision");
+            ComboMenu.Add("UltLS", new CheckBox("Wait until last second?"));
             ComboMenu.Add("UltAEIV", new CheckBox("Ult if all enemies are knocked Up"));
             ComboMenu.Add("UltHEIV", new CheckBox("Ult if 1/2 enemies are knocked Up"));
             ComboMenu.Add("UltLH", new CheckBox("Ult if less than 10% Health", false));

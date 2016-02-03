@@ -302,6 +302,7 @@ namespace UnsignedYasuo
                 bool UltIfAllEnemiesKU = Program.ComboMenu["UltAEIV"].Cast<CheckBox>().CurrentValue;
                 bool UltIfHalfEnemiesKU = Program.ComboMenu["UltHEIV"].Cast<CheckBox>().CurrentValue;
                 bool UltIf10Health = Program.ComboMenu["UltLH"].Cast<CheckBox>().CurrentValue;
+                bool UltAtLastSecond = Program.ComboMenu["UltLS"].Cast<CheckBox>().CurrentValue;
                 int UltEnemiesKnockedUp = Program.ComboMenu["UltREnemies"].Cast<Slider>().CurrentValue;
 
                 bool QREADY = Program.Q.IsReady();
@@ -326,23 +327,20 @@ namespace UnsignedYasuo
                 #region R
                 if (Program.R.IsReady())
                 {
-                    int enemiesKnockedUp = YasuoCalcs.GetEnemiesKnockedUp();
+                    int enemiesKnockedUp = YasuoCalcs.GetNumEnemiesKnockedUp();
                     int enemiesInVision = _Player.CountEnemiesInRange(Program.R.Range);
 
                     if (UltIfAllEnemiesKU && enemiesKnockedUp >= enemiesInVision && enemiesInVision != 0)
-                        Program.R.Cast();
+                        CastR(UltAtLastSecond);
                     else if (UltIfHalfEnemiesKU && enemiesKnockedUp >= enemiesInVision / 2 && enemiesInVision != 0)
-                        Program.R.Cast();
+                        CastR(UltAtLastSecond);
                     else if (UltEnemiesKnockedUp != 0 && enemiesKnockedUp >= UltEnemiesKnockedUp)
-                        Program.R.Cast();
+                        CastR(UltAtLastSecond);
                     else if (UltIf10Health && _Player.HealthPercent <= 10 && enemiesKnockedUp >= 1)
-                        Program.R.Cast();
-                    
-
+                        CastR(UltAtLastSecond);
                 }
                 #endregion
-
-
+                
                 #region E
                 //if e is ready and menu allows for it to be used
                 if (ECHECK && EREADY)
@@ -541,6 +539,21 @@ namespace UnsignedYasuo
                 Program.Q.Cast(target.Position);
             else if (Program.QHitChance == HitChance.Unknown)
                 Program.Q.Cast(target.Position);
+        }
+        public static void CastR(bool UltAtLastSecond)
+        {
+            if (!Program.R.IsReady())
+                return;
+
+            if (UltAtLastSecond)
+            {
+                List<AIHeroClient> Enemies = YasuoCalcs.GetEnemiesKnockedUp();
+                AIHeroClient LowestKnockUpTime = Enemies.OrderBy(a => a.Buffs.OrderBy(b => b.EndTime).FirstOrDefault().EndTime).FirstOrDefault();
+                if (YasuoCalcs.IsLastKnockUpSecond(LowestKnockUpTime))
+                    Program.R.Cast();
+            }
+            else
+                Program.R.Cast();
         }
     }
 }
