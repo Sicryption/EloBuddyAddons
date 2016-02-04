@@ -171,9 +171,7 @@ namespace UnsignedYasuo
             {
                 Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.Q);
 
-                if (Program.Q.Range == 1000 && !Q3CHECK)
-                    CastQ(target);
-                else if (Program.Q.Range == 475)
+                if ((Program.Q.Range == 1000 && Q3CHECK) || Program.Q.Range == 475)
                     CastQ(target);
             }
 
