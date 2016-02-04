@@ -98,11 +98,7 @@ namespace UnsignedYasuo
                 && a.EndTime <= Game.Time + 0.25).FirstOrDefault();
 
             if (KnockUp != null)
-            {
-                Chat.Print("Returned true");
-                Chat.Print(KnockUp.EndTime + ", " + Game.Time);
                 return true;
-            }
             return false;
         }
         public static int RadiansToDegrees(float angle)

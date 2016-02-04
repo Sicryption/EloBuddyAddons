@@ -418,11 +418,7 @@ namespace UnsignedYasuo
                     //angle1 = 20 angle 2 = 40
                     if (Math.Abs(angle1) - Math.Abs(angle2) >= 20 ||
                         Math.Abs(angle2) - Math.Abs(angle1) >= 20)
-                    {
-                        Chat.Print(angle1 + ", " + angle2);
-
                         Program.E.Cast(fleeObject);
-                    }
                 }
             }
         }

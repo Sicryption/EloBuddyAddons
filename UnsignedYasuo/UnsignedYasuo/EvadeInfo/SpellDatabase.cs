@@ -861,8 +861,60 @@ namespace UnsignedEvade
                     CollisionCount = 0
                 },
             #endregion
-            //Need to add Jhin W and R
             #region Jhin
+            new SpellInfo()
+                {
+                    ChampionName = "Jhin",
+                    SpellName = "JhinQ",
+                    MissileName = "JhinQMisBounce",
+                    ProjectileType = ProjectileType.LinearSkillshot,
+                    Slot = SpellSlot.Q,
+                    Range = 1500,
+                    Delay = 600,
+                    MissileSpeed = 3300,
+                    Width = 60,
+                    CollisionCount = 1
+                },
+            new SpellInfo()
+                {
+                    ChampionName = "Jhin",
+                    SpellName = "JhinE",
+                    MissileName = "JhinETrap",
+                    ProjectileType = ProjectileType.LinearSkillshot,
+                    CCType = BuffType.Snare,
+                    Slot = SpellSlot.E,
+                    Range = 1500,
+                    Delay = 600,
+                    MissileSpeed = 3300,
+                    Width = 60,
+                    CollisionCount = 1
+                },
+            new SpellInfo()
+                {
+                    ChampionName = "Jhin",
+                    SpellName = "JhinR",
+                    MissileName = "JhinRShotMis",
+                    ProjectileType = ProjectileType.LinearSkillshot,
+                    Slot = SpellSlot.R,
+                    Range = 1500,
+                    Delay = 600,
+                    MissileSpeed = 3300,
+                    Width = 60,
+                    CollisionCount = 1
+                },
+            new SpellInfo()
+                {
+                    ChampionName = "Jhin",
+                    SpellName = "JhinR",
+                    MissileName = "JhinRShotMis4",
+                    ProjectileType = ProjectileType.LinearSkillshot,
+                    Slot = SpellSlot.R,
+                    Range = 1500,
+                    Delay = 600,
+                    MissileSpeed = 3300,
+                    Width = 60,
+                    CollisionCount = 1
+                },
             #endregion
             #region Jinx
             new SpellInfo()
