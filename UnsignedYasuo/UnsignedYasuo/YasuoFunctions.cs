@@ -114,6 +114,7 @@ namespace UnsignedYasuo
         public static void LastHit()
         {
             bool QCHECK = Program.LastHit["LHQ"].Cast<CheckBox>().CurrentValue;
+            bool Q3CHECK = Program.LastHit["LHQ3"].Cast<CheckBox>().CurrentValue;
             bool ECHECK = Program.LastHit["LHE"].Cast<CheckBox>().CurrentValue;
             bool EQCHECK = Program.LastHit["LHEQ"].Cast<CheckBox>().CurrentValue;
             bool EUNDERTURRET = Program.LastHit["LHEUT"].Cast<CheckBox>().CurrentValue;
@@ -123,16 +124,17 @@ namespace UnsignedYasuo
             
             if (QCHECK && QREADY && !IsDashing)
             {
-                Obj_AI_Minion minion = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
+                Obj_AI_Base target = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
 
-                CastQ(minion);
+                if ((Program.Q.Range == 1000 && Q3CHECK) || Program.Q.Range == 475)
+                    CastQ(target);
             }
 
             if (EQCHECK && EREADY && QREADY)
             {
                 Obj_AI_Base enemy = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.EQ, EUNDERTURRET);
 
-                if (enemy != null)
+                if (enemy != null && YasuoCalcs.ShouldEQ(enemy))
                 {
                     Program.E.Cast(enemy);
                     CastQ(enemy);

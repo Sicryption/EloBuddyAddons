@@ -95,6 +95,7 @@ namespace UnsignedYasuo
             LastHit = menu.AddSubMenu("Last Hit", "lasthitmenu");
             LastHit.AddGroupLabel("Last Hit Settings");
             LastHit.Add("LHQ", new CheckBox("Use Q"));
+            LastHit.Add("LHQ3", new CheckBox("Use 3Q"));
             LastHit.Add("LHE", new CheckBox("Use E"));
             LastHit.Add("LHEQ", new CheckBox("Use EQ"));
             LastHit.Add("LHEUT", new CheckBox("E Under Turret", false));
