@@ -861,6 +861,7 @@ namespace UnsignedEvade
                     CollisionCount = 0
                 },
             #endregion
+            //need to add jhin w
             #region Jhin
             new SpellInfo()
                 {
@@ -881,7 +882,6 @@ namespace UnsignedEvade
                     SpellName = "JhinE",
                     MissileName = "JhinETrap",
                     ProjectileType = ProjectileType.LinearSkillshot,
-                    CCType = BuffType.Snare,
                     Slot = SpellSlot.E,
                     Range = 1500,
                     Delay = 600,
