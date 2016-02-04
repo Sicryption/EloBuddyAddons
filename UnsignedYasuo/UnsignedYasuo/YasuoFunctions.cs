@@ -152,6 +152,7 @@ namespace UnsignedYasuo
         public static void LaneClear()
         {
             bool QCHECK = Program.LaneClear["LCQ"].Cast<CheckBox>().CurrentValue;
+            bool Q3CHECK = Program.LaneClear["LC3Q"].Cast<CheckBox>().CurrentValue;
             bool ECHECK = Program.LaneClear["LCE"].Cast<CheckBox>().CurrentValue;
             bool EQCHECK = Program.LaneClear["LCEQ"].Cast<CheckBox>().CurrentValue;
             bool EUNDERTURRET = Program.LaneClear["LCEUT"].Cast<CheckBox>().CurrentValue;
@@ -170,7 +171,10 @@ namespace UnsignedYasuo
             {
                 Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.Q);
 
-                CastQ(target);
+                if (Program.Q.Range == 1000 && !Q3CHECK)
+                    CastQ(target);
+                else if (Program.Q.Range == 475)
+                    CastQ(target);
             }
 
             if (ECHECK && EREADY)

@@ -54,6 +54,7 @@ namespace UnsignedYasuo
             WindWallMenu = Program.menu.AddSubMenu("Wind Wall Menu", "WWM");
             WindWallMenu.Add("WW", new CheckBox("Auto-Use Wind Wall"));
             WindWallMenu.Add("WWGOT", new CheckBox("GameOnTick (Increased FPS)"));
+            WindWallMenu.Add("WWFPS", new CheckBox("Increase FPS", false));
             WindWallMenu.Add("WWD", new CheckBox("Debug", false));
             WindWallMenu.Add("WWCN", new CheckBox("Use Champion Names"));
             WindWallMenu.AddSeparator(1);
@@ -118,15 +119,18 @@ namespace UnsignedYasuo
         
         public static void OnUpdate(GameObject obj, EventArgs args)
         {
-            var missile = obj as MissileClient;
-            if (missile != null &&
-                missile.SpellCaster != null &&
-                missile.SpellCaster.IsEnemy &&
-                missile.SpellCaster.Type == GameObjectType.AIHeroClient &&
-                ProjectileList.Contains(missile))
+            if (!WindWallMenu.Get<CheckBox>("WWFPS").CurrentValue)
             {
-                ProjectileList.Remove(missile);
-                ProjectileList.Add(missile);
+                var missile = obj as MissileClient;
+                if (missile != null &&
+                    missile.SpellCaster != null &&
+                    missile.SpellCaster.IsEnemy &&
+                    missile.SpellCaster.Type == GameObjectType.AIHeroClient &&
+                    ProjectileList.Contains(missile))
+                {
+                    ProjectileList.Remove(missile);
+                    ProjectileList.Add(missile);
+                }
             }
         }
         

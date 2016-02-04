@@ -74,6 +74,7 @@ namespace UnsignedYasuo
             LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
             LaneClear.AddGroupLabel("Lane Clear Settings");
             LaneClear.Add("LCQ", new CheckBox("Use Q"));
+            LaneClear.Add("LC3Q", new CheckBox("Use 3Q"));
             LaneClear.Add("LCE", new CheckBox("Use E"));
             LaneClear.Add("LCEQ", new CheckBox("Use EQ"));
             LaneClear.Add("LCELH", new CheckBox("Only E for Last Hit"));
