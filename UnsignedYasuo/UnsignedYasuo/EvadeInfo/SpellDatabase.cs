@@ -861,7 +861,6 @@ namespace UnsignedEvade
                     CollisionCount = 0
                 },
             #endregion
-            //need to add jhin w
             #region Jhin
             new SpellInfo()
                 {
@@ -874,7 +873,21 @@ namespace UnsignedEvade
                     Delay = 600,
                     MissileSpeed = 3300,
                     Width = 60,
-                    CollisionCount = 1
+                    CollisionCount = 4
+                },
+            new SpellInfo()
+                {
+                    ChampionName = "Jhin",
+                    SpellName = "JhinW",
+                    MissileName = "JhinWMissile",
+                    ProjectileType = ProjectileType.LinearSkillshot,
+                    CCType = BuffType.Snare,
+                    Slot = SpellSlot.W,
+                    Range = 1500,
+                    Delay = 600,
+                    MissileSpeed = 3300,
+                    Width = 60,
+                    CollisionCount = 0
                 },
             new SpellInfo()
                 {
@@ -887,7 +900,7 @@ namespace UnsignedEvade
                     Delay = 600,
                     MissileSpeed = 3300,
                     Width = 60,
-                    CollisionCount = 1
+                    CollisionCount = 0
                 },
             new SpellInfo()
                 {
