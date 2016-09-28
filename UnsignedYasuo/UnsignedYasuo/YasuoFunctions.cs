@@ -626,7 +626,7 @@ namespace UnsignedYasuo
                 Vector3 position = Program.Q.GetBestLinearCastPosition(enemies, 0, _Player.Position.To2D()).CastPosition;
                 if(position != null && position != Vector3.Zero)
                     Program.Q.Cast(position);
-                Chat.Print(position);
+                //Chat.Print(position);
             }
             else if (EQ)
                 Program.Q.Cast(_Player.Position);
