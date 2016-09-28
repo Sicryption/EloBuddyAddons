@@ -147,5 +147,13 @@ namespace UnsignedYasuo
 
             return _Player.Position.Extend(target, Program.E.Range).To3D();
         }
+
+        public static int GetAngleBetween(Vector3 a, Vector3 b)
+        {
+            var dotProd = Vector3.Dot(a, b);
+            var lenProd = a.Length() * b.Length();
+            var divOperation = dotProd / lenProd;
+            return (int)(Math.Acos(divOperation) * (180.0 / Math.PI));
+        }
     }
 }

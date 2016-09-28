@@ -101,9 +101,9 @@ namespace UnsignedYasuo
                 &&
                 ((spell == AttackSpell.Q && a.Health <= YasuoCalcs.Q(a) && !IsDashing) ||
                 (spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a) && YasuoCalcs.ERequirements(a, EUNDERTURRET)) ||
-                (spell == AttackSpell.EQ && 
-                        a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) && 
-                        YasuoCalcs.ERequirements(a, EUNDERTURRET) && 
+                (spell == AttackSpell.EQ &&
+                        a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) &&
+                        YasuoCalcs.ERequirements(a, EUNDERTURRET) &&
                         a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange)) ||
                 (spell == AttackSpell.Ignite && a.Health <= YasuoCalcs.Ignite(a)))).FirstOrDefault();
         }
@@ -121,7 +121,7 @@ namespace UnsignedYasuo
 
             bool QREADY = Program.Q.IsReady();
             bool EREADY = Program.E.IsReady();
-            
+
             if (QCHECK && QREADY && !IsDashing)
             {
                 Obj_AI_Base target = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
@@ -160,7 +160,7 @@ namespace UnsignedYasuo
             bool EUNDERTURRET = Program.LaneClear["LCEUT"].Cast<CheckBox>().CurrentValue;
             bool ELastHit = Program.LaneClear["LCELH"].Cast<CheckBox>().CurrentValue;
             bool ITEMSCHECK = Program.LaneClear["LCI"].Cast<CheckBox>().CurrentValue;
-            
+
             bool QREADY = Program.Q.IsReady();
             bool EREADY = Program.E.IsReady();
 
@@ -272,7 +272,7 @@ namespace UnsignedYasuo
 
             if (ITEMSCHECK)
                 UseItemsAndIgnite(Mode.Harass);
-            
+
             if (QCHECK && QREADY && !IsDashing)
             {
                 Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
@@ -345,7 +345,7 @@ namespace UnsignedYasuo
                         CastR(UltAtLastSecond);
                 }
                 #endregion
-                
+
                 #region E
                 //if e is ready and menu allows for it to be used
                 if (ECHECK && EREADY)
@@ -358,7 +358,7 @@ namespace UnsignedYasuo
                         && EnemyToDashCloserToChampion != null)
                         Program.E.Cast(EnemyToDashCloserToChampion);
                     //if there isnt any champions to auto, and no enemies will bring you into auto attack range, E to enemy
-                    else if(_Player.CountEnemiesInRange(_Player.GetAutoAttackRange()) == 0)
+                    else if (_Player.CountEnemiesInRange(_Player.GetAutoAttackRange()) == 0)
                     {
 
                         //enemy in range
@@ -416,12 +416,12 @@ namespace UnsignedYasuo
 
                 if (fleeObject != null)
                 {
-                    int angle1 = YasuoCalcs.RadiansToDegrees(_Player.Position.AngleBetween(YasuoCalcs.GetDashingEnd(fleeObject)));
-                    int angle2 = YasuoCalcs.RadiansToDegrees(_Player.Position.AngleBetween(Game.CursorPos));
-
+                    float angle1 = _Player.Position.To2D().AngleBetween(YasuoCalcs.GetDashingEnd(fleeObject).To2D());
+                    float angle2 = _Player.Position.To2D().AngleBetween(Game.CursorPos.To2D());
+                    
                     //angle1 = 20 angle 2 = 40
-                    if (Math.Abs(angle1) - Math.Abs(angle2) >= 20 ||
-                        Math.Abs(angle2) - Math.Abs(angle1) >= 20)
+                    if (Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) >= 20 ||
+                        Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) >= 20)
                         Program.E.Cast(fleeObject);
                 }
             }
