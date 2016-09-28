@@ -137,7 +137,7 @@ namespace UnsignedYasuo
                 if (enemy != null && YasuoCalcs.ShouldEQ(enemy))
                 {
                     Program.E.Cast(enemy);
-                    CastQ(enemy);
+                    CastQ(enemy, true);
                 }
             }
 
@@ -200,14 +200,14 @@ namespace UnsignedYasuo
                     Program.E.Cast(target);
             }
 
-            if (!ELastHit && EREADY && QREADY && EQCHECK)
+            if (!ELastHit && EREADY && YasuoCalcs.WillQBeReady() && EQCHECK)
             {
                 Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.EQ, EUNDERTURRET);
 
                 if (target != null)
                 {
                     Program.E.Cast(target);
-                    CastQ(target);
+                    CastQ(target, true);
                 }
             }
         }
@@ -262,7 +262,7 @@ namespace UnsignedYasuo
                 if (enemy != null && YasuoCalcs.ShouldEQ(enemy) && YasuoCalcs.WillQBeReady())
                 {
                     Program.E.Cast(enemy);
-                    CastQ(enemy);
+                    CastQ(enemy, true);
                 }
             }
         }
@@ -298,7 +298,7 @@ namespace UnsignedYasuo
                 {
                     Program.E.Cast(target);
                     if (YasuoCalcs.GetDashingEnd(target).IsInRange(target, 375) && EQCHECK && YasuoCalcs.WillQBeReady())
-                        CastQ(target);
+                        CastQ(target, true);
                 }
             }
         }
@@ -322,6 +322,9 @@ namespace UnsignedYasuo
 
                 if (ITEMSCHECK)
                     UseItemsAndIgnite(Mode.Combo);
+                
+                if (Program.ComboMenu["CBB"].Cast<CheckBox>().CurrentValue)
+                    Beyblade();
 
                 #region Q
                 if (QCHECK && QREADY && !IsDashing)
@@ -381,7 +384,7 @@ namespace UnsignedYasuo
                                 {
                                     Program.E.Cast(dashEnemy);
                                     if (YasuoCalcs.GetDashingEnd(dashEnemy).IsInRange(enemy, Program.EQRange) && YasuoCalcs.WillQBeReady() && EQCHECK)
-                                        CastQ(dashEnemy);
+                                        CastQ(dashEnemy, true);
                                 }
                             }
                         }
@@ -433,26 +436,28 @@ namespace UnsignedYasuo
                 AIHeroClient enemy = ObjectManager.Get<AIHeroClient>().Where(a =>
                     a != null
                     && _Player.Distance(a) <= Program.BeybladeRange
-                    && _Player.Distance(a) >= Program.E.Range + (Program.EQRange / 2)
+                    //&& _Player.Distance(a) >= Program.E.Range + (Program.EQRange / 2) add this back when put into the combo
                     && a.IsEnemy
                     && !a.IsDead).OrderBy(a => a.Distance(_Player)).FirstOrDefault();
 
-                Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
-                    a.IsEnemy
-                    && enemy != null
-                    && enemy.Distance(_Player) <= Program.BeybladeRange
-                    && !a.HasBuff("YasuoDashWrapper")
-                    && !a.IsDead
-                    && _Player.Distance(a) <= Program.E.Range
-                    && YasuoCalcs.GetDashingEnd(a).Distance(enemy) <= Program.Flash.Range + (Program.EQRange / 2)).FirstOrDefault();
-
-                if (enemy != null && minion != null)
+                if (enemy != null)
                 {
-                    BEYBLADE = true;
-                    Program.E.Cast(minion);
+                    Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
+                        a.IsEnemy
+                        && a != enemy
+                        && !a.HasBuff("YasuoDashWrapper")
+                        && !a.IsDead
+                        && _Player.Distance(a) <= Program.E.Range
+                        && YasuoCalcs.GetDashingEnd(a).Distance(enemy) <= Program.Flash.Range + (Program.EQRange / 2)).FirstOrDefault();
+
+                    if (enemy != null && minion != null)
+                    {
+                        BEYBLADE = true;
+                        Program.E.Cast(minion);
+                    }
+                    else
+                        BEYBLADE = false;
                 }
-                else
-                    BEYBLADE = false;
             }
             else if (Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.E).CooldownExpires - Game.Time) <= 0.1f  && !Program.E.IsReady() && BEYBLADE)
             {
@@ -462,13 +467,13 @@ namespace UnsignedYasuo
 
                 if (enemy != null)
                 {
+                    if (BEYBLADE)
+                        Program.Q.Cast(enemy.Position);
+
                     if (_Player.Position.Distance(enemy) >= 400 && _Player.Position.Distance(enemy) <= 400 + (Program.EQRange / 2))
                         Program.Flash.Cast(_Player.Position.Extend(enemy, 400).To3D());
                     else if (_Player.Position.Distance(enemy) < 400)
                         Program.Flash.Cast(enemy.Position);
-                    
-                    if (BEYBLADE)
-                        Program.Q.Cast(enemy.Position);
                 }
                 else
                     BEYBLADE = false;
@@ -601,19 +606,23 @@ namespace UnsignedYasuo
                 };
         }
         
-        public static void CastQ(Obj_AI_Base target)
+        public static void CastQ(Obj_AI_Base target, bool EQ = false)
         {
-            if (!Program.Q.IsReady() || target == null || target.Position == Vector3.Zero)
+            if (!Program.Q.IsReady() || target == null || target.Position == Vector3.Zero && _Player.CanAttack)
                 return;
 
-            IEnumerable<Obj_AI_Base> enemies = null;
-
-            if (target.Type == GameObjectType.AIHeroClient)
-                enemies = EntityManager.Heroes.Enemies;
-            else if (target.Type == GameObjectType.obj_AI_Minion || target.Type == GameObjectType.obj_AI_Base)
-                enemies = EntityManager.MinionsAndMonsters.CombinedAttackable;
-
-            Program.Q.Cast(Program.Q.GetBestLinearCastPosition(enemies, 0, _Player.Position.To2D()).CastPosition);
+            if (!EQ && !IsDashing && Program.E.IsReady())
+            {
+                IEnumerable<Obj_AI_Base> enemies = ObjectManager.Get<Obj_AI_Base>().Where(
+                    a => a.IsEnemy 
+                    && !a.IsDead 
+                    && a.Type != GameObjectType.obj_AI_Turret
+                    && a.Type == target.Type);
+                
+                Program.Q.Cast(Program.Q.GetBestLinearCastPosition(enemies, 0, _Player.Position.To2D()).CastPosition);
+            }
+            else if (EQ)
+                Program.Q.Cast(_Player.Position);
         }
         public static void CastR(bool UltAtLastSecond)
         {

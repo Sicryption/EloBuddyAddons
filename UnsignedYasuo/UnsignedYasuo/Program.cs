@@ -222,8 +222,6 @@ namespace UnsignedYasuo
                 YasuoFunctions.LaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
                 YasuoFunctions.Flee();
-            if (ComboMenu["CBB"].Cast<CheckBox>().CurrentValue)
-                YasuoFunctions.Beyblade();
             if (_Player.PentaKills > PentaKills)
             {
                 Chat.Print("Nice Penta! Make sure to screenshot it and post it on the UnsignedYasuo thread to show off!");
