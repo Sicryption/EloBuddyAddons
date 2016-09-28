@@ -145,9 +145,9 @@ namespace UnsignedYasuo
             Spellbook spell = _Player.Spellbook;
             SpellDataInst Sum1 = spell.GetSpell(SpellSlot.Summoner1);
             SpellDataInst Sum2 = spell.GetSpell(SpellSlot.Summoner2);
-            if (Sum1.Name == "summonerdot")
+            if (Sum1.Name == "SummonerDot")
                 Ignite = new Spell.Targeted(SpellSlot.Summoner1, 600);
-            else if (Sum2.Name == "summonerdot")
+            else if (Sum2.Name == "SummonerDot")
                 Ignite = new Spell.Targeted(SpellSlot.Summoner2, 600);
 
             Game.OnTick += Game_OnTick;
