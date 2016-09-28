@@ -1949,6 +1949,19 @@ namespace UnsignedEvade
                     Width = 80,
                     CollisionCount = 0
                 },
+            new SpellInfo()
+                {
+                    ChampionName = "Talon",
+                    SpellName = "TalonShadowAssault",
+                    MissileName = "TalonShadowAssaultMisTwo",
+                    ProjectileType = ProjectileType.LinearSkillshot,
+                    Slot = SpellSlot.R,
+                    Range = 800,
+                    Delay = 250,
+                    MissileSpeed = 1850,
+                    Width = 80,
+                    CollisionCount = 0
+                },
             #endregion
             #region Taric
             new SpellInfo()
