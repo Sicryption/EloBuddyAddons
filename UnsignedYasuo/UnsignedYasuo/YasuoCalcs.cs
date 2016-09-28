@@ -140,6 +140,13 @@ namespace UnsignedYasuo
 
             return minion;
         }
+        public static bool WillQBeReady()
+        {
+            if (Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.Q).CooldownExpires - Game.Time) <= 0.40f)
+                return true;
+            else
+                return false;
+        }
         public static Vector3 GetDashingEnd(Obj_AI_Base target)
         {
             if (!target.IsValidTarget())

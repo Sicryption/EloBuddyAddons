@@ -17,6 +17,7 @@ namespace UnsignedYasuo
         public static Spell.Targeted E;
         public static Spell.Active R;
         public static Spell.Targeted Ignite;
+        public static Spell.Skillshot Flash;
         public static HitChance QHitChance = HitChance.Unknown;
         public static int PentaKills;
         public static int EQRange = 375;
@@ -57,6 +58,7 @@ namespace UnsignedYasuo
             ComboMenu = menu.AddSubMenu("Combo", "combomenu");
 
             ComboMenu.AddGroupLabel("Combo Settings");
+            ComboMenu.Add("CKB", new CheckBox("Keyblade"));
             ComboMenu.Add("CQ", new CheckBox("Use Q"));
             ComboMenu.Add("CE", new CheckBox("Use E"));
             ComboMenu.Add("CEQ", new CheckBox("Use EQ"));
@@ -149,7 +151,11 @@ namespace UnsignedYasuo
                 Ignite = new Spell.Targeted(SpellSlot.Summoner1, 600);
             else if (Sum2.Name == "SummonerDot")
                 Ignite = new Spell.Targeted(SpellSlot.Summoner2, 600);
-
+            if (Sum1.Name == "SummonerFlash")
+                Flash = new Spell.Skillshot(SpellSlot.Summoner1, 400, SkillShotType.Circular);
+            else if (Sum2.Name == "SummonerFlash")
+                Flash = new Spell.Skillshot(SpellSlot.Summoner2, 400, SkillShotType.Circular);
+            
             Game.OnTick += Game_OnTick;
             Game.OnTick += WindWall.GameOnTick;
             Game.OnUpdate += WindWall.GameOnUpdate;
@@ -207,6 +213,8 @@ namespace UnsignedYasuo
                 YasuoFunctions.LaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
                 YasuoFunctions.Flee();
+            if (ComboMenu["CKB"].Cast<CheckBox>().CurrentValue)
+                YasuoFunctions.Keyblade();
             if (_Player.PentaKills > PentaKills)
             {
                 Chat.Print("Nice Penta! Make sure to screenshot it and post it on the UnsignedYasuo thread to show off!");

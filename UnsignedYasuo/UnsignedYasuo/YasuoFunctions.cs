@@ -401,7 +401,6 @@ namespace UnsignedYasuo
                     }
                 }
                 #endregion
-
             }
         }
 
@@ -427,6 +426,40 @@ namespace UnsignedYasuo
                         Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) >= 20)
                         Program.E.Cast(fleeObject);
                 }
+            }
+        }
+
+        public static void Keyblade()
+        {
+            if (!IsDashing)
+            {
+                AIHeroClient enemy = ObjectManager.Get<AIHeroClient>().Where(a =>
+                _Player.Distance(a) <= Program.E.Range
+                && a.IsEnemy
+                && !a.IsDead).OrderBy(a => a.Distance(_Player)).FirstOrDefault();
+
+                Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
+                _Player.Distance(a) <= Program.E.Range
+                && a.IsEnemy
+                && !a.IsDead
+                && YasuoCalcs.GetDashingEnd(a).Distance(a) <= Program.Flash.Range + (Program.EQRange / 2)).FirstOrDefault();
+
+                if (_Player.HasBuff("yasuoq3w")
+                    && YasuoCalcs.WillQBeReady()
+                    && Program.E.IsReady()
+                    && Program.Flash != null
+                    && Program.Flash.IsReady()
+                    && Program.R.IsReady())
+                    Program.E.Cast(minion);
+            }
+            else if (Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.E).CooldownExpires - Game.Time) <= 0.05f)
+            {
+                AIHeroClient enemy = ObjectManager.Get<AIHeroClient>().Where(a =>
+                _Player.Distance(a) <= Program.E.Range
+                && a.IsEnemy
+                && !a.IsDead).OrderBy(a => a.Distance(_Player)).FirstOrDefault();
+
+                Program.Q.Cast(enemy.Position);
             }
         }
 
