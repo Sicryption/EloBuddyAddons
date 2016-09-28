@@ -130,7 +130,7 @@ namespace UnsignedYasuo
                     CastQ(target);
             }
 
-            if (EQCHECK && EREADY && QREADY)
+            if (EQCHECK && EREADY && YasuoCalcs.WillQBeReady())
             {
                 Obj_AI_Base enemy = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.EQ, EUNDERTURRET);
 
@@ -173,8 +173,18 @@ namespace UnsignedYasuo
             {
                 Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.Q);
 
-                if ((Program.Q.Range == 1000 && Q3CHECK) || Program.Q.Range == 475)
+                if (Program.Q.Range == 475)
                     CastQ(target);
+                else if(Program.Q.Range == 1000 && Q3CHECK)
+                {
+                    Vector3 CastPosition = Program.Q.GetBestLinearCastPosition(
+                        ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy && !a.IsDead && a.Distance(_Player) <= Program.Q.Range),
+                        0,
+                        _Player.Position.To2D()).CastPosition;
+
+                    if (CastPosition != null)
+                        Program.Q.Cast(CastPosition);
+                }
             }
 
             if (ECHECK && EREADY)
@@ -246,10 +256,10 @@ namespace UnsignedYasuo
                     Program.E.Cast(enemy);
             }
 
-            if (QREADY && EREADY && EQCHECK)
+            if (EREADY && EQCHECK)
             {
                 var enemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.EQ, EUNDERTURRET);
-                if (enemy != null && YasuoCalcs.ShouldEQ(enemy))
+                if (enemy != null && YasuoCalcs.ShouldEQ(enemy) && YasuoCalcs.WillQBeReady())
                 {
                     Program.E.Cast(enemy);
                     CastQ(enemy);
@@ -287,7 +297,7 @@ namespace UnsignedYasuo
                 if (target != null)
                 {
                     Program.E.Cast(target);
-                    if (YasuoCalcs.GetDashingEnd(target).IsInRange(target, 375) && QREADY && EQCHECK)
+                    if (YasuoCalcs.GetDashingEnd(target).IsInRange(target, 375) && EQCHECK && YasuoCalcs.WillQBeReady())
                         CastQ(target);
                 }
             }
@@ -304,11 +314,6 @@ namespace UnsignedYasuo
                 bool EQCHECK = Program.ComboMenu["CEQ"].Cast<CheckBox>().CurrentValue;
                 bool RCHECK = Program.ComboMenu["CR"].Cast<CheckBox>().CurrentValue;
                 bool ITEMSCHECK = Program.ComboMenu["CI"].Cast<CheckBox>().CurrentValue;
-                bool UltIfAllEnemiesKU = Program.ComboMenu["UltAEIV"].Cast<CheckBox>().CurrentValue;
-                bool UltIfHalfEnemiesKU = Program.ComboMenu["UltHEIV"].Cast<CheckBox>().CurrentValue;
-                bool UltIf10Health = Program.ComboMenu["UltLH"].Cast<CheckBox>().CurrentValue;
-                bool UltAtLastSecond = Program.ComboMenu["UltLS"].Cast<CheckBox>().CurrentValue;
-                int UltEnemiesKnockedUp = Program.ComboMenu["UltREnemies"].Cast<Slider>().CurrentValue;
 
                 bool QREADY = Program.Q.IsReady();
                 bool EREADY = Program.E.IsReady();
@@ -326,23 +331,6 @@ namespace UnsignedYasuo
 
                     if (enemy != null)
                         CastQ(enemy);
-                }
-                #endregion
-
-                #region R
-                if (Program.R.IsReady())
-                {
-                    int enemiesKnockedUp = YasuoCalcs.GetNumEnemiesKnockedUp();
-                    int enemiesInVision = _Player.CountEnemiesInRange(Program.R.Range);
-
-                    if (UltIfAllEnemiesKU && enemiesKnockedUp >= enemiesInVision && enemiesInVision != 0)
-                        CastR(UltAtLastSecond);
-                    else if (UltIfHalfEnemiesKU && enemiesKnockedUp >= enemiesInVision / 2 && enemiesInVision != 0)
-                        CastR(UltAtLastSecond);
-                    else if (UltEnemiesKnockedUp != 0 && enemiesKnockedUp >= UltEnemiesKnockedUp)
-                        CastR(UltAtLastSecond);
-                    else if (UltIf10Health && _Player.HealthPercent <= 10 && enemiesKnockedUp >= 1)
-                        CastR(UltAtLastSecond);
                 }
                 #endregion
 
@@ -374,7 +362,7 @@ namespace UnsignedYasuo
                             {
                                 Program.E.Cast(enemy);
 
-                                if (YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, Program.EQRange) && EQCHECK && QREADY)
+                                if (YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, Program.EQRange) && EQCHECK && YasuoCalcs.WillQBeReady())
                                     CastQ(enemy);
                             }
                         }
@@ -393,7 +381,7 @@ namespace UnsignedYasuo
                                 if (dashEnemy != null)
                                 {
                                     Program.E.Cast(dashEnemy);
-                                    if (YasuoCalcs.GetDashingEnd(dashEnemy).IsInRange(enemy, Program.EQRange) && QREADY && EQCHECK)
+                                    if (YasuoCalcs.GetDashingEnd(dashEnemy).IsInRange(enemy, Program.EQRange) && YasuoCalcs.WillQBeReady() && EQCHECK)
                                         CastQ(dashEnemy);
                                 }
                             }
@@ -429,37 +417,67 @@ namespace UnsignedYasuo
             }
         }
 
-        public static void Keyblade()
+        public static bool BEYBLADE = false;
+
+        //if q cd is 1.33 and enemy champion does not have yasuodashwrapper. do eq to minion, f, eq to champion, r - keyblade
+        public static void Beyblade()
         {
-            if (!IsDashing)
+            if (!IsDashing
+                && _Player.HasBuff("yasuoq3w")
+                && YasuoCalcs.WillQBeReady()
+                && Program.E.IsReady()
+                && Program.Flash != null
+                && Program.Flash.IsReady()
+                && Program.R.IsReady()
+                && !BEYBLADE)
             {
                 AIHeroClient enemy = ObjectManager.Get<AIHeroClient>().Where(a =>
-                _Player.Distance(a) <= Program.E.Range
-                && a.IsEnemy
-                && !a.IsDead).OrderBy(a => a.Distance(_Player)).FirstOrDefault();
+                    a != null
+                    && _Player.Distance(a) <= Program.BeybladeRange
+                    && _Player.Distance(a) >= Program.E.Range + (Program.EQRange / 2)
+                    && a.IsEnemy
+                    && !a.IsDead).OrderBy(a => a.Distance(_Player)).FirstOrDefault();
 
                 Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
-                _Player.Distance(a) <= Program.E.Range
-                && a.IsEnemy
-                && !a.IsDead
-                && YasuoCalcs.GetDashingEnd(a).Distance(a) <= Program.Flash.Range + (Program.EQRange / 2)).FirstOrDefault();
+                    a.IsEnemy
+                    && enemy != null
+                    && enemy.Distance(_Player) <= Program.BeybladeRange
+                    && !a.HasBuff("YasuoDashWrapper")
+                    && !a.IsDead
+                    && _Player.Distance(a) <= Program.E.Range
+                    && YasuoCalcs.GetDashingEnd(a).Distance(enemy) <= Program.Flash.Range + (Program.EQRange / 2)).FirstOrDefault();
 
-                if (_Player.HasBuff("yasuoq3w")
-                    && YasuoCalcs.WillQBeReady()
-                    && Program.E.IsReady()
-                    && Program.Flash != null
-                    && Program.Flash.IsReady()
-                    && Program.R.IsReady())
+                if (enemy != null && minion != null)
+                {
+                    BEYBLADE = true;
                     Program.E.Cast(minion);
+                }
+                else
+                    BEYBLADE = false;
             }
-            else if (Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.E).CooldownExpires - Game.Time) <= 0.05f)
+            else if (Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.E).CooldownExpires - Game.Time) <= 0.1f && BEYBLADE)
             {
                 AIHeroClient enemy = ObjectManager.Get<AIHeroClient>().Where(a =>
-                _Player.Distance(a) <= Program.E.Range
+               a != null
+               && _Player.Distance(a) <= Program.BeybladeRange
                 && a.IsEnemy
-                && !a.IsDead).OrderBy(a => a.Distance(_Player)).FirstOrDefault();
+                && !a.IsDead).FirstOrDefault();
 
-                Program.Q.Cast(enemy.Position);
+                if (enemy != null)
+                {
+
+                    if (_Player.Position.Distance(enemy) >= 400 && _Player.Position.Distance(enemy) <= 400 + (Program.EQRange / 2))
+                        Program.Flash.Cast(_Player.Position.Extend(enemy, 400).To3D());
+                    else if (_Player.Position.Distance(enemy) < 400)
+                        Program.Flash.Cast(enemy.Position);
+                    else
+                        BEYBLADE = false;
+
+                    if (BEYBLADE)
+                        Program.Q.Cast(enemy.Position);
+                }
+                else
+                    BEYBLADE = false;
             }
         }
 
@@ -615,6 +633,32 @@ namespace UnsignedYasuo
             }
             else
                 Program.R.Cast();
+        }
+
+        public static void UltHandler()
+        {
+            bool UltIfAllEnemiesKU = Program.UltMenu["UltAEIV"].Cast<CheckBox>().CurrentValue;
+            bool UltIfHalfEnemiesKU = Program.UltMenu["UltHEIV"].Cast<CheckBox>().CurrentValue;
+            bool UltIf10Health = Program.UltMenu["UltLH"].Cast<CheckBox>().CurrentValue;
+            bool UltAtLastSecond = Program.UltMenu["UltLS"].Cast<CheckBox>().CurrentValue;
+            int UltEnemiesKnockedUp = Program.UltMenu["UltREnemies"].Cast<Slider>().CurrentValue;
+
+            #region R
+            if (Program.R.IsReady())
+            {
+                int enemiesKnockedUp = YasuoCalcs.GetNumEnemiesKnockedUp();
+                int enemiesInVision = _Player.CountEnemiesInRange(Program.R.Range);
+
+                if (UltIfAllEnemiesKU && enemiesKnockedUp >= enemiesInVision && enemiesInVision != 0)
+                    CastR(UltAtLastSecond);
+                else if (UltIfHalfEnemiesKU && enemiesKnockedUp >= enemiesInVision / 2 && enemiesInVision != 0)
+                    CastR(UltAtLastSecond);
+                else if (UltEnemiesKnockedUp != 0 && enemiesKnockedUp >= UltEnemiesKnockedUp)
+                    CastR(UltAtLastSecond);
+                else if (UltIf10Health && _Player.HealthPercent <= 10 && enemiesKnockedUp >= 1)
+                    CastR(UltAtLastSecond);
+            }
+            #endregion
         }
     }
 }

@@ -142,7 +142,7 @@ namespace UnsignedYasuo
         }
         public static bool WillQBeReady()
         {
-            if (Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.Q).CooldownExpires - Game.Time) <= 0.40f)
+            if (Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.Q).CooldownExpires - Game.Time) <= 0.40f && Program.Q.IsLearned)
                 return true;
             else
                 return false;
@@ -153,18 +153,6 @@ namespace UnsignedYasuo
                 return Vector3.Zero;
 
             return _Player.Position.Extend(target, Program.E.Range).To3D();
-        }
-        public static int FindNumEnemyUnitsHitByQ()
-        {
-            //Prediction.Position.PredictLinearMissile(null, Program.Q.Range, )
-            return 0;
-       }
-        public static int GetAngleBetween(Vector3 a, Vector3 b)
-        {
-            var dotProd = Vector3.Dot(a, b);
-            var lenProd = a.Length() * b.Length();
-            var divOperation = dotProd / lenProd;
-            return (int)(Math.Acos(divOperation) * (180.0 / Math.PI));
         }
     }
 }

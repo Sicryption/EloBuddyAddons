@@ -11,7 +11,7 @@ namespace UnsignedYasuo
 {
     internal class Program
     {
-        public static Menu ComboMenu, DrawingsMenu, KSMenu, LaneClear, LastHit, Harass, Items, menu;
+        public static Menu ComboMenu, DrawingsMenu, KSMenu, UltMenu, LaneClear, LastHit, Harass, Items, menu;
         public static Spell.Skillshot Q;
         public static Spell.SpellBase W;
         public static Spell.Targeted E;
@@ -20,7 +20,8 @@ namespace UnsignedYasuo
         public static Spell.Skillshot Flash;
         public static HitChance QHitChance = HitChance.Unknown;
         public static int PentaKills;
-        public static int EQRange = 375;
+        public static int EQRange = 375,
+            BeybladeRange;
         public static int TurretRange
         {
             get
@@ -58,21 +59,22 @@ namespace UnsignedYasuo
             ComboMenu = menu.AddSubMenu("Combo", "combomenu");
 
             ComboMenu.AddGroupLabel("Combo Settings");
-            ComboMenu.Add("CKB", new CheckBox("Keyblade"));
+            ComboMenu.Add("CBB", new CheckBox("Beyblade"));
             ComboMenu.Add("CQ", new CheckBox("Use Q"));
             ComboMenu.Add("CE", new CheckBox("Use E"));
             ComboMenu.Add("CEQ", new CheckBox("Use EQ"));
-            ComboMenu.Add("CR", new CheckBox("Use R"));
             ComboMenu.Add("CI", new CheckBox("Use Items"));
             ComboMenu.Add("CEUT", new CheckBox("E Under Turret", false));
-            ComboMenu.AddGroupLabel("Ult Settings - First two are relative to enemies in vision");
-            ComboMenu.Add("UltLS", new CheckBox("Wait until last second?"));
-            ComboMenu.Add("UltAEIV", new CheckBox("Ult if all enemies are knocked Up"));
-            ComboMenu.Add("UltHEIV", new CheckBox("Ult if 1/2 enemies are knocked Up"));
-            ComboMenu.Add("UltLH", new CheckBox("Ult if less than 10% Health", false));
-            ComboMenu.Add("UltREnemies", new Slider("Enemies Knocked-Up", 3, 0, 5));
 
-
+            UltMenu = menu.AddSubMenu("Ultimate", "ultimate");
+            UltMenu.AddGroupLabel("Ultimate Settings");
+            UltMenu.Add("Ult", new CheckBox("Use Ultimate"));
+            UltMenu.Add("UltLS", new CheckBox("Wait until last second?"));
+            UltMenu.Add("UltAEIV", new CheckBox("Ult if all enemies are knocked Up"));
+            UltMenu.Add("UltHEIV", new CheckBox("Ult if 1/2 enemies are knocked Up"));
+            UltMenu.Add("UltLH", new CheckBox("Ult if less than 10% Health", false));
+            UltMenu.Add("UltREnemies", new Slider("Enemies Knocked-Up", 3, 0, 5));
+            
             LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
             LaneClear.AddGroupLabel("Lane Clear Settings");
             LaneClear.Add("LCQ", new CheckBox("Use Q"));
@@ -81,7 +83,7 @@ namespace UnsignedYasuo
             LaneClear.Add("LCEQ", new CheckBox("Use EQ"));
             LaneClear.Add("LCELH", new CheckBox("Only E for Last Hit"));
             LaneClear.Add("LCEUT", new CheckBox("E Under Turret", false));
-            LaneClear.Add("LCI", new CheckBox("Use Items (Hydra/Timat)"));
+            LaneClear.Add("LCI", new CheckBox("Use Items (Hydra/Tiamat)"));
 
             Harass = menu.AddSubMenu("Harass", "harass");
             Harass.AddGroupLabel("Harass Settings");
@@ -89,7 +91,7 @@ namespace UnsignedYasuo
             Harass.Add("HE", new CheckBox("Use E"));
             Harass.Add("HEQ", new CheckBox("Use EQ"));
             Harass.Add("HEUT", new CheckBox("E Under Turret", false));
-            Harass.Add("HI", new CheckBox("Use Items (Hydra/Timat)"));
+            Harass.Add("HI", new CheckBox("Use Items (Hydra/Tiamat)"));
             Harass.AddGroupLabel("Auto-Harass Settings");
             Harass.Add("AHQ", new CheckBox("Auto-Harass with Q"));
             Harass.Add("AH3Q", new CheckBox("Auto-Harass with 3rd Q", false));
@@ -118,6 +120,7 @@ namespace UnsignedYasuo
             DrawingsMenu.Add("DW", new CheckBox("Draw W"));
             DrawingsMenu.Add("DE", new CheckBox("Draw E"));
             DrawingsMenu.Add("DR", new CheckBox("Draw R"));
+            DrawingsMenu.Add("DKB", new CheckBox("Draw Keyblade"));
             DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
 
             Items = menu.AddSubMenu("Items", "itemsmenu");
@@ -170,6 +173,8 @@ namespace UnsignedYasuo
             WindWall.OnGameLoad();
             PentaKills = _Player.PentaKills;
 
+            BeybladeRange = (int)(E.Range + Flash.Range + (EQRange / 2));
+
             OnHitChanceSliderChange(menu.Get<Slider>("QHitChance"), null);
         }
         
@@ -179,11 +184,13 @@ namespace UnsignedYasuo
                 return;
 
             if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
-                Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.BlueViolet);
+                Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.Red);
+            if (DrawingsMenu["DKB"].Cast<CheckBox>().CurrentValue && Q.IsLearned && E.IsLearned && Flash != null && Flash.IsReady() && R.IsLearned && R.IsReady())
+                Drawing.DrawCircle(_Player.Position, BeybladeRange, System.Drawing.Color.OrangeRed);
             if (DrawingsMenu["DE"].Cast<CheckBox>().CurrentValue && E.IsLearned)
-                Drawing.DrawCircle(_Player.Position, E.Range, System.Drawing.Color.BlueViolet);
+                Drawing.DrawCircle(_Player.Position, E.Range, System.Drawing.Color.Green);
             if (DrawingsMenu["DW"].Cast<CheckBox>().CurrentValue && W.IsLearned)
-                Drawing.DrawCircle(_Player.Position, W.Range, System.Drawing.Color.BlueViolet);
+                Drawing.DrawCircle(_Player.Position, W.Range, System.Drawing.Color.White);
             if (DrawingsMenu["DR"].Cast<CheckBox>().CurrentValue && R.IsLearned)
                 Drawing.DrawCircle(_Player.Position, Program.R.Range, System.Drawing.Color.BlueViolet);
 
@@ -200,6 +207,8 @@ namespace UnsignedYasuo
             Q = YasuoFunctions.GetQType();
             YasuoFunctions.AutoHarrass();
             YasuoFunctions.UseItemsAndIgnite(YasuoFunctions.Mode.PotionManager);
+            if (R.IsReady() && UltMenu["Ult"].Cast<CheckBox>().CurrentValue)
+                YasuoFunctions.UltHandler();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                 YasuoFunctions.Combo();
             if (KSMenu["EnableKS"].Cast<CheckBox>().CurrentValue)
@@ -213,8 +222,8 @@ namespace UnsignedYasuo
                 YasuoFunctions.LaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
                 YasuoFunctions.Flee();
-            if (ComboMenu["CKB"].Cast<CheckBox>().CurrentValue)
-                YasuoFunctions.Keyblade();
+            if (ComboMenu["CBB"].Cast<CheckBox>().CurrentValue)
+                YasuoFunctions.Beyblade();
             if (_Player.PentaKills > PentaKills)
             {
                 Chat.Print("Nice Penta! Make sure to screenshot it and post it on the UnsignedYasuo thread to show off!");
