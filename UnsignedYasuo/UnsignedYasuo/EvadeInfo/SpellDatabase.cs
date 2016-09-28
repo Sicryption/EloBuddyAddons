@@ -493,80 +493,66 @@ namespace UnsignedEvade
                     CollisionCount = 0
                 },
             #endregion
-            //Need to check elise e
+            //Need to add Elise Cocoon
             #region Elise
-            new SpellInfo()
-                {
-                    ChampionName = "Elise",
-                    SpellName = "EliseHumanE",
-                    MissileName = "Cocoon",
-                    ProjectileType = ProjectileType.LinearSkillshot,
-                    CCType = BuffType.Stun,
-                    Slot = SpellSlot.Q,
-                    Range = 1100,
-                    Delay = 250,
-                    MissileSpeed = 1600,
-                    Width = 70,
-                    CollisionCount = 1
-                },
-        #endregion
+            #endregion
             //Need to add Evelynn Q
             #region Evelynn
             #endregion
             #region Ezreal
             new SpellInfo()
-                    {
-                        ChampionName = "Ezreal",
-                        SpellName = "EzrealMysticShot",
-                        MissileName = "EzrealMysticShotMissile",
-                        ProjectileType = ProjectileType.LinearSkillshot,
-                        Slot = SpellSlot.Q,
-                        Range = 1200,
-                        Delay = 250,
-                        MissileSpeed = 2000,
-                        Width = 60,
-                        CollisionCount = 1
-                    },
-                new SpellInfo()
-                    {
-                        ChampionName = "Ezreal",
-                        SpellName = "EzrealEssenceFlux",
-                        MissileName = "EzrealEssenceFluxMissile",
-                        ProjectileType = ProjectileType.LinearSkillshot,
-                        Slot = SpellSlot.W,
-                        Range = 1050,
-                        Delay = 250,
-                        MissileSpeed = 1600,
-                        Width = 80,
-                        CollisionCount = 0
-                    },
-                new SpellInfo()
-                    {
-                        ChampionName = "Ezreal",
-                        SpellName = "EzrealArcaneShift",
-                        MissileName = "EzrealArcaneShiftMissile",
-                        ProjectileType = ProjectileType.LockOnProjectile,
-                        Slot = SpellSlot.E,
-                        Range = 1050,
-                        Delay = 250,
-                        MissileSpeed = 1600,
-                        Width = 80,
-                        CollisionCount = 0
-                    },
-                new SpellInfo()
-                    {
-                        ChampionName = "Ezreal",
-                        SpellName = "EzrealTrueshotBarrage",
-                        MissileName = "EzrealTrueshotBarrage",
-                        ProjectileType = ProjectileType.LinearSkillshot,
-                        Slot = SpellSlot.R,
-                        Range = 20000,
-                        Delay = 1000,
-                        MissileSpeed = 2000,
-                        Width = 160,
-                        CollisionCount = 0
-                    },
-                #endregion
+                {
+                    ChampionName = "Ezreal",
+                    SpellName = "EzrealMysticShot",
+                    MissileName = "EzrealMysticShotMissile",
+                    ProjectileType = ProjectileType.LinearSkillshot,
+                    Slot = SpellSlot.Q,
+                    Range = 1200,
+                    Delay = 250,
+                    MissileSpeed = 2000,
+                    Width = 60,
+                    CollisionCount = 1
+                },
+            new SpellInfo()
+                {
+                    ChampionName = "Ezreal",
+                    SpellName = "EzrealEssenceFlux",
+                    MissileName = "EzrealEssenceFluxMissile",
+                    ProjectileType = ProjectileType.LinearSkillshot,
+                    Slot = SpellSlot.W,
+                    Range = 1050,
+                    Delay = 250,
+                    MissileSpeed = 1600,
+                    Width = 80,
+                    CollisionCount = 0
+                },
+            new SpellInfo()
+                {
+                    ChampionName = "Ezreal",
+                    SpellName = "EzrealArcaneShift",
+                    MissileName = "EzrealArcaneShiftMissile",
+                    ProjectileType = ProjectileType.LockOnProjectile,
+                    Slot = SpellSlot.E,
+                    Range = 1050,
+                    Delay = 250,
+                    MissileSpeed = 1600,
+                    Width = 80,
+                    CollisionCount = 0
+                },
+            new SpellInfo()
+                {
+                    ChampionName = "Ezreal",
+                    SpellName = "EzrealTrueshotBarrage",
+                    MissileName = "EzrealTrueshotBarrage",
+                    ProjectileType = ProjectileType.LinearSkillshot,
+                    Slot = SpellSlot.R,
+                    Range = 20000,
+                    Delay = 1000,
+                    MissileSpeed = 2000,
+                    Width = 160,
+                    CollisionCount = 0
+                },
+            #endregion
             #region Fiddlesticks
             new SpellInfo()
                 {
@@ -1320,6 +1306,7 @@ namespace UnsignedEvade
                     CollisionCount = 0
                 },
             #endregion
+            //Add Lux W
             #region Lux
             new SpellInfo()
                 {
@@ -1546,7 +1533,7 @@ namespace UnsignedEvade
             #endregion
             #region Orianna
             #endregion
-            //Need to add Pantheon Q/W
+            //Need to add Pantheon Q/E
             #region Pantheon
             #endregion
             #region Poppy
@@ -1620,20 +1607,6 @@ namespace UnsignedEvade
                     ChampionName = "Rengar",
                     SpellName = "RengarE",
                     MissileName = "RengarEFinal",
-                    ProjectileType = ProjectileType.LinearSkillshot,
-                    CCType = BuffType.Slow,
-                    Slot = SpellSlot.E,
-                    Range = 1000,
-                    Delay = 250,
-                    MissileSpeed = 1500,
-                    Width = 70,
-                    CollisionCount = 1
-                },
-            new SpellInfo()
-                {
-                    ChampionName = "Rengar",
-                    SpellName = "RengarE",
-                    MissileName = "RengarEFinalMAX",
                     ProjectileType = ProjectileType.LinearSkillshot,
                     CCType = BuffType.Slow,
                     Slot = SpellSlot.E,
