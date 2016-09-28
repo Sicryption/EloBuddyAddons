@@ -352,7 +352,8 @@ namespace UnsignedYasuo
                 {
                     Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.E, EUNDERTURRET);
                     Obj_AI_Base EnemyToDashCloserToChampion = YasuoCalcs.GetBestDashEnemyToChampionWithinAARange(enemy, EUNDERTURRET);
-                    //if number of enemies in Auto Attack range is 0, but there are champions yas could dash to, find 
+
+                    //if number of enemies in Auto Attack range is 0, but there are champions yas could dash to, find best enemy to dash to
                     if (_Player.CountEnemiesInRange(_Player.GetAutoAttackRange()) == 0
                         && YasuoCalcs.GetEnemyHeroesInRange(Program.E.Range) >= 1
                         && EnemyToDashCloserToChampion != null)
@@ -365,6 +366,8 @@ namespace UnsignedYasuo
                         if (enemy != null)
                         {
                             //if can auto attack, don't e, instead auto attack
+                            //this is performed automatically by the orbwalker
+
                             //if e'ing gets player in auto attack range. e
                             if (!_Player.IsInAutoAttackRange(enemy)
                                 && YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, _Player.GetAutoAttackRange()))
@@ -546,8 +549,8 @@ namespace UnsignedYasuo
             else
                 return new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear)
                 {
-                    CastDelay = 500,
-                    Width = 90,
+                    CastDelay = 250,
+                    Width = 25,
                     Speed = 1500,
                     AllowedCollisionCount = int.MaxValue
                 };

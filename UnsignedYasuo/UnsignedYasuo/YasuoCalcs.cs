@@ -147,7 +147,11 @@ namespace UnsignedYasuo
 
             return _Player.Position.Extend(target, Program.E.Range).To3D();
         }
-
+        public static int FindNumEnemyUnitsHitByQ()
+        {
+            //Prediction.Position.PredictLinearMissile(null, Program.Q.Range, )
+            return 0;
+       }
         public static int GetAngleBetween(Vector3 a, Vector3 b)
         {
             var dotProd = Vector3.Dot(a, b);

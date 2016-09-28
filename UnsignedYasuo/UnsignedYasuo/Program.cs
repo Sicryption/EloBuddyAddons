@@ -41,7 +41,7 @@ namespace UnsignedYasuo
             if (Player.Instance.ChampionName != "Yasuo")
                 return;
 
-            Q = new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear);
+            Q = new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear, 250, 0, 25, DamageType.Physical);
             W = new Spell.Skillshot(SpellSlot.W, 400, SkillShotType.Linear);
             E = new Spell.Targeted(SpellSlot.E, 475);
             R = new Spell.Active(SpellSlot.R)
