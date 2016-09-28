@@ -312,7 +312,6 @@ namespace UnsignedYasuo
                 bool QCHECK = Program.ComboMenu["CQ"].Cast<CheckBox>().CurrentValue;
                 bool ECHECK = Program.ComboMenu["CE"].Cast<CheckBox>().CurrentValue;
                 bool EQCHECK = Program.ComboMenu["CEQ"].Cast<CheckBox>().CurrentValue;
-                bool RCHECK = Program.ComboMenu["CR"].Cast<CheckBox>().CurrentValue;
                 bool ITEMSCHECK = Program.ComboMenu["CI"].Cast<CheckBox>().CurrentValue;
 
                 bool QREADY = Program.Q.IsReady();
@@ -455,24 +454,19 @@ namespace UnsignedYasuo
                 else
                     BEYBLADE = false;
             }
-            else if (Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.E).CooldownExpires - Game.Time) <= 0.1f && BEYBLADE)
+            else if (Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.E).CooldownExpires - Game.Time) <= 0.1f  && !Program.E.IsReady() && BEYBLADE)
             {
-                AIHeroClient enemy = ObjectManager.Get<AIHeroClient>().Where(a =>
-               a != null
-               && _Player.Distance(a) <= Program.BeybladeRange
-                && a.IsEnemy
+                AIHeroClient enemy = EntityManager.Heroes.Enemies.Where(a =>
+                _Player.Distance(a) <= Program.BeybladeRange
                 && !a.IsDead).FirstOrDefault();
 
                 if (enemy != null)
                 {
-
                     if (_Player.Position.Distance(enemy) >= 400 && _Player.Position.Distance(enemy) <= 400 + (Program.EQRange / 2))
                         Program.Flash.Cast(_Player.Position.Extend(enemy, 400).To3D());
                     else if (_Player.Position.Distance(enemy) < 400)
                         Program.Flash.Cast(enemy.Position);
-                    else
-                        BEYBLADE = false;
-
+                    
                     if (BEYBLADE)
                         Program.Q.Cast(enemy.Position);
                 }
@@ -612,12 +606,14 @@ namespace UnsignedYasuo
             if (!Program.Q.IsReady() || target == null || target.Position == Vector3.Zero)
                 return;
 
-            if (IsDashing)
-                Program.Q.Cast(target.Position);
-            else if (Program.Q.GetPrediction(target).HitChance >= Program.QHitChance)
-                Program.Q.Cast(target.Position);
-            else if (Program.QHitChance == HitChance.Unknown)
-                Program.Q.Cast(target.Position);
+            IEnumerable<Obj_AI_Base> enemies = null;
+
+            if (target.Type == GameObjectType.AIHeroClient)
+                enemies = EntityManager.Heroes.Enemies;
+            else if (target.Type == GameObjectType.obj_AI_Minion || target.Type == GameObjectType.obj_AI_Base)
+                enemies = EntityManager.MinionsAndMonsters.CombinedAttackable;
+
+            Program.Q.Cast(Program.Q.GetBestLinearCastPosition(enemies, 0, _Player.Position.To2D()).CastPosition);
         }
         public static void CastR(bool UltAtLastSecond)
         {
