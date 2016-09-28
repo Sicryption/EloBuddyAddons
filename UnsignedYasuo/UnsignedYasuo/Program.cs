@@ -203,12 +203,10 @@ namespace UnsignedYasuo
         {
             if (_Player.IsDead)
                 return;
-
+            
             Q = YasuoFunctions.GetQType();
             YasuoFunctions.AutoHarrass();
             YasuoFunctions.UseItemsAndIgnite(YasuoFunctions.Mode.PotionManager);
-            if (R.IsReady() && UltMenu["Ult"].Cast<CheckBox>().CurrentValue)
-                YasuoFunctions.UltHandler();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                 YasuoFunctions.Combo();
             if (KSMenu["EnableKS"].Cast<CheckBox>().CurrentValue)
