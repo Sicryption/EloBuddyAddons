@@ -154,5 +154,20 @@ namespace UnsignedYasuo
 
             return _Player.Position.Extend(target, Program.E.Range).To3D();
         }
+        public static float GetYasuoQCooldown()
+        {
+            float baseCooldown = 4,
+                MinimumCooldown = 1.33f,
+                bonusAttackSpeedPercentPerLevel = 2.5f,
+                bonusAttackSpeedPercentFromLevel = bonusAttackSpeedPercentPerLevel * _Player.Level,
+                attackSpeedPercentFromItems = 0f,
+                CooldownPercentReductionPerPercentAS = 0.64f,
+                cooldown = 0;
+            
+            if (cooldown <= 1.34)
+                return 1.33f;
+
+            return cooldown;
+        }
     }
 }
