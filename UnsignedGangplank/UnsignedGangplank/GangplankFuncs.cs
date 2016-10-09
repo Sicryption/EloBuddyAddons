@@ -59,7 +59,7 @@ namespace UnsignedGP
                 && a.IsValidTarget(range)
                 &&
                 (
-                (a.Health <= GPCalcs.Q(a) && AttackSpell.Q == spell) ||
+                (a.Health <= GPCalcs.Q(a) && AttackSpell.Q == spell && !NearbyBarrel(350, a.Position)) ||
                 (a.Health <= GPCalcs.E(a, EwithQ) && AttackSpell.E == spell) ||
                 (a.Health <= (GPCalcs.RDamagePerWave(a) * 8) && AttackSpell.R == spell) ||
                 (a.Health <= GPCalcs.Ignite(a) && AttackSpell.Ignite == spell)
@@ -127,29 +127,40 @@ namespace UnsignedGP
             if (ECHECK && EREADY)
             {
                 //find spot that can hit all 6 minions and use barrel
-                List<Obj_AI_Base> enemies = ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy && a.Distance(GP) <= Program.E.Range + 350 && a.Type == GameObjectType.obj_AI_Minion).ToList();
+                List<Obj_AI_Base> enemies = ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy && !a.IsDead && a.Name != "Barrel" && a.Distance(GP) <= Program.E.Range && a.Type == GameObjectType.obj_AI_Minion).ToList();
 
-                if (enemies.Count > 0)
+                if (enemies != null && enemies.FirstOrDefault() != null && enemies.Count > 0)
                 {
-                    Spell.Skillshot.BestPosition pos = Program.E.GetBestCircularCastPosition(enemies);
-
-                    if (pos.CastPosition != null)
+                    try
                     {
-                        List<Obj_AI_Base> obs = EntityManager.Enemies.Where(a => a.Distance(pos.CastPosition) <= 350).ToList();
+                        Spell.Skillshot.BestPosition pos = Program.E.GetBestCircularCastPosition(enemies);
 
-                        if (obs != null)
+                        if (pos.CastPosition != null)
                         {
-                            if (obs.Count >= 4)
-                                PlaceBarrel(pos.CastPosition);
+                            List<Obj_AI_Base> obs = EntityManager.Enemies.Where(a => a.Distance(pos.CastPosition) <= 350).ToList();
+
+                            if (obs != null)
+                            {
+                                if (obs.Count >= 4)
+                                    PlaceBarrel(pos.CastPosition);
+                            }
                         }
                     }
+                    catch
+                    {
+                        Chat.Print("FAILING WITH PLACING BARREL");
+                    }
+                   
                 }
             }
         }
 
-        public static bool NearbyBarrel(int range = 1000)
+        public static bool NearbyBarrel(int range = 1000, Vector3 position = new Vector3())
         {
-            List<Obj_AI_Base> barrels = ObjectManager.Get<Obj_AI_Base>().Where(a => a.Name == "Barrel" && a.Distance(GP) <= range).ToList();
+            if (position == new Vector3())
+                position = GP.Position;
+
+            List<Obj_AI_Base> barrels = ObjectManager.Get<Obj_AI_Base>().Where(a => a.Name == "Barrel" && !a.IsDead && a.Distance(position) <= range).ToList();
 
             if (barrels.FirstOrDefault() != null)
                 return true;
@@ -263,7 +274,7 @@ namespace UnsignedGP
             if (ECHECK && EREADY)
             {
                 //find spot that can hit all 6 minions and use barrel
-                List<Obj_AI_Base> enemies = EntityManager.Enemies.Where(a => a.IsEnemy && a.Distance(GP) <= Program.E.Range + 350 && a.Type == GameObjectType.obj_AI_Minion).ToList();
+                List<Obj_AI_Base> enemies = EntityManager.Enemies.Where(a => a.IsEnemy && !a.IsDead && !a.IsMoving && a.Distance(GP) <= Program.E.Range + 350 && a.Type == GameObjectType.obj_AI_Minion).ToList();
 
                 if (enemies.Count > 0)
                 {
@@ -312,7 +323,7 @@ namespace UnsignedGP
 
             TryToComboBarrels();
 
-            if (QCHECK && QREADY)
+            if (QCHECK && QREADY && !NearbyBarrel((int)Program.Q.Range))
             {
                 AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.Q.Range, GameObjectType.AIHeroClient);
 
@@ -499,10 +510,11 @@ namespace UnsignedGP
             #endregion
             #region W At %HP and %Mana
             if (Program.W.IsReady()
+                && !GP.IsRecalling()
                 && Program.SettingsMenu.Get<Slider>("SAWH").CurrentValue != 100
                 && Program.SettingsMenu.Get<Slider>("SAWH").CurrentValue >= GP.HealthPercent
                 && Program.SettingsMenu.Get<Slider>("SAWM").CurrentValue != 100
-                && Program.SettingsMenu.Get<Slider>("SAWM").CurrentValue >= GP.ManaPercent)
+                && Program.SettingsMenu.Get<Slider>("SAWM").CurrentValue <= GP.ManaPercent)
                 Program.W.Cast();
             #endregion
         }

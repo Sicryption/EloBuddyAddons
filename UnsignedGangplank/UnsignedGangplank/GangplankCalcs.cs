@@ -101,8 +101,8 @@ namespace UnsignedGP
                 Program.Q.Cast(barrel);
             else if (Program.GetBarrelAtPosition(barrel.Position).TimeAt1HP - Game.Time <= CalculateQTimeToTarget(barrel) && Program.GetBarrelAtPosition(barrel.Position).decayRate != 0)
             {
-                Chat.Print("Q Time was: " + CalculateQTimeToTarget(barrel));
-                Chat.Print("Time til bomb explosion was: " + (Program.GetBarrelAtPosition(barrel.Position).TimeAt1HP - Game.Time));
+                //Chat.Print("Q Time was: " + CalculateQTimeToTarget(barrel));
+                //Chat.Print("Time til bomb explosion was: " + (Program.GetBarrelAtPosition(barrel.Position).TimeAt1HP - Game.Time));
                 Program.Q.Cast(barrel);
             }
         }
