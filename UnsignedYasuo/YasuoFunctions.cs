@@ -440,13 +440,14 @@ namespace UnsignedYasuo
         //complete
         public static void Flee()
         {
-            if (Program.E.IsReady() && !IsDashing)
+            if (Program.FleeMode.Get<CheckBox>("UseE").CurrentValue && Program.E.IsReady() && !IsDashing)
             {
                 Obj_AI_Base fleeObject = ObjectManager.Get<Obj_AI_Base>().Where(a =>
                     !a.IsDead &&
                     a.IsEnemy &&
                     YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos) <= _Player.Distance(Game.CursorPos) &&
                     !a.HasBuff("YasuoDashWrapper") &&
+                    (!YasuoCalcs.IsUnderTurret(YasuoCalcs.GetDashingEnd(a)) || Program.FleeMode.Get<CheckBox>("FleeEUT").CurrentValue) &&
                     a.IsInRange(_Player, Program.E.Range)).OrderBy(a => a.Distance(Game.CursorPos)).FirstOrDefault();
 
                 if (fleeObject != null)
@@ -458,6 +459,9 @@ namespace UnsignedYasuo
                     if (Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) >= 20 ||
                         Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) >= 20)
                         Program.E.Cast(fleeObject);
+
+                    if (Program.Q.IsReady() && Program.FleeMode.Get<CheckBox>("FleeQ").CurrentValue && Program.Q.Range != 1000)
+                        Program.Q.Cast(fleeObject.Position);
                 }
             }
         }
@@ -615,11 +619,12 @@ namespace UnsignedYasuo
             bool QCHECK = Program.Harass["AHQ"].Cast<CheckBox>().CurrentValue;
             bool Q3CHECK = Program.Harass["AH3Q"].Cast<CheckBox>().CurrentValue;
             var QRange = Program.Q.Range;
-            if ((QRange == 1000 && Q3CHECK) || (QRange == 475 && QCHECK) && !IsDashing)
+            if ((QRange == 1000 && Q3CHECK) || (QRange == 475 && QCHECK) && !IsDashing && Program.E.IsReady())
             {
                 var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
 
-                CastQ(enemy);
+                if(enemy != null)
+                    CastQ(enemy);
             }
         }
 

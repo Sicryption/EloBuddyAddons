@@ -11,7 +11,7 @@ namespace UnsignedYasuo
 {
     internal class Program
     {
-        public static Menu ComboMenu, DrawingsMenu, KSMenu, UltMenu, LaneClear, LastHit, Harass, Items, menu;
+        public static Menu ComboMenu, DrawingsMenu, KSMenu, UltMenu, FleeMode, LaneClear, LastHit, Harass, Items, menu;
         public static Spell.Skillshot Q;
         public static Spell.SpellBase W;
         public static Spell.Targeted E;
@@ -76,16 +76,6 @@ namespace UnsignedYasuo
             UltMenu.Add("UltLH", new CheckBox("Ult if less than 10% Health", false));
             UltMenu.Add("UltREnemies", new Slider("Enemies Knocked-Up", 3, 0, 5));
             
-            LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
-            LaneClear.AddGroupLabel("Lane Clear Settings");
-            LaneClear.Add("LCQ", new CheckBox("Use Q"));
-            LaneClear.Add("LC3Q", new CheckBox("Use 3Q"));
-            LaneClear.Add("LCE", new CheckBox("Use E"));
-            LaneClear.Add("LCEQ", new CheckBox("Use EQ"));
-            LaneClear.Add("LCELH", new CheckBox("Only E for Last Hit"));
-            LaneClear.Add("LCEUT", new CheckBox("E Under Turret", false));
-            LaneClear.Add("LCI", new CheckBox("Use Items (Hydra/Tiamat)"));
-
             Harass = menu.AddSubMenu("Harass", "harass");
             Harass.AddGroupLabel("Harass Settings");
             Harass.Add("HQ", new CheckBox("Use Q"));
@@ -97,6 +87,16 @@ namespace UnsignedYasuo
             Harass.Add("AHQ", new CheckBox("Auto-Harass with Q"));
             Harass.Add("AH3Q", new CheckBox("Auto-Harass with 3rd Q", false));
 
+            LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
+            LaneClear.AddGroupLabel("Lane Clear Settings");
+            LaneClear.Add("LCQ", new CheckBox("Use Q"));
+            LaneClear.Add("LC3Q", new CheckBox("Use 3Q"));
+            LaneClear.Add("LCE", new CheckBox("Use E"));
+            LaneClear.Add("LCEQ", new CheckBox("Use EQ"));
+            LaneClear.Add("LCELH", new CheckBox("Only E for Last Hit"));
+            LaneClear.Add("LCEUT", new CheckBox("E Under Turret", false));
+            LaneClear.Add("LCI", new CheckBox("Use Items (Hydra/Tiamat)"));
+            
             LastHit = menu.AddSubMenu("Last Hit", "lasthitmenu");
             LastHit.AddGroupLabel("Last Hit Settings");
             LastHit.Add("LHQ", new CheckBox("Use Q"));
@@ -114,15 +114,6 @@ namespace UnsignedYasuo
             KSMenu.Add("KSEQ", new CheckBox("KS with EQ"));
             KSMenu.Add("KSI", new CheckBox("KS with Ignite"));
             KSMenu.Add("KSEUT", new CheckBox("E Under Turret", false));
-
-            DrawingsMenu = menu.AddSubMenu("Drawings", "drawingsmenu");
-            DrawingsMenu.AddGroupLabel("Drawings Settings");
-            DrawingsMenu.Add("DQ", new CheckBox("Draw Q"));
-            DrawingsMenu.Add("DW", new CheckBox("Draw W"));
-            DrawingsMenu.Add("DE", new CheckBox("Draw E"));
-            DrawingsMenu.Add("DR", new CheckBox("Draw R"));
-            DrawingsMenu.Add("DKB", new CheckBox("Draw Keyblade"));
-            DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
 
             Items = menu.AddSubMenu("Items", "itemsmenu");
             Items.AddGroupLabel("Item Settings");
@@ -147,6 +138,22 @@ namespace UnsignedYasuo
             Items.Add("QSSTaunt", new CheckBox("Taunt"));
             Items.AddGroupLabel("Potion Settings");
             Items.Add("PotSlider", new Slider("Use Potion at Health Percent", 65, 1, 100));
+
+            FleeMode = menu.AddSubMenu("Flee", "fleemenu");
+            FleeMode.AddGroupLabel("Flee Settings");
+            FleeMode.Add("FleeE", new CheckBox("Use E"));
+            FleeMode.Add("FleeEUT", new CheckBox("Use E under tower"));
+            FleeMode.Add("FleeQ", new CheckBox("Use Q until 3 stacks"));
+            //FleeMode.Add("FleeCamps", new CheckBox("Dash to Jungle Camps"));
+
+            DrawingsMenu = menu.AddSubMenu("Drawings", "drawingsmenu");
+            DrawingsMenu.AddGroupLabel("Drawings Settings");
+            DrawingsMenu.Add("DQ", new CheckBox("Draw Q"));
+            DrawingsMenu.Add("DW", new CheckBox("Draw W"));
+            DrawingsMenu.Add("DE", new CheckBox("Draw E"));
+            DrawingsMenu.Add("DR", new CheckBox("Draw R"));
+            DrawingsMenu.Add("DKB", new CheckBox("Draw Airblade"));
+            DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
 
             Spellbook spell = _Player.Spellbook;
             SpellDataInst Sum1 = spell.GetSpell(SpellSlot.Summoner1);
