@@ -150,7 +150,6 @@ namespace UnsignedGP
                     {
                         Chat.Print("FAILING WITH PLACING BARREL");
                     }
-                   
                 }
             }
         }
