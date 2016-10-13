@@ -27,11 +27,11 @@ namespace PickACard
 
             menu = MainMenu.AddMenu("Shroom Tracker", "ShroomTracker");
             //U key
-            menu.Add("Gold Card", new KeyBind("Gold Card", false, KeyBind.BindTypes.HoldActive, 'u'));
+            menu.Add("Gold Card", new KeyBind("Gold Card (Key: u)", false, KeyBind.BindTypes.HoldActive, 'u'));
             //I key
-            menu.Add("Blue Card", new KeyBind("Blue Card", false, KeyBind.BindTypes.HoldActive, 'i'));
+            menu.Add("Blue Card", new KeyBind("Blue Card (Key: i)", false, KeyBind.BindTypes.HoldActive, 'i'));
             //O key
-            menu.Add("Red Card", new KeyBind("Red Card", false, KeyBind.BindTypes.HoldActive, 'o'));
+            menu.Add("Red Card", new KeyBind("Red Card (Key: o)", false, KeyBind.BindTypes.HoldActive, 'o'));
             menu.Add("Draw", new CheckBox("Draw Shrooms", true));
 
             Game.OnTick += Game_OnTick;
