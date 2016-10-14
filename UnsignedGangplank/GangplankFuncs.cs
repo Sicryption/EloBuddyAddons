@@ -428,6 +428,12 @@ namespace UnsignedGP
         //add tiamat and QSS
         public static void UseItems(bool isInComboMode = false)
         {
+            bool useTiamat = Program.Items.Get<CheckBox>("ItemsT").CurrentValue;
+            bool useRavenous = Program.Items.Get<CheckBox>("ItemsRH").CurrentValue;
+            bool useTitanic = Program.Items.Get<CheckBox>("ItemsTH").CurrentValue;
+            bool useCutlass = Program.Items.Get<CheckBox>("ItemsBC").CurrentValue;
+            bool useYoumuus = Program.Items.Get<CheckBox>("ItemsY").CurrentValue;
+            bool useBORK = Program.Items.Get<CheckBox>("ItemsBORK").CurrentValue;
             InventorySlot[] items = GP.InventoryItems;
 
             foreach (InventorySlot item in items)
@@ -443,6 +449,32 @@ namespace UnsignedGP
                         item.Cast();
                     }
                 }
+
+                if (((item.Id == ItemId.Blade_of_the_Ruined_King && useBORK)
+                        || (item.Id == ItemId.Bilgewater_Cutlass && useCutlass)) &&
+                        isInComboMode)
+                {
+                    var enemy = GetEnemy(550, GameObjectType.AIHeroClient);
+
+                    if (enemy != null)
+                        item.Cast(enemy);
+                }
+
+                if ((item.Id == ItemId.Tiamat_Melee_Only && useTiamat)
+                    || (item.Id == ItemId.Ravenous_Hydra_Melee_Only && useRavenous)
+                    || (item.Id == ItemId.Titanic_Hydra && useTitanic)
+                    && isInComboMode)
+                {
+                    var enemy = GetEnemy(400, GameObjectType.AIHeroClient);
+
+                    if (enemy != null)
+                        item.Cast();
+                }
+
+                if ((item.Id == ItemId.Youmuus_Ghostblade && useYoumuus)
+                    && isInComboMode
+                    && GP.CountEnemiesInRange(GP.GetAutoAttackRange()) >= 1)
+                    item.Cast();    
             }
         }
 

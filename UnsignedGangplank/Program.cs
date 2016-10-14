@@ -78,12 +78,12 @@ namespace UnsignedGP
 
             Items = menu.AddSubMenu("Items", "itemsmenu");
             Items.AddGroupLabel("Item Settings");
-            Items.Add("ItemsT", new CheckBox("Use Tiamat"));
-            Items.Add("ItemsRH", new CheckBox("Use Ravenous Hydra"));
-            Items.Add("ItemsTH", new CheckBox("Use Titanic Hydra"));
-            Items.Add("ItemsBC", new CheckBox("Use Bilgewater Cutlass"));
-            Items.Add("ItemsBORK", new CheckBox("Use Blade of the Ruined King"));
-            Items.Add("ItemsY", new CheckBox("Use Youmuus"));
+            Items.Add("ItemsT", new CheckBox("Use Tiamat"));//complete
+            Items.Add("ItemsRH", new CheckBox("Use Ravenous Hydra"));//complete
+            Items.Add("ItemsTH", new CheckBox("Use Titanic Hydra"));//complete
+            Items.Add("ItemsBC", new CheckBox("Use Bilgewater Cutlass"));//complete
+            Items.Add("ItemsBORK", new CheckBox("Use Blade of the Ruined King"));//complete
+            Items.Add("ItemsY", new CheckBox("Use Youmuus"));//complete
             Items.Add("ItemsQSS", new CheckBox("Use Quick Silversash"));//complete
             Items.Add("ItemsMS", new CheckBox("Use Mercurial Scimitar"));//complete
             Items.Add("ItemsPotions", new CheckBox("Use Potions"));
@@ -159,7 +159,6 @@ namespace UnsignedGP
                     barrel.timeSinceLastDecay = Game.Time;
                 }
             }
-
         }
 
         private static void Drawing_OnDraw(EventArgs args)
