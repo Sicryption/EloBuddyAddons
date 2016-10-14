@@ -93,7 +93,7 @@ namespace UnsignedGP
                 {
                     if (barrel.Health == 1)
                     {
-                        int tempCount = EntityManager.Enemies.Where(a => a.Distance(barrel) <= 350 && a.Health <= GPCalcs.E(a, true)).Count();
+                        int tempCount = EntityManager.Enemies.Where(a => a.Distance(barrel) <= 350 && !a.IsDead && a.Health <= GPCalcs.E(a, true)).Count();
                         target = (tempCount > enemyCount) ? barrel : target;
                         enemyCount = (tempCount > enemyCount) ? tempCount : enemyCount;
                     }
@@ -113,7 +113,7 @@ namespace UnsignedGP
                 {
                     if (barrel.Health == 1)
                     {
-                        int tempCount = EntityManager.Enemies.Where(a => a.Distance(barrel) <= 350 && a.Health <= GPCalcs.E(a, false)).Count();
+                        int tempCount = EntityManager.Enemies.Where(a => a.Distance(barrel) <= 350 && !a.IsDead && a.Health <= GPCalcs.E(a, false)).Count();
                         target = (tempCount > enemyCount) ? barrel : target;
                         enemyCount = (tempCount > enemyCount) ? tempCount : enemyCount;
                     }
@@ -137,7 +137,7 @@ namespace UnsignedGP
 
                         if (pos.CastPosition != null)
                         {
-                            List<Obj_AI_Base> obs = EntityManager.Enemies.Where(a => a.Distance(pos.CastPosition) <= 350).ToList();
+                            List<Obj_AI_Base> obs = EntityManager.Enemies.Where(a => a.Distance(pos.CastPosition) <= 350 && !a.IsDead).ToList();
 
                             if (obs != null)
                             {
@@ -148,7 +148,7 @@ namespace UnsignedGP
                     }
                     catch
                     {
-                        Chat.Print("FAILING WITH PLACING BARREL");
+                        //Chat.Print("FAILING WITH PLACING BARREL");
                     }
                 }
             }
@@ -358,7 +358,7 @@ namespace UnsignedGP
             }
             //then check if enemy is within 1 barrel of an existing barrel,
             //need to check if barrel has 2 hp and auto then q it.
-            if (Program.E.AmmoQuantity >= 1 && Program.E.IsReady() && cont)
+            if (Program.E.AmmoQuantity >= 1 && Program.E.IsReady() && GP.CanCast && cont)
             {
                 foreach (Obj_AI_Base barrel in NearbyBarrels)
                 {
