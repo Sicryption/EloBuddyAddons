@@ -20,11 +20,9 @@ namespace UnsignedAnnie
             Q,
             W,
             R,
-            RPet,
             Ignite
         };
-
-        //get enemy non last hit)
+        
         public static Obj_AI_Base GetEnemy(float range, GameObjectType type)
         {
             return ObjectManager.Get<Obj_AI_Base>().OrderBy(a => a.Health).Where(a => a.IsEnemy
@@ -41,7 +39,7 @@ namespace UnsignedAnnie
             if (spell == AttackSpell.W)
                 range = Program.W.Range;
             else if (spell == AttackSpell.R)
-                range = Program.R.Range;
+                range = Program.R.Range + (Program.R.Width /2);
             else if (spell == AttackSpell.Q)
                 range = Program.Q.Range;
             else if (spell == AttackSpell.Ignite)
@@ -66,8 +64,8 @@ namespace UnsignedAnnie
 
         public static void LastHit()
         {
-            bool QCHECK = Program.LastHit["LHQ"].Cast<CheckBox>().CurrentValue;
-            bool WCHECK = Program.LastHit["LHW"].Cast<CheckBox>().CurrentValue;
+            bool QCHECK = Program.LastHit["Q"].Cast<CheckBox>().CurrentValue;
+            bool WCHECK = Program.LastHit["W"].Cast<CheckBox>().CurrentValue;
             bool QREADY = Program.Q.IsReady();
             bool WREADY = Program.W.IsReady();
 
@@ -90,10 +88,10 @@ namespace UnsignedAnnie
 
         public static void KillSteal()
         {
-            bool QCHECK = Program.Killsteal["KSQ"].Cast<CheckBox>().CurrentValue;
-            bool WCHECK = Program.Killsteal["KSW"].Cast<CheckBox>().CurrentValue;
-            bool RCHECK = Program.Killsteal["KSR"].Cast<CheckBox>().CurrentValue;
-            bool ICHECK = Program.Killsteal["KSI"].Cast<CheckBox>().CurrentValue;
+            bool QCHECK = Program.Killsteal["Q"].Cast<CheckBox>().CurrentValue;
+            bool WCHECK = Program.Killsteal["W"].Cast<CheckBox>().CurrentValue;
+            bool RCHECK = Program.Killsteal["R"].Cast<CheckBox>().CurrentValue;
+            bool ICHECK = Program.Killsteal["Ignite"].Cast<CheckBox>().CurrentValue;
             bool QREADY = Program.Q.IsReady();
             bool WREADY = Program.W.IsReady();
             bool RREADY = Program.R.IsReady();
@@ -101,7 +99,7 @@ namespace UnsignedAnnie
             if (Program.Ignite != null && Program.Ignite.IsReady())
                 IREADY = true;
 
-            if (ObjectManager.Get<AIHeroClient>().Where(a => a.IsEnemy && a.Distance(Annie) <= Program.R.Range).OrderBy(a => a.Health).FirstOrDefault() != null)
+            if (ObjectManager.Get<AIHeroClient>().Where(a => a.IsEnemy && a.Distance(Annie) <= Program.R.Range + (Program.R.Width /2)).OrderBy(a => a.Health).FirstOrDefault() != null)
             {
                 if (QCHECK && QREADY)
                 {
@@ -137,32 +135,40 @@ namespace UnsignedAnnie
 
         public static void LaneClear()
         {
-            bool QCHECK = Program.LaneClear["LCQ"].Cast<CheckBox>().CurrentValue;
-            bool WCHECK = Program.LaneClear["LCW"].Cast<CheckBox>().CurrentValue;
+            bool QCHECK = Program.LaneClear["Q"].Cast<CheckBox>().CurrentValue;
+            bool QForLastHit = Program.LaneClear["QForLastHit"].Cast<CheckBox>().CurrentValue;
+            bool WCHECK = Program.LaneClear["W"].Cast<CheckBox>().CurrentValue;
             bool QREADY = Program.Q.IsReady();
             bool WREADY = Program.W.IsReady();
 
             if (QCHECK && QREADY)
             {
-                Obj_AI_Minion enemy = (Obj_AI_Minion)GetEnemy(Program.Q.Range, GameObjectType.obj_AI_Minion);
-
+                Obj_AI_Minion enemy;
+                if (QForLastHit)
+                    enemy = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
+                else
+                    enemy = (Obj_AI_Minion)GetEnemy(Program.Q.Range, GameObjectType.obj_AI_Minion);
                 if (enemy != null)
                     Program.Q.Cast(enemy);
             }
-
+                
             if (WCHECK && WREADY)
             {
-                Vector3 pos = GetBestWLocation(GameObjectType.obj_AI_Minion);
-
-                if (pos != Vector3.Zero)
-                    Program.W.Cast(pos);
+                Vector3 pos;
+                Chat.Print("ELLO2");
+                if (GetBestWLocationUnits(GameObjectType.obj_AI_Minion, out pos) >= 3)
+                {
+                    Chat.Print("ELLO");
+                    if (pos != Vector3.Zero)
+                        Program.W.Cast(pos);
+                }
             }
         }
        
         public static void Harrass()
         {
-            bool QCHECK = Program.Harass["HQ"].Cast<CheckBox>().CurrentValue;
-            bool WCHECK = Program.Harass["HW"].Cast<CheckBox>().CurrentValue;
+            bool QCHECK = Program.Harass["Q"].Cast<CheckBox>().CurrentValue;
+            bool WCHECK = Program.Harass["W"].Cast<CheckBox>().CurrentValue;
             bool QREADY = Program.Q.IsReady();
             bool WREADY = Program.W.IsReady();
 
@@ -176,7 +182,8 @@ namespace UnsignedAnnie
 
             if (WCHECK && WREADY)
             {
-                Vector3 pos = GetBestWLocation(GameObjectType.AIHeroClient);
+                Vector3 pos;
+                GetBestWLocationUnits(GameObjectType.AIHeroClient, out pos);
 
                 if (pos != Vector3.Zero)
                     Program.W.Cast(pos);
@@ -185,12 +192,12 @@ namespace UnsignedAnnie
 
         public static void Combo()
         {
-            bool QCHECK = Program.ComboMenu["QU"].Cast<CheckBox>().CurrentValue;
-            bool WCHECK = Program.ComboMenu["WU"].Cast<CheckBox>().CurrentValue;
-            bool ECHECK = Program.ComboMenu["EU"].Cast<CheckBox>().CurrentValue;
-            bool RCHECK = Program.ComboMenu["RU"].Cast<CheckBox>().CurrentValue;
-            bool ItemsCHECK = Program.ComboMenu["IU"].Cast<CheckBox>().CurrentValue;
-            bool IgniteCHECK = Program.ComboMenu["IgU"].Cast<CheckBox>().CurrentValue;
+            bool QCHECK = Program.ComboMenu["Q"].Cast<CheckBox>().CurrentValue;
+            bool WCHECK = Program.ComboMenu["W"].Cast<CheckBox>().CurrentValue;
+            bool ECHECK = Program.ComboMenu["E"].Cast<CheckBox>().CurrentValue;
+            bool RCHECK = Program.ComboMenu["R"].Cast<CheckBox>().CurrentValue;
+            bool ItemsCHECK = Program.ComboMenu["Items"].Cast<CheckBox>().CurrentValue;
+            bool IgniteCHECK = Program.ComboMenu["Ignite"].Cast<CheckBox>().CurrentValue;
             bool QREADY = Program.Q.IsReady();
             bool WREADY = Program.W.IsReady();
             bool EREADY = Program.E.IsReady();
@@ -222,7 +229,8 @@ namespace UnsignedAnnie
 
             if (WCHECK && WREADY)
             {
-                Vector3 pos = GetBestWLocation(GameObjectType.AIHeroClient);
+                Vector3 pos;
+                GetBestWLocationUnits(GameObjectType.AIHeroClient, out pos);
 
                 if (pos != Vector3.Zero)
                     Program.W.Cast(pos);
@@ -257,9 +265,9 @@ namespace UnsignedAnnie
             if(Annie.IsInShopRange()
                 && !Annie.HasBuff("pyromania_particle"))
             {
-                if (Program.W.IsReady())
+                if (Program.W.IsLearned && Program.W.IsReady())
                     Program.W.Cast(Annie.Position);
-                if (Program.E.IsReady())
+                if (Program.E.IsLearned && Program.E.IsReady())
                     Program.E.Cast();
             }
         }
@@ -283,24 +291,6 @@ namespace UnsignedAnnie
                         && Annie.CountEnemiesInRange(2000) <= 1
                         && !Annie.IsInShopRange()
                         && !Annie.HasBuff("RegenerationPotion"))
-                    {
-                        item.Cast();
-                    }
-                    if (item.Id == ItemId.Mana_Potion
-                        && Annie.Mana <= (Annie.MaxMana * 0.45)
-                        && !Annie.IsRecalling()
-                        && Annie.CountEnemiesInRange(2000) <= 1
-                        && !Annie.IsInShopRange()
-                        && !Annie.HasBuff("FlaskOfCrystalWater"))
-                    {
-                        item.Cast();
-                    }
-                    if (item.Id == ItemId.Crystalline_Flask
-                        && (Annie.Health <= (Annie.MaxHealth * 0.45) || Annie.Mana <= (Annie.MaxMana * 0.45))
-                        && !Annie.IsRecalling()
-                        && Annie.CountEnemiesInRange(2000) <= 1
-                        && !Annie.IsInShopRange()
-                        && !Annie.HasBuff("ItemCrystalFlask"))
                     {
                         item.Cast();
                     }
@@ -348,25 +338,38 @@ namespace UnsignedAnnie
             }
         }
 
+        public static void CastR(Vector3 position)
+        {
+            //enemy is not in annie r range
+            if (Annie.Distance(position) > Program.R.Range + (Program.R.Width / 2) || !Program.R.IsReady())
+                return;
+            //enemy is in the range
+            else if (Annie.Distance(position) <= Program.R.Range)
+                Program.R.Cast(position);
+            //enemy can be hit by tibbers AOE spawn size
+            else
+                Program.R.Cast(Annie.Position.Extend(position, Program.R.Range).To3D());
+        }
+
         public static void AutoUlt()
         {
             Vector3 ultPos = Vector3.Zero;
-            if(GetBestRLocationUnits(GameObjectType.AIHeroClient, out ultPos) >= 3 && Program.R.IsReady() && Program.R.Name == "InfernalGuardian")
+            if(Program.R.IsLearned && Program.R.IsReady() && Program.R.Name == "InfernalGuardian" && GetBestRLocationUnits(GameObjectType.AIHeroClient, out ultPos) >= 3)
             {
                 if (ultPos != Vector3.Zero)
                 {
                     if (Annie.HasBuff("pyromania_particle"))
-                    {
-                        Program.R.Cast(ultPos);
-                    }
-                    else if(Program.PassiveStacks == 3 && Program.E.IsReady())
-                    {
+                        CastR(ultPos);
+                    else if (Program.PassiveStacks == 3 && Program.E.IsReady())
                         Program.E.Cast();
-                    }
-                    else if(Program.PassiveStacks == 3 && Program.W.IsReady())
+                    else if (Program.PassiveStacks == 3 && Program.W.IsReady())
                     {
-                        Vector3 position = GetBestWLocation(GameObjectType.AIHeroClient);
-                        Program.W.Cast(position);
+                        Vector3 position;
+                        GetBestWLocationUnits(GameObjectType.obj_AI_Base, out position);
+                        if (position != Vector3.Zero)
+                            Program.W.Cast(position);
+                        else
+                            Program.W.Cast(Annie.Position);
                     }
                     else if (Program.PassiveStacks == 3 && Program.Q.IsReady())
                     {
@@ -378,78 +381,94 @@ namespace UnsignedAnnie
             }
         }
 
-        public static Vector3 GetBestWLocation(GameObjectType type)
+        //credits to whoever made it
+        public static int GetBestWLocationUnits(GameObjectType type, out Vector3 pos)
         {
-            int mostUnits = 0;
-            Vector3 bestPos = Vector3.Zero;
-            PredictionResult[] prediction = Prediction.Position.PredictConeSpellAoe(
-                ObjectManager.Get<Obj_AI_Base>()
-                    .Where(a => !a.IsDead
-                    && !a.IsInvulnerable)
-                    .ToArray(), Program.W.Range, 50, 1, 0, Annie.Position);
-            foreach (PredictionResult pr in prediction)
+            var sectorList = new List<Geometry.Polygon.Sector>();
+            pos = Vector3.Zero;
+
+            List<Obj_AI_Minion> minionList = EntityManager.MinionsAndMonsters.EnemyMinions.Where(it => !it.IsDead && it.IsValidTarget(Program.W.Range)).OrderByDescending(it => it.Distance(Annie)).ToList();
+            List<AIHeroClient> championList = EntityManager.Heroes.Enemies.Where(it => !it.IsDead && it.IsValidTarget(Program.W.Range)).OrderByDescending(it => it.Distance(Annie)).ToList();
+
+            Obj_AI_Base enemy = (type == GameObjectType.AIHeroClient) ?
+                (Obj_AI_Base)championList.FirstOrDefault() : (Obj_AI_Base)minionList.FirstOrDefault();
+
+            if (enemy == null)
+                return 0;
+
+            var Vectors = new List<Vector3>()
             {
-                int tempUnits = 0;
-                foreach (Obj_AI_Base enemy in pr.CollisionObjects)
-                    if (!enemy.IsDead && !enemy.IsInvulnerable && enemy.IsEnemy && enemy.Type == type)
-                        tempUnits++;
-                if (tempUnits > mostUnits)
+                new Vector3(enemy.ServerPosition.X + 550, enemy.ServerPosition.Y, enemy.ServerPosition.Z),
+                new Vector3(enemy.ServerPosition.X - 550, enemy.ServerPosition.Y, enemy.ServerPosition.Z),
+                new Vector3(enemy.ServerPosition.X, enemy.ServerPosition.Y + 550, enemy.ServerPosition.Z),
+                new Vector3(enemy.ServerPosition.X, enemy.ServerPosition.Y - 550, enemy.ServerPosition.Z),
+                new Vector3(enemy.ServerPosition.X + 230, enemy.ServerPosition.Y, enemy.ServerPosition.Z),
+                new Vector3(enemy.ServerPosition.X - 230, enemy.ServerPosition.Y, enemy.ServerPosition.Z),
+                new Vector3(enemy.ServerPosition.X, enemy.ServerPosition.Y + 230, enemy.ServerPosition.Z),
+                new Vector3(enemy.ServerPosition.X, enemy.ServerPosition.Y - 230, enemy.ServerPosition.Z),
+                enemy.ServerPosition
+            };
+
+            float ANGLE = (float)(5 * Math.PI / 18);
+
+            var sector1 = new Geometry.Polygon.Sector(Annie.Position, Vectors[0], ANGLE, 585);
+            var sector2 = new Geometry.Polygon.Sector(Annie.Position, Vectors[1], ANGLE, 585);
+            var sector3 = new Geometry.Polygon.Sector(Annie.Position, Vectors[2], ANGLE, 585);
+            var sector4 = new Geometry.Polygon.Sector(Annie.Position, Vectors[3], ANGLE, 585);
+            var sector5 = new Geometry.Polygon.Sector(Annie.Position, Vectors[4], ANGLE, 585);
+            var sector6 = new Geometry.Polygon.Sector(Annie.Position, Vectors[5], ANGLE, 585);
+            var sector7 = new Geometry.Polygon.Sector(Annie.Position, Vectors[6], ANGLE, 585);
+            var sector8 = new Geometry.Polygon.Sector(Annie.Position, Vectors[7], ANGLE, 585);
+            var sector9 = new Geometry.Polygon.Sector(Annie.Position, Vectors[8], ANGLE, 585);
+
+            sectorList.Add(sector1);
+            sectorList.Add(sector2);
+            sectorList.Add(sector3);
+            sectorList.Add(sector4);
+            sectorList.Add(sector5);
+            sectorList.Add(sector6);
+            sectorList.Add(sector7);
+            sectorList.Add(sector8);
+            sectorList.Add(sector9);
+
+            var CSHits = new List<int>() { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+            for (int count = 0; count < 9; count++)
+                if (type == GameObjectType.AIHeroClient)
                 {
-                    mostUnits = tempUnits;
-                    bestPos = pr.CastPosition;
+                    foreach (Obj_AI_Base champion in championList)
+                        if (sectorList.ElementAt(count).IsInside(champion))
+                            CSHits[count]++;
                 }
-            }
-            return bestPos;
+                else
+                {
+                    foreach (Obj_AI_Base minion in minionList)
+                        if (sectorList.ElementAt(count).IsInside(minion))
+                            CSHits[count]++;
+                }
+
+            int i = CSHits.Select((value, index) => new { Value = value, Index = index }).Aggregate((a, b) => (a.Value > b.Value) ? a : b).Index;
+
+            pos = Vectors[i];
+            return CSHits[i];
         }
-        
+
         public static Vector3 GetBestRLocation(GameObjectType type)
         {
-            int mostUnits = 0;
-            Vector3 bestPos = Vector3.Zero;
-            PredictionResult[] prediction = Prediction.Position.PredictCircularMissileAoe(
-                ObjectManager.Get<Obj_AI_Base>()
-                    .Where(a => !a.IsDead
-                    && a.Type == type)
-                    .ToArray(), Program.R.Range, 290, 1, 0, Annie.Position);
-
-            foreach (PredictionResult pr in prediction)
-            {
-                int tempUnits = 0;
-                foreach (Obj_AI_Base enemy in pr.CollisionObjects)
-                    if (!enemy.IsDead && !enemy.IsInvulnerable && enemy.IsEnemy && enemy.Type == type)
-                        tempUnits++;
-                if (tempUnits > mostUnits)
-                {
-                    mostUnits = tempUnits;
-                    bestPos = pr.CastPosition;
-                }
-            }
-            return bestPos;
+            Spell.Skillshot.BestPosition pos = Program.R.GetBestCircularCastPosition(EntityManager.Enemies.Where(a => a.Type == type && a.Distance(Annie) <= Program.R.Range + (Program.R.Width / 2)));
+            if (pos.HitNumber >= 1)
+                return pos.CastPosition;
+            else
+                return Vector3.Zero;
         }
         public static int GetBestRLocationUnits(GameObjectType type, out Vector3 pos)
         {
-            int mostUnits = 0;
-            Vector3 bestPos = Vector3.Zero;
-            PredictionResult[] prediction = Prediction.Position.PredictConeSpellAoe(
-                ObjectManager.Get<Obj_AI_Base>()
-                    .Where(a => !a.IsDead
-                    && !a.IsInvulnerable)
-                    .ToArray(), Program.R.Range, 290, 1, 0, Annie.Position);
-
-            foreach (PredictionResult pr in prediction)
-            {
-                int tempUnits = 0;
-                foreach (Obj_AI_Base enemy in pr.CollisionObjects)
-                    if (!enemy.IsDead && !enemy.IsInvulnerable && enemy.IsEnemy && enemy.Type == type)
-                        tempUnits++;
-                if (tempUnits > mostUnits)
-                {
-                    mostUnits = tempUnits;
-                    bestPos = pr.CastPosition;
-                }
-            }
-            pos = bestPos;
-            return mostUnits;
+            Spell.Skillshot.BestPosition position = Program.R.GetBestCircularCastPosition(EntityManager.Enemies.Where(a => a.Type == type && a.Distance(Annie) <= Program.R.Range + (Program.R.Width / 2)));
+            pos = position.CastPosition;
+            if (position.HitNumber >= 1)
+                return position.HitNumber;
+            else
+                return 0;
         }
     }
 }

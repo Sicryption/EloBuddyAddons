@@ -14,7 +14,7 @@ namespace UnsignedAnnie
         public static Spell.Targeted Q;
         public static Spell.Skillshot W;
         public static Spell.Active E;
-        public static Spell.Targeted R;
+        public static Spell.Skillshot R;
         public static Spell.Targeted Ignite;
         public static int PassiveStacks
         {
@@ -41,56 +41,62 @@ namespace UnsignedAnnie
             //Hacks.AntiAFK = true;
             Bootstrap.Init(null);
 
-            Q = new Spell.Targeted(SpellSlot.Q, 625);
-            W = new Spell.Skillshot(SpellSlot.W, 625, SkillShotType.Cone);
+            Q = new Spell.Targeted(SpellSlot.Q, 625, DamageType.Magical);
+            W = new Spell.Skillshot(SpellSlot.W, 625, SkillShotType.Cone, 250, null, null, DamageType.Mixed)
+            {
+                ConeAngleDegrees = 50
+            };
             E = new Spell.Active(SpellSlot.E);
-            R = new Spell.Targeted(SpellSlot.R, 745);
+            R = new Spell.Skillshot(SpellSlot.R, 600, SkillShotType.Circular, 0, int.MaxValue, 290, DamageType.Magical);
 
             menu = MainMenu.AddMenu("Unsigned Annie", "UnsignedAnnie");
 
             ComboMenu = menu.AddSubMenu("Combo", "combomenu");
             ComboMenu.AddGroupLabel("Combo Settings");
-            ComboMenu.Add("QU", new CheckBox("Use Q"));
-            ComboMenu.Add("WU", new CheckBox("Use W"));
-            ComboMenu.Add("EU", new CheckBox("Use E"));
-            ComboMenu.Add("RU", new CheckBox("Use R"));
-            ComboMenu.Add("IU", new CheckBox("Use Items"));
-            ComboMenu.Add("IgU", new CheckBox("Use Ignite"));
+            ComboMenu.Add("Q", new CheckBox("Use Q"));
+            ComboMenu.Add("W", new CheckBox("Use W"));
+            ComboMenu.Add("E", new CheckBox("Use E"));
+            ComboMenu.Add("R", new CheckBox("Use R"));
+            //ComboMenu.Add("Flash Ult", new CheckBox("Flash R"));
+            //ComboMenu.Add("Flash Ult People", new Slider("Flash R at x People: ", 4, 0, 5));
+            ComboMenu.Add("Items", new CheckBox("Use Items"));
+            ComboMenu.Add("Ignite", new CheckBox("Use Ignite"));
 
             LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
             LaneClear.AddGroupLabel("Lane Clear Settings");
-            LaneClear.Add("LCQ", new CheckBox("Use Q"));
-            LaneClear.Add("LCW", new CheckBox("Use W"));
+            LaneClear.Add("Q", new CheckBox("Use Q"));
+            LaneClear.Add("QForLastHit", new CheckBox("Use Q Only to Last Hit"));
+            LaneClear.Add("W", new CheckBox("Use W"));
 
             Harass = menu.AddSubMenu("Harass", "harass");
             Harass.AddGroupLabel("Harass Settings");
-            Harass.Add("HQ", new CheckBox("Use Q"));
-            Harass.Add("HW", new CheckBox("Use W"));
+            Harass.Add("Q", new CheckBox("Use Q"));
+            Harass.Add("W", new CheckBox("Use W"));
 
             LastHit = menu.AddSubMenu("Last Hit", "lasthitmenu");
             LastHit.AddGroupLabel("Last Hit Settings");
-            LastHit.Add("LHQ", new CheckBox("Use Q"));
-            LastHit.Add("LHW", new CheckBox("Use W"));
+            LastHit.Add("Q", new CheckBox("Use Q"));
+            LastHit.Add("W", new CheckBox("Use W", false));
 
             Killsteal = menu.AddSubMenu("Killsteal", "killstealmenu");
             Killsteal.AddGroupLabel("Killsteal Settings");
-            Killsteal.Add("KSER", new CheckBox("Activate Killsteal"));
-            Killsteal.Add("KSQ", new CheckBox("Use Q"));
-            Killsteal.Add("KSW", new CheckBox("Use W"));
-            Killsteal.Add("KSR", new CheckBox("Use R"));
-            Killsteal.Add("KSI", new CheckBox("Use Ignite"));
+            Killsteal.Add("KS", new CheckBox("Activate Killsteal"));
+            Killsteal.Add("Q", new CheckBox("Use Q"));
+            Killsteal.Add("W", new CheckBox("Use W"));
+            Killsteal.Add("R", new CheckBox("Use R", false));
+            Killsteal.Add("Ignite", new CheckBox("Use Ignite"));
 
             DrawingsMenu = menu.AddSubMenu("Drawings", "drawingsmenu");
             DrawingsMenu.AddGroupLabel("Drawings Settings");
-            DrawingsMenu.Add("DQ", new CheckBox("Draw Q/W"));
-            DrawingsMenu.Add("DR", new CheckBox("Draw R"));
+            DrawingsMenu.Add("Q", new CheckBox("Draw Q/W"));
+            DrawingsMenu.Add("R", new CheckBox("Draw R"));
             
             SettingsMenu = menu.AddSubMenu("Settings", "settingsmenu");
             SettingsMenu.AddGroupLabel("Settings");
-            SettingsMenu.Add("SS", new CheckBox("Prepare Stun at Base"));
-            SettingsMenu.Add("SHM", new CheckBox("Auto-Use Mana and Health Potions"));
-            SettingsMenu.Add("ST", new CheckBox("Auto-Control Tibbers"));
-            SettingsMenu.Add("SAU", new CheckBox("Auto Tibbers on 4 or more units (with stun)"));
+            SettingsMenu.Add("Stack", new CheckBox("Prepare Stun at Base"));
+            SettingsMenu.Add("Health Potions", new CheckBox("Auto-Use Health Potions"));
+            SettingsMenu.Add("Tibbers Controller", new CheckBox("Auto-Control Tibbers"));
+            SettingsMenu.Add("Auto R", new CheckBox("Auto Tibbers on 4 or more units (with stun)"));
 
             SpellDataInst Sum1 = _Player.Spellbook.GetSpell(SpellSlot.Summoner1);
             SpellDataInst Sum2 = _Player.Spellbook.GetSpell(SpellSlot.Summoner2);
@@ -104,61 +110,35 @@ namespace UnsignedAnnie
         }
         private static void Drawing_OnDraw(EventArgs args)
         {
-            if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue)
-            {
+            if (DrawingsMenu["Q"].Cast<CheckBox>().CurrentValue && (Q.IsLearned || W.IsLearned))
                 Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.BlueViolet);
-            }
-
-            if (DrawingsMenu["DR"].Cast<CheckBox>().CurrentValue)
-            {
-                Drawing.DrawCircle(_Player.Position, R.Range, System.Drawing.Color.BlueViolet);
-            }
-
+            if (DrawingsMenu["R"].Cast<CheckBox>().CurrentValue && R.IsLearned)
+                Drawing.DrawCircle(_Player.Position, R.Range + (R.Width / 2), System.Drawing.Color.BlueViolet);
         }
 
         private static void Game_OnTick(EventArgs args)
         {
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
-            {
                 AnnieFunctions.Combo();
-            }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LastHit))
-            {
                 AnnieFunctions.LastHit();
-            }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))
-            {
                 AnnieFunctions.Harrass();
-            }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear) ||
                 Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear))
-            {
                 AnnieFunctions.LaneClear();
-            }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
-            {
                 AnnieFunctions.Flee();
-            }
-            if (SettingsMenu["SS"].Cast<CheckBox>().CurrentValue)
-            {
+            if (SettingsMenu["Stack"].Cast<CheckBox>().CurrentValue)
                 AnnieFunctions.StackMode();
-            }
-            if (Killsteal["KSER"].Cast<CheckBox>().CurrentValue)
-            {
+            if (Killsteal["KS"].Cast<CheckBox>().CurrentValue)
                 AnnieFunctions.KillSteal();
-            }
-            if (SettingsMenu["SHM"].Cast<CheckBox>().CurrentValue)
-            {
+            if (SettingsMenu["Health Potions"].Cast<CheckBox>().CurrentValue)
                 AnnieFunctions.UseItems();
-            }
-            if (SettingsMenu["ST"].Cast<CheckBox>().CurrentValue)
-            {
+            if (SettingsMenu["Tibbers Controller"].Cast<CheckBox>().CurrentValue)
                 AnnieFunctions.ControlTibbers();
-            }
-            if (SettingsMenu["SAU"].Cast<CheckBox>().CurrentValue)
-            {
+            if (SettingsMenu["Auto R"].Cast<CheckBox>().CurrentValue)
                 AnnieFunctions.AutoUlt();
-            }
         }
     }
 }

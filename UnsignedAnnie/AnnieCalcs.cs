@@ -32,7 +32,7 @@ namespace UnsignedAnnie
         public static float R(Obj_AI_Base target)
         {
             return Annie.CalculateDamageOnUnit(target, DamageType.Magical,
-                (new float[] { 0, 175, 300, 425 }[Program.R.Level] + (0.80f * Annie.FlatMagicDamageMod)));
+                (new float[] { 0, 150, 275, 400 }[Program.R.Level] + (0.65f * Annie.FlatMagicDamageMod)));
         }
 
         public static float Ignite(Obj_AI_Base target)
