@@ -15,10 +15,13 @@ Unsigned Ryze:
 - Needs to be updated for current Ryze combos.
 
 Unsigned Gangplank:
-- Needs 3 barrel chain. Otherwise Working.
+- https://www.elobuddy.net/topic/42596-620-unsigned-gangplank/
 
 Unsigned Evade:
 - Lots of work to still be done.
 
 Shroom Tracker:
 - Tracks enemy Teemos shrooms, so you don't forget about them.
+
+Pick a Card:
+- A simple addon to go with other Twisted Fate scripts to help select cards easier.
