@@ -26,8 +26,7 @@ namespace UnsignedGP
             ENearEnemy,
             Ignite
         };
-
-        //get enemy non last hit
+        
         public static Obj_AI_Base GetEnemy(float range, GameObjectType type)
         {
             return ObjectManager.Get<Obj_AI_Base>().OrderBy(a => a.Health).Where(a => a.IsEnemy
@@ -406,15 +405,6 @@ namespace UnsignedGP
 
             if (Program.Q.IsReady())
             {
-                /*Obj_AI_Base barrel = ObjectManager.Get<Obj_AI_Base>().Where(a => 
-                a.Name == "Barrel" 
-                && a.Distance(GP) <= Program.Q.Range
-                && !a.IsDead
-                && a.Health == 1).FirstOrDefault();
-
-                if (barrel != null)
-                    Program.Q.Cast(barrel);*/
-
                 Obj_AI_Base barrel = ObjectManager.Get<Obj_AI_Base>().Where(a =>
                     a.Name == "Barrel"
                     && a.Distance(GP) <= Program.Q.Range
@@ -424,8 +414,7 @@ namespace UnsignedGP
                     GPCalcs.CastQOnBarrel(barrel);
             }
         }
-
-        //add tiamat and QSS
+        
         public static void UseItems(bool isInComboMode = false)
         {
             bool useTiamat = Program.Items.Get<CheckBox>("ItemsT").CurrentValue;
@@ -497,7 +486,6 @@ namespace UnsignedGP
             }
         }
 
-        //also handles QSS/Merc Scim
         public static void AutoW()
         {
             #region QSS/AutoWCleanse
