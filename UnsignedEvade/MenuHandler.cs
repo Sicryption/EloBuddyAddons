@@ -1,0 +1,72 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using EloBuddy;
+using EloBuddy.SDK;
+using EloBuddy.SDK.Menu;
+using EloBuddy.SDK.Menu.Values;
+
+namespace UnsignedEvade
+{
+    class MenuHandler
+    {
+        private static Menu mainMenu, DodgeMenu, DebugMenu;
+
+        public enum MenuType
+        {
+            Main,
+            Dodge,
+            Debug
+        }
+
+        public static void Loading_OnLoadingComplete(EventArgs args)
+        {
+            mainMenu = MainMenu.AddMenu("Unsigned Evade", "Unsigned Evade");
+
+            DodgeMenu = mainMenu.AddSubMenu("Dodge Menu");
+            DodgeMenu.AddGroupLabel("Dodge Settings");
+
+            DebugMenu = mainMenu.AddSubMenu("Debug Menu");
+            DebugMenu.AddGroupLabel("Debug Settings");
+            CreateCheckbox(ref DebugMenu, "Debug Projectile Creation");
+            CreateCheckbox(ref DebugMenu, "Debug Projectile Deletion");
+            CreateCheckbox(ref DebugMenu, "Show only Enemy Projectiles");
+            CreateCheckbox(ref DebugMenu, "Show only Champion Projectiles");
+            CheckBox NewProjectilesButton = CreateCheckbox(ref DebugMenu, "Print New Projectiles");
+        }
+
+        private static CheckBox CreateCheckbox(ref Menu menu, string name, bool defaultValue = true)
+        {
+            return menu.Add(name, new CheckBox(name, defaultValue));
+        }
+
+        private static Menu getMenu(MenuType type)
+        {
+            switch(type)
+            {
+                case MenuType.Debug:
+                    return DebugMenu;
+                case MenuType.Main:
+                    return mainMenu;
+                case MenuType.Dodge:
+                    return DodgeMenu;
+            }
+            return null;
+        }
+
+        public static CheckBox GetCheckbox(MenuType menuType, string uniqueName)
+        {
+            CheckBox checkbox = getMenu(menuType).Get<CheckBox>(uniqueName);
+            if (checkbox == null)
+                Console.WriteLine("Checkbox " + uniqueName + " does not exist under this menu type: " + menuType.ToString());
+            return checkbox;
+        }
+
+        public static bool GetCheckboxValue(MenuType menuType, string uniqueName)
+        {
+            return GetCheckbox(menuType, uniqueName).CurrentValue;
+        }
+    }
+}
