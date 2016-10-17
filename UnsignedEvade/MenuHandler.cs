@@ -12,13 +12,14 @@ namespace UnsignedEvade
 {
     class MenuHandler
     {
-        private static Menu mainMenu, DodgeMenu, DebugMenu;
+        private static Menu mainMenu, DodgeMenu, DebugMenu, DrawMenu;
 
         public enum MenuType
         {
             Main,
             Dodge,
-            Debug
+            Debug,
+            Draw
         }
 
         public static void Loading_OnLoadingComplete(EventArgs args)
@@ -27,14 +28,18 @@ namespace UnsignedEvade
 
             DodgeMenu = mainMenu.AddSubMenu("Dodge Menu");
             DodgeMenu.AddGroupLabel("Dodge Settings");
+            
+            DrawMenu = mainMenu.AddSubMenu("Draw Menu");
+            DrawMenu.AddGroupLabel("Draw Settings");
+            CreateCheckbox(ref DrawMenu, "Draw Friendly Projectiles", false);
 
             DebugMenu = mainMenu.AddSubMenu("Debug Menu");
             DebugMenu.AddGroupLabel("Debug Settings");
             CreateCheckbox(ref DebugMenu, "Debug Projectile Creation");
             CreateCheckbox(ref DebugMenu, "Debug Projectile Deletion");
             CreateCheckbox(ref DebugMenu, "Show only Enemy Projectiles");
-            CreateCheckbox(ref DebugMenu, "Show only Champion Projectiles");
-            CheckBox NewProjectilesButton = CreateCheckbox(ref DebugMenu, "Print New Projectiles");
+            CreateCheckbox(ref DebugMenu, "Show Animation Names", false);
+            CreateCheckbox(ref DebugMenu, "Show Friendly Targeted Spells", false);
         }
 
         private static CheckBox CreateCheckbox(ref Menu menu, string name, bool defaultValue = true)
@@ -52,6 +57,8 @@ namespace UnsignedEvade
                     return mainMenu;
                 case MenuType.Dodge:
                     return DodgeMenu;
+                case MenuType.Draw:
+                    return DrawMenu;
             }
             return null;
         }

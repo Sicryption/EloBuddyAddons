@@ -69,6 +69,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DodgeManager.cs" />
     <Compile Include="EvadeController.cs" />
     <Compile Include="Geometry.cs" />
     <Compile Include="MenuHandler.cs" />
