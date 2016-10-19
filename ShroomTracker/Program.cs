@@ -49,7 +49,7 @@ namespace ShroomTracker
 
             //check for existing shrooms           
             foreach (GameObject obj in ObjectManager.Get<GameObject>())
-                if (obj.Name == "Noxious Trap")
+                if (obj.Name == "Noxious Trap" && obj.IsEnemy && !obj.IsDead)
                     Shrooms.Add(obj);
 
             Drawing.OnDraw += Drawing_OnDraw;
