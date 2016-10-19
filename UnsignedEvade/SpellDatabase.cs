@@ -3670,9 +3670,30 @@ namespace UnsignedEvade
             },
             #endregion
             #region Teemo
+            //aa
+            new SpellInfo()
+            {
+                SpellName = "ToxicShotAttack",
+                MissileName = "ToxicShotAttack",
+                ChampionName = "Teemo",
+                Range = 600f,
+                MissileSpeed = 1300f,
+                MissileMinSpeed = 1300f,
+                MissileMaxSpeed = 1300f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.Auto,
+            },
             //q
             new SpellInfo()
             {
+                SpellName = "BlindingDart",
+                MissileName = "BlindingDart",
+                ChampionName = "Teemo",
+                Range = 680f,
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.Blind,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -3694,7 +3715,32 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "TeemoRCast",
+                MissileName = "BantamTrap",
+                ChampionName = "Teemo",
+                Range = 400f,
+                MissileSpeed = 1000f,
+                MissileMinSpeed = 1000f,
+                MissileMaxSpeed = 1000f,
+                Width = 120f,
+                Radius = 135f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                CCtype = SpellInfo.CrowdControlType.Slow,
+                Slot = SpellInfo.SpellSlot.R,
+            },
+            //r2
+            new SpellInfo()
+            {
+                SpellName = "TeemoRCast",
+                MissileName = "BantamTrapBounceSpell",
+                ChampionName = "Teemo",
+                Range = 400f,
+                MissileSpeed = 1000f,
+                MissileMinSpeed = 1000f,
+                MissileMaxSpeed = 1000f,
+                Width = 120f,
+                Radius = 135f,
+                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.R,
             },
