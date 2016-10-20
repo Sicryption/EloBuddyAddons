@@ -14,126 +14,102 @@ namespace UnsignedEvade
 {
     class Geometry
     {
-        public static void DrawTargetedSpell(SpellInfo info)
+        public static System.Drawing.Color drawColor = System.Drawing.Color.Blue;
+
+        public static void DrawTargetedSpell(Vector3 startPosition, Vector3 endPosition)
         {
-            if (info.missile == null || info == null || info.missile.Position == null && info.target.Name == Player.Instance.Name)
-                return;
-
-            if (info.Width == 0)
-                info.Width = 10;
-            
-            for(int i = 0; i < info.GetPath().Count - 1; i++)
-            {
-                Drawing.DrawLine(info.GetPath()[i].WorldToScreen(), info.GetPath()[i + 1].WorldToScreen(), 4, System.Drawing.Color.Red);
-            }
-
-            //Drawing.DrawLine(info.missile.Position.WorldToScreen(), info.target.Position.WorldToScreen(), info.Width, System.Drawing.Color.Blue);
+            Drawing.DrawLine(startPosition.WorldToScreen(), endPosition.WorldToScreen(), 10, drawColor);
         }
-        
-        public static Vector3 CalculateEndPosition(SpellInfo info)
+        public static void DrawTargetedSpell(Vector3 startPosition, Obj_AI_Base target)
         {
-            return Extensions.Extend(info.startPosition, info.endPosition, info.Range).To3DWorld();
+            Drawing.DrawLine(startPosition.WorldToScreen(), target.Position.WorldToScreen(), 10, drawColor);
+        }
+        public static void DrawTargetedSpell(Vector3 startPosition, GameObject target)
+        {
+            Drawing.DrawLine(startPosition.WorldToScreen(), target.Position.WorldToScreen(), 10, drawColor);
+        }
+
+        public static Vector3 CalculateEndPosition(Vector3 position, Vector3 endPosition, float range)
+        {
+            return Extensions.Extend(position, endPosition, range).To3DWorld();
         }
 
         //if onSpellCast was used then the spells end position is the direction the caster is facing extended to max range. IE: xerath q, velkoz r
-        public static void DrawLinearSkillshot(SpellInfo info)
+        public static void DrawLinearSkillshot(Vector3 startPosition, Vector3 endPosition, float width, float missileSpeed, float range, float collisionCount)
         {
-            if (info.Width == 0)
-                info.Width = 10;
-
-            Vector2 startPosition = info.startPosition.WorldToScreen();
-            if (info.missile == null)
-            {
-                //using this for gragas e dash
-                if (info.DashType == SpellInfo.Dashtype.Linear)
-                {
-                    //dashes
-                    if (info.SpellName != "CarpetBomb2" && info.SpellName != "CarpetBombMega2")
-                        startPosition = info.caster.Position.WorldToScreen();
-                }
-            }
-            else
-            {
-                //using this for missile spells ie velkoz q
-                startPosition = info.missile.Position.WorldToScreen()   ; 
-
-                if (info.MissileName.ToLower().Contains("return"))
-                    info.endPosition = info.missile.SpellCaster.Position;
-            }
-
-            Vector2 endPosition = info.endPosition.WorldToScreen();
-
-            if (info.CollisionCount != 0)
+            if (collisionCount != 0 && collisionCount != int.MaxValue)
             {
                 List<Obj_AI_Base> enemiesThatWillBeHit = new List<Obj_AI_Base>();
                 //get if unit(s) will be hit by spell if so get the info.CollisionCount's units position and set it as the end position
-                foreach(Obj_AI_Base enemy in EntityManager.Enemies.Where(a=>!a.IsDead &&a.Distance(info.startPosition) <= info.Range))
-                    if (Prediction.Position.Collision.LinearMissileCollision(enemy, info.startPosition.To2D(), info.endPosition.To2D(), info.MissileSpeed, (int)info.Width, (int)info.Delay))
+                foreach(Obj_AI_Base enemy in EntityManager.Enemies.Where(a=>!a.IsDead &&a.Distance(startPosition) <= range))
+                    if (Prediction.Position.Collision.LinearMissileCollision(enemy, startPosition.To2D(), endPosition.To2D(), missileSpeed, (int)width, 0))
                         enemiesThatWillBeHit.Add(enemy);
 
-                enemiesThatWillBeHit.OrderByDescending(a => a.Distance(info.startPosition));
-                if(enemiesThatWillBeHit.Count() >= info.CollisionCount)
-                    endPosition = enemiesThatWillBeHit[(int)info.CollisionCount - 1].Position.WorldToScreen();
+                enemiesThatWillBeHit.OrderByDescending(a => a.Distance(startPosition));
+                if(enemiesThatWillBeHit.Count() >= collisionCount)
+                    endPosition = enemiesThatWillBeHit[(int)collisionCount - 1].Position;
             }
 
-
-            Vector2 northernMostPoint;
-            Vector2 southernMostPoint;
-
-            if (startPosition.Y >= endPosition.Y)
-            {
-                northernMostPoint = startPosition;
-                southernMostPoint = endPosition;
-            }
-            else
-            {
-                northernMostPoint = endPosition;
-                southernMostPoint = startPosition;
-            }
+            Vector2 northernMostPoint = (startPosition.Y >= endPosition.Y) ? startPosition.To2D() : endPosition.To2D();
+            Vector2 southernMostPoint =  (startPosition.Y >= endPosition.Y) ? endPosition.To2D() : startPosition.To2D();
+            
             Vector2 betweenVector = new Vector2(northernMostPoint.X - southernMostPoint.X, northernMostPoint.Y - southernMostPoint.Y);
             Vector2 betweenVector2 = new Vector2(betweenVector.Y, -betweenVector.X);
             double Length = Math.Sqrt(betweenVector2.X * betweenVector2.X + betweenVector2.Y * betweenVector2.Y); //Thats length of perpendicular
             Vector2 NewVector = new Vector2((float)(betweenVector2.X / Length), (float)(betweenVector2.Y / Length)); //Now N is normalized perpendicular
-
-
-            Vector2 NEPoint = new Vector2(southernMostPoint.X + NewVector.X * (info.Width / 2), southernMostPoint.Y + NewVector.Y * (info.Width / 2));
-            Vector2 NWPoint = new Vector2(southernMostPoint.X - NewVector.X * (info.Width / 2), southernMostPoint.Y - NewVector.Y * (info.Width / 2));
-            Vector2 SEPoint = new Vector2(northernMostPoint.X + NewVector.X * (info.Width / 2), northernMostPoint.Y + NewVector.Y * (info.Width / 2));
-            Vector2 SWPoint = new Vector2(northernMostPoint.X - NewVector.X * (info.Width / 2), northernMostPoint.Y - NewVector.Y * (info.Width / 2));
-
+            
+            Vector2 NEPoint = new Vector2(southernMostPoint.X + NewVector.X * (width / 2), southernMostPoint.Y + NewVector.Y * (width / 2));
+            Vector2 NWPoint = new Vector2(southernMostPoint.X - NewVector.X * (width / 2), southernMostPoint.Y - NewVector.Y * (width / 2));
+            Vector2 SEPoint = new Vector2(northernMostPoint.X + NewVector.X * (width / 2), northernMostPoint.Y + NewVector.Y * (width / 2));
+            Vector2 SWPoint = new Vector2(northernMostPoint.X - NewVector.X * (width / 2), northernMostPoint.Y - NewVector.Y * (width / 2));
+            
             //top
-            Drawing.DrawLine(NEPoint, NWPoint, 3, System.Drawing.Color.Blue);
+            Drawing.DrawLine(NEPoint.To3D().WorldToScreen(), NWPoint.To3D().WorldToScreen(), 3, drawColor);
             //bottom
-            Drawing.DrawLine(SEPoint, SWPoint, 3, System.Drawing.Color.Blue);
+            Drawing.DrawLine(SEPoint.To3D().WorldToScreen(), SWPoint.To3D().WorldToScreen(), 3, drawColor);
             //right
-            Drawing.DrawLine(NEPoint, SEPoint, 3, System.Drawing.Color.Blue);
+            Drawing.DrawLine(NEPoint.To3D().WorldToScreen(), SEPoint.To3D().WorldToScreen(), 3, drawColor);
             //left
-            Drawing.DrawLine(NWPoint, SWPoint, 3, System.Drawing.Color.Blue);
+            Drawing.DrawLine(NWPoint.To3D().WorldToScreen(), SWPoint.To3D().WorldToScreen(), 3, drawColor);
         }
 
-        public static void DrawCircularSkillshot(SpellInfo info, bool SelfActive = false)
+        public static void DrawRectangle(int length, int width, Vector3 position, int xoffset = 0, int yoffset = 0)
         {
-            if(SelfActive)
-                Drawing.DrawCircle(info.caster.Position, info.Radius, System.Drawing.Color.Blue);
-            else
-                Drawing.DrawCircle(info.endPosition, info.Radius, System.Drawing.Color.Blue);
+            Vector3 SW = Vector3.Zero, SE = Vector3.Zero, NW = Vector3.Zero, NE = Vector3.Zero;
+            
+            SW = new Vector3(position.X - (length / 2) + xoffset, position.Y - (width / 2) + yoffset, 0f);
+            SE = new Vector3(position.X + (length / 2) + xoffset, position.Y - (width / 2) + yoffset, 0f);
+            NW = new Vector3(position.X - (length / 2) + xoffset, position.Y + (width / 2) + yoffset, 0f);
+            NE = new Vector3(position.X + (length / 2) + xoffset, position.Y + (width / 2) + yoffset, 0f);
+
+            Drawing.DrawLine(SW.WorldToScreen(), SE.WorldToScreen(), 3, drawColor);
+            Drawing.DrawLine(SW.WorldToScreen(), NW.WorldToScreen(), 3, drawColor);
+            Drawing.DrawLine(NW.WorldToScreen(), NE.WorldToScreen(), 3, drawColor);
+            Drawing.DrawLine(NE.WorldToScreen(), SE.WorldToScreen(), 3, drawColor);
+
+            Drawing.DrawText(position.WorldToScreen(), drawColor, "Corki W", 16);
         }
 
-        public static void DrawConeSkillshot(SpellInfo info)
+        public static void DrawCircularSkillshot(Vector3 position, float radius)
+        {
+            Drawing.DrawCircle(position, radius, drawColor);
+        }
+
+        public static void DrawConeSkillshot(Vector3 startPosition, Vector3 endPosition, float coneAngle)
         {
             //drawing won't look like a cone, instead will look like <>
 
-            Vector2 centerPoint = info.startPosition.WorldToScreen();
-            Vector2 endPoint = info.endPosition.WorldToScreen();
+            Vector2 centerPoint = startPosition.WorldToScreen();
+            Vector2 endPoint = endPosition.WorldToScreen();
 
-            Vector2 leftPoint = centerPoint.RotateAroundPoint(endPoint, (float)(info.ConeDegrees * Math.PI / 180));
-            Vector2 rightPoint = centerPoint.RotateAroundPoint(endPoint, -(float)(info.ConeDegrees * Math.PI / 180));
+            Vector2 leftPoint = centerPoint.RotateAroundPoint(endPoint, (float)(coneAngle * Math.PI / 180));
+            Vector2 rightPoint = centerPoint.RotateAroundPoint(endPoint, -(float)(coneAngle * Math.PI / 180));
 
             //Drawing.DrawLine(centerPoint, leftPoint, 3, System.Drawing.Color.Red);
             //Drawing.DrawLine(centerPoint, rightPoint, 3, System.Drawing.Color.Red);
             //Drawing.DrawLine(leftPoint, endPoint, 3, System.Drawing.Color.Red);
             //Drawing.DrawLine(rightPoint, endPoint, 3, System.Drawing.Color.Red);
-            Drawing.DrawLine(centerPoint, endPoint, 3, System.Drawing.Color.Blue);
+            Drawing.DrawLine(centerPoint, endPoint, 3, drawColor);
         }
     }
 }

@@ -103,6 +103,12 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "AkaliMota",
+                ChampionName = "Akali",
+                Range = 600f,
+                MissileSpeed = 1000f,
+                MissileMinSpeed = 1000f,
+                MissileMaxSpeed = 1000f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -110,6 +116,16 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "AkaliSmokeBomb",
+                ChampionName = "Akali",
+                Range = 700f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 390f,
+                ConeDegrees = 45f,
+                Delay = 8.25f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.W,
@@ -117,15 +133,29 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                SpellName = "AkaliShadowSwipe",
+                ChampionName = "Akali",
+                MissileSpeed = 0f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Radius = 325f,
+                SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
-                CCtype = SpellInfo.CrowdControlType.None,
+                SpellName = "AkaliShadowDance",
+                ChampionName = "Akali",
+                Range = 400f,
+                MissileSpeed = 2200f,
+                MissileMinSpeed = 2200f,
+                MissileMaxSpeed = 2200f,
+                Radius = 300f,
+                ConeDegrees = 45f,
+                DashType = SpellInfo.Dashtype.Linear,
+                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 Slot = SpellInfo.SpellSlot.R,
             },
             #endregion
@@ -693,6 +723,16 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "GGun",
+                ChampionName = "Corki",
+                BuffName = "GGun",
+                Range = 600f,
+                MissileSpeed = 902f,
+                MissileMinSpeed = 902f,
+                MissileMaxSpeed = 902f,
+                Width = 0f,
+                Radius = 100f,
+                ConeDegrees = 28f,
                 SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -1657,9 +1697,51 @@ namespace UnsignedEvade
             },
             #endregion
             #region Jinx
+            //aa
+            new SpellInfo()
+            {
+                MissileName = "JinxBasicAttack",
+                ChampionName = "Jinx",
+                MissileSpeed = 2750f,
+                MissileMinSpeed = 2750f,
+                MissileMaxSpeed = 2750f,
+                Range = 625f,
+                Radius = 100f,
+                ConeDegrees = 45f,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.Auto,
+            },
+            //rocket aa
+            new SpellInfo()
+            {
+                MissileName = "JinxQAttack",
+                ChampionName = "Jinx",
+                MissileSpeed = 2000f,
+                MissileMinSpeed = 2000f,
+                MissileMaxSpeed = 2000f,
+                Width = 20f,
+                Radius = 100f,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.Auto,
+                OtherMissileNames = new string[]
+                {
+                    "JinxQAttack2",
+                },
+            },
             //q
             new SpellInfo()
             {
+                SpellName = "JinxQ",
+                ChampionName = "Jinx",
+                Range = 600f,
+                MissileSpeed = 2000f,
+                MissileMinSpeed = 2000f,
+                MissileMaxSpeed = 2000f,
+                Width = 0f,
+                Radius = 100f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -1667,6 +1749,20 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "JinxW",
+                ChampionName = "Jinx",
+                MissileName = "JinxWMissile",
+                Range = 1600f,
+                MissileSpeed = 1200f,
+                MissileMinSpeed = 1200f,
+                MissileMaxSpeed = 1200f,
+                Width = 60f,
+                Delay = 0.5f,
+                OtherMissileNames = new string[]
+                {
+                    "JinxWMissile",
+                },
+                CollisionCount = 1,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.W,
@@ -1674,13 +1770,30 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
-                CCtype = SpellInfo.CrowdControlType.Stun,
+                SpellName = "JinxE",
+                MissileName = "JinxEHit",
+                ChampionName = "Jinx",
+                MissileSpeed = 1100f,   
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
+                Range = 1200f,
+                Radius = 50f,
+                //handled under the trap handler
+                //SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                //CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
+                SpellName = "JinxR",
+                ChampionName = "Jinx",
+                MissileName = "JinxR",
+                Range = 250000f,
+                MissileSpeed = 1700f,
+                MissileMinSpeed = 1700f,
+                MissileMaxSpeed = 1700f,
+                Width = 140f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,

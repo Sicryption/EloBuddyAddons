@@ -14,15 +14,17 @@ namespace UnsignedEvade
             MissileMinSpeed,
             MissileSpeed,
             Radius,
-            Width,
+            Width = 10,
             Range,
             CollisionCount = int.MaxValue,
             ConeDegrees,
             TimeOfCast;
-        private float travelTime;
+        private float travelTime = 0;
         public string ChampionName,
             MissileName,
-            SpellName;
+            SpellName,
+            BuffName = "",
+            TrapName = "";
         public bool canVaryInLength = false;
         public string[] OtherMissileNames = new string[0];
         public SpellSlot Slot = SpellSlot.None;
@@ -74,7 +76,7 @@ namespace UnsignedEvade
         {
             get
             {
-                if (travelTime == -1f)
+                if (travelTime == -1f || MissileSpeed == 0)
                     return 0f;
                 else if(travelTime == 0)
                     travelTime = startPosition.Distance(endPosition) / MissileSpeed;

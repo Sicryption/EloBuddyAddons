@@ -40,6 +40,7 @@ namespace UnsignedEvade
             CreateCheckbox(ref DebugMenu, "Show only Enemy Projectiles");
             CreateCheckbox(ref DebugMenu, "Show Animation Names", false);
             CreateCheckbox(ref DebugMenu, "Show Friendly Targeted Spells", false);
+            CreateCheckbox(ref DebugMenu, "Show Particles", false);
         }
 
         private static CheckBox CreateCheckbox(ref Menu menu, string name, bool defaultValue = true)
