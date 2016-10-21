@@ -14,6 +14,7 @@ namespace UnsignedEvade
             MissileMinSpeed,
             MissileSpeed,
             Radius,
+            SecondRadius,
             Width = 10,
             Range,
             CollisionCount = int.MaxValue,
@@ -23,8 +24,7 @@ namespace UnsignedEvade
         public string ChampionName,
             MissileName,
             SpellName,
-            BuffName = "",
-            TrapName = "";
+            BuffName = "";
         public bool canVaryInLength = false;
         public string[] OtherMissileNames = new string[0];
         public SpellSlot Slot = SpellSlot.None;

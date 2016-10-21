@@ -10,10 +10,18 @@ namespace UnsignedEvade
     {
         public static List<Trap> trapList = new List<Trap>()
         {
+            //jinx and caitlyn traps
             new Trap()
             {
                 Name = "Cupcake Trap",
                 Radius = 100f,
+            },
+            
+            //jinx and caitlyn traps
+            new Trap()
+            {
+                Name = "Barrel",
+                Radius = 325f,
             },
         };
 

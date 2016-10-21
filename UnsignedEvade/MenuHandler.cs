@@ -32,6 +32,7 @@ namespace UnsignedEvade
             DrawMenu = mainMenu.AddSubMenu("Draw Menu");
             DrawMenu.AddGroupLabel("Draw Settings");
             CreateCheckbox(ref DrawMenu, "Draw Friendly Projectiles", false);
+            CreateCheckbox(ref DrawMenu, "Draw Player Direction", false);
 
             DebugMenu = mainMenu.AddSubMenu("Debug Menu");
             DebugMenu.AddGroupLabel("Debug Settings");
@@ -41,6 +42,7 @@ namespace UnsignedEvade
             CreateCheckbox(ref DebugMenu, "Show Animation Names", false);
             CreateCheckbox(ref DebugMenu, "Show Friendly Targeted Spells", false);
             CreateCheckbox(ref DebugMenu, "Show Particles", false);
+            CreateCheckbox(ref DebugMenu, "Show All Object Names", false);
         }
 
         private static CheckBox CreateCheckbox(ref Menu menu, string name, bool defaultValue = true)

@@ -90,9 +90,12 @@ namespace UnsignedEvade
             Drawing.DrawText(position.WorldToScreen(), drawColor, "Corki W", 16);
         }
 
-        public static void DrawCircularSkillshot(Vector3 position, float radius)
+        public static void DrawCircularSkillshot(Vector3 position, float radius, float secondRadius = 0)
         {
             Drawing.DrawCircle(position, radius, drawColor);
+
+            if(secondRadius != 0)
+                Drawing.DrawCircle(position, secondRadius, drawColor);
         }
 
         public static void DrawConeSkillshot(Vector3 startPosition, Vector3 endPosition, float coneAngle)

@@ -25,6 +25,13 @@ namespace UnsignedEvade
                     "Corki_Base_W_AoE_ground.troy",
                 },
             },
+            //Ziggs E 
+            new ParticleInfo()
+            {
+                ParticleName = "Ziggs_Base_E_placedMine.troy",
+                Radius = 90f,
+                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,   
+            },
         };
 
         public static ParticleInfo GetParticleInfo(string name)

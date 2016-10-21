@@ -213,6 +213,14 @@ namespace UnsignedEvade
             if (_Player.IsDead)
                 return;
 
+
+            if(MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Player Direction"))
+                Drawing.DrawText(_Player.Position.WorldToScreen(), Geometry.drawColor, _Player.Direction.ToString(), 15);
+
+            if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show All Object Names"))
+                foreach (GameObject ob in ObjectManager.Get<GameObject>())
+                    Drawing.DrawText(ob.Position.WorldToScreen(), Geometry.drawColor, ob.Name, 15);
+
             #region clear screen when object is destroyed
             //when removing object from below add it to this list then cross reference in another method and reset.
             List<SpellInfo> KeepList = new List<SpellInfo>();
@@ -265,19 +273,19 @@ namespace UnsignedEvade
                         //linear skillshot
                         if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
                         {
-                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null)
+                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.SpellCaster != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
                                 KeepList.Add(info);
                         }
                         if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted)
                         {
-                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null)
+                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
                                 KeepList.Add(info);
                         }
                         if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
                         {
-                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null)
+                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
                                 KeepList.Add(info);
-                        }
+                        }   
                         break;
                 }
             }
@@ -312,14 +320,14 @@ namespace UnsignedEvade
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
                     {
                         if (info.missile != null)
-                            Geometry.DrawCircularSkillshot(info.missile.EndPosition, info.Radius);
+                            Geometry.DrawCircularSkillshot(info.missile.EndPosition, info.Radius, info.SecondRadius);
                         else
-                            Geometry.DrawCircularSkillshot(info.endPosition, info.Radius);
+                            Geometry.DrawCircularSkillshot(info.endPosition, info.Radius, info.SecondRadius);
                     }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSkillshot)
                         Geometry.DrawConeSkillshot(info.caster.Position, info.endPosition, info.ConeDegrees);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive)
-                        Geometry.DrawCircularSkillshot(info.caster.Position, info.Radius);
+                        Geometry.DrawCircularSkillshot(info.caster.Position, info.Radius, info.SecondRadius);
                 }
             }
 

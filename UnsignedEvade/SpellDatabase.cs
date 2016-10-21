@@ -466,10 +466,20 @@ namespace UnsignedEvade
                 Slot = SpellInfo.SpellSlot.R,
             },
             #endregion
+            //add brand passive
             #region Brand
             //q
             new SpellInfo()
             {
+                SpellName = "BrandQ",
+                MissileName = "BrandQMissile",
+                ChampionName = "Brand",
+                MissileSpeed = 1600f,
+                MissileMinSpeed = 2000f,
+                MissileMaxSpeed = 2000f,
+                Range = 1100f,
+                Width = 60f,
+                CollisionCount = 1,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -477,6 +487,12 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "BrandW",
+                ChampionName = "Brand",
+                Range = 900f,
+                Width = 0f,
+                Radius = 240f,
+                Delay = 0.875f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -484,6 +500,15 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "BrandE",
+                ChampionName = "Brand",
+                Range = 675f,
+                MissileSpeed = 1800f,
+                MissileMinSpeed = 1400f,
+                MissileMaxSpeed = 1400f,
+                Width = 0f,
+                Radius = 710f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -491,9 +516,20 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "BrandR",
+                MissileName = "BrandRMissile",
+                ChampionName = "Brand",
+                Range = 750f,
+                MissileSpeed = 750f,
+                MissileMinSpeed = 250f,
+                MissileMaxSpeed = 3000f,
+                Width = 0f,
+                Radius = 0f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
+                OtherMissileNames = new string[] { "BrandR" },
             },
             #endregion
             //add braum aa passive stun
@@ -528,9 +564,52 @@ namespace UnsignedEvade
             },
             #endregion
             #region Caitlyn
+            //aa
+            new SpellInfo()
+            {
+                MissileName = "CaitlynBasicAttack",
+                ChampionName = "Caitlyn",
+                Range = 750f,
+                MissileSpeed = 2500f,
+                MissileMinSpeed = 2500f,
+                MissileMaxSpeed = 2500f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.Auto,
+            },
+            //headshot
+            new SpellInfo()
+            {
+                MissileName = "CaitlynHeadshotMissile",
+                ChampionName = "Caitlyn",
+                MissileSpeed = 3000f,
+                MissileMinSpeed = 2500f,
+                MissileMaxSpeed = 2500f,
+                Range = 750f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.Auto,
+            },
             //q
             new SpellInfo()
             {
+                SpellName = "CaitlynPiltoverPeacemaker",
+                MissileName = "CaitlynPiltoverPeacemaker",
+                ChampionName = "Caitlyn",
+                Range = 1300f,
+                Width = 60f,
+                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.Q,
+            },
+            //q2
+            new SpellInfo()
+            {
+                SpellName = "CaitlynPiltoverPeacemaker",
+                MissileName = "CaitlynPiltoverPeacemaker2",
+                ChampionName = "Caitlyn",
+                Range = 1300f,
+                Width = 90f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -538,20 +617,46 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
-                CCtype = SpellInfo.CrowdControlType.Slow,
+                SpellName = "CaitlynYordleTrap",
+                ChampionName = "Caitlyn",
+                Range = 800f,
+                MissileSpeed = 1450f,
+                MissileMinSpeed = 1450f,
+                MissileMaxSpeed = 1450f,
+                Width = 0f,
+                Radius = 75f,
+                ConeDegrees = 45f,
+                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
-                CCtype = SpellInfo.CrowdControlType.Stun,
+                SpellName = "CaitlynEntrapment",
+                MissileName = "CaitlynEntrapmentMissile",
+                ChampionName = "Caitlyn",
+                Range = 800f,
+                MissileSpeed = 1600f,
+                MissileMinSpeed = 2000f,
+                MissileMaxSpeed = 2000f,
+                Width = 70f,
+                Radius = 20f,
+                ConeDegrees = 45f,
+                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
+                SpellName = "CaitlynAceintheHole",
+                MissileName = "CaitlynAceintheHoleMissile",
+                ChampionName = "Caitlyn",
+                Range = 2000f,
+                MissileSpeed = 3200f,
+                MissileMinSpeed = 2200f,
+                MissileMaxSpeed = 2200f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -1160,27 +1265,64 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "GangplankQWrapper",
+                MissileName = "GangplankQProceed",
+                ChampionName = "Gangplank",
+                Range = 625f,
+                MissileSpeed = 2600f,
+                MissileMinSpeed = 2600f,
+                MissileMaxSpeed = 2600f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
+                OtherMissileNames = new string[] { "GangplankQProceed" },
             },
             //w
             new SpellInfo()
             {
+                SpellName = "GangplankW",
+                ChampionName = "Gangplank",
+                Range = 400f,
+                MissileSpeed = 500f,
+                MissileMinSpeed = 500f,
+                MissileMaxSpeed = 500f,
+                Width = 0f,
+                Radius = 0f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
-            //e
-            new SpellInfo()
+            //e in Trap Database
+            /*new SpellInfo()
             {
+                SpellName = "GangplankE",
+                ChampionName = "Gangplank",
+                Range = 1000f,
+                MissileSpeed = 500f,
+                MissileMinSpeed = 500f,
+                MissileMaxSpeed = 500f,
+                Width = 0f,
+                Radius = 325f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
-            },
+            },*/
             //r
             new SpellInfo()
             {
+                SpellName = "GangplankR",
+                ChampionName = "Gangplank",
+                Range = 30000f,
+                MissileSpeed = 500f,
+                MissileMinSpeed = 500f,
+                MissileMaxSpeed = 500f,
+                Width = 0f,
+                Radius = 525f,
+                ConeDegrees = 45f,
+                Delay = 7.25f,
+                TravelTime = 0,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.R,
@@ -1974,6 +2116,13 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "JudicatorReckoning",
+                MissileName = "JudicatorReckoning",
+                ChampionName = "Kayle",
+                Range = 650f,
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1300f,
+                MissileMaxSpeed = 1300f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -1981,6 +2130,15 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "JudicatorDivineBlessing",
+                ChampionName = "Kayle",
+                Range = 900f,
+                MissileSpeed = 20f,
+                MissileMinSpeed = 20f,
+                MissileMaxSpeed = 20f,
+                Width = 0f,
+                Radius = 210f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -1988,6 +2146,12 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "JudicatorRighteousFury",
+                ChampionName = "Kayle",
+                Range = 20f,
+                MissileSpeed = 779.9f,
+                MissileMinSpeed = 779.9f,
+                MissileMaxSpeed = 779.9f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -1995,6 +2159,15 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "JudicatorIntervention",
+                ChampionName = "Kayle",
+                Range = 900f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 300f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -2794,6 +2967,12 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "Consume",
+                ChampionName = "Nunu",
+                Range = 125f,
+                MissileSpeed = 500f,
+                MissileMinSpeed = 500f,
+                MissileMaxSpeed = 500f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -2801,6 +2980,12 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "BloodBoil",
+                ChampionName = "Nunu",
+                Range = 700f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -2808,6 +2993,13 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "IceBlast",
+                MissileName = "IceBlast",
+                ChampionName = "Nunu",
+                Range = 550f,
+                MissileSpeed = 1000f,
+                MissileMinSpeed = 1000f,
+                MissileMaxSpeed = 1000f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
@@ -2815,6 +3007,14 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "AbsoluteZero",
+                ChampionName = "Nunu",
+                Range = 650f,
+                MissileSpeed = 828.5f,
+                MissileMinSpeed = 828.5f,
+                MissileMaxSpeed = 828.5f,
+                Width = 0f,
+                Radius = 650f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.R,
@@ -4635,27 +4835,71 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "ZiggsQ",
+                MissileName = "ZiggsQSpell",
+                ChampionName = "Ziggs",
+                Range = 1625f,
+                MissileSpeed = 1750f,
+                MissileMinSpeed = 1750f,
+                MissileMaxSpeed = 1750f,
+                Width = 120f,
+                Radius = 125f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
+                canVaryInLength = true,
+                OtherMissileNames = new string[]
+                {
+                    "ZiggsQSpell2",
+                    "ZiggsQSpell3",
+                },
             },
             //w
             new SpellInfo()
             {
+                SpellName = "ZiggsW",
+                MissileName = "ZiggsW",
+                ChampionName = "Ziggs",
+                Range = 1000f,
+                MissileSpeed = 1750f,
+                MissileMinSpeed = 1750f,
+                MissileMaxSpeed = 1750f,
+                Width = 0f,
+                Radius = 275f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
-                CCtype = SpellInfo.CrowdControlType.None,
+                CCtype = SpellInfo.CrowdControlType.KnockBack,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
+                MissileName = "ZiggsE",
+                ChampionName = "Ziggs",
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
+                Range = 900f,
+                Width = 60f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
-                CCtype = SpellInfo.CrowdControlType.KnockBack,
+                CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
+                OtherMissileNames = new string[] { "ZiggsE2", "ZiggsE3" }
             },
             //r
             new SpellInfo()
             {
+                SpellName = "ZiggsR",
+                ChampionName = "Ziggs",
+                MissileName = "ZiggsRBoom",
+                Range = 5000f,
+                MissileSpeed = 1750f,
+                MissileMinSpeed = 1750f,
+                MissileMaxSpeed = 1750f,
+                Width = 0f,
+                Radius = 250f,
+                SecondRadius = 500f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
