@@ -149,7 +149,7 @@ namespace UnsignedYasuo
         }
         public static float GetQReadyTime()
         {
-            return Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.Q).CooldownExpires - Game.Time));
+            return Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.Q).CooldownExpires - Game.Time);
         }
         public static Vector3 GetDashingEnd(Obj_AI_Base target)
         {
