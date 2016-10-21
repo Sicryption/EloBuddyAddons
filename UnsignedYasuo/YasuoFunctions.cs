@@ -208,7 +208,7 @@ namespace UnsignedYasuo
                 if (target != null)
                 {
                     Program.E.Cast(target);
-                    CastQ(target, true);
+                    Core.DelayAction(delegate { CastQ(target, true); }, (int)(YasuoCalcs.GetQReadyTime() * 1000));
                 }
             }
         }
@@ -442,22 +442,26 @@ namespace UnsignedYasuo
         {
             if (Program.FleeMode.Get<CheckBox>("UseE").CurrentValue && Program.E.IsReady() && !IsDashing)
             {
+                Vector3 cursorPos = Game.CursorPos;
+
                 Obj_AI_Base fleeObject = ObjectManager.Get<Obj_AI_Base>().Where(a =>
                     !a.IsDead &&
                     a.IsEnemy &&
+                    a.IsInRange(_Player, Program.E.Range) &&
                     YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos) <= _Player.Distance(Game.CursorPos) &&
                     !a.HasBuff("YasuoDashWrapper") &&
-                    (!YasuoCalcs.IsUnderTurret(YasuoCalcs.GetDashingEnd(a)) || Program.FleeMode.Get<CheckBox>("FleeEUT").CurrentValue) &&
-                    a.IsInRange(_Player, Program.E.Range)).OrderBy(a => a.Distance(Game.CursorPos)).FirstOrDefault();
+                    (!YasuoCalcs.IsUnderTurret(YasuoCalcs.GetDashingEnd(a)) || Program.FleeMode.Get<CheckBox>("FleeEUT").CurrentValue)).OrderBy(a => a.Distance(Game.CursorPos)).FirstOrDefault();
 
                 if (fleeObject != null)
                 {
+                    //had to comment this out due to .Direction no longer working
+                    /*
                     float angle1 = _Player.Position.To2D().AngleBetween(YasuoCalcs.GetDashingEnd(fleeObject).To2D());
                     float angle2 = _Player.Position.To2D().AngleBetween(Game.CursorPos.To2D());
                     
                     //angle1 = 20 angle 2 = 40
                     if (Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) >= 20 ||
-                        Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) >= 20)
+                        Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) >= 20)*/
                         Program.E.Cast(fleeObject);
 
                     if (Program.Q.IsReady() && Program.FleeMode.Get<CheckBox>("FleeQ").CurrentValue && Program.Q.Range != 1000)
@@ -508,7 +512,7 @@ namespace UnsignedYasuo
                 && _Player.Spellbook.GetSpell(SpellSlot.E).Cooldown - (_Player.Spellbook.GetSpell(SpellSlot.E).CooldownExpires - Game.Time ) <= 0.3f)
                 //and is doing beyblade)
             {
-                AIHeroClient enemy = EntityManager.Heroes.Enemies.Where(a =>
+                AIHeroClient enemy = EntityManager.Heroes.Enemies.OrderBy(a=>a.CountEnemiesInRange(Program.EQRange)).Where(a =>
                 _Player.Distance(a) <= Program.BeybladeRange
                 && !a.IsDead).FirstOrDefault();
 
