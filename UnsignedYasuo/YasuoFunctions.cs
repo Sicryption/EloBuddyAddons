@@ -363,11 +363,11 @@ namespace UnsignedYasuo
                 if (ITEMSCHECK)
                     UseItemsAndIgnite(Mode.Combo);
                 
-                if (Program.ComboMenu["CBB"].Cast<CheckBox>().CurrentValue)
+                if (Program.ComboMenu["CBB"].Cast<CheckBox>().CurrentValue && (!Program.ComboMenu["CBBoKP"].Cast<CheckBox>().CurrentValue || Program.ComboMenu.Get<KeyBind>("CBBKP").CurrentValue))
                     Beyblade();
 
                 if (Program.R.IsReady() && Program.UltMenu["Ult"].Cast<CheckBox>().CurrentValue)
-                    YasuoFunctions.UltHandler();
+                    UltHandler();
 
                 #region Q
                 if (QCHECK && QREADY && !IsDashing)

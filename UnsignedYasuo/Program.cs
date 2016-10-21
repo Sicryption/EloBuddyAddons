@@ -60,12 +60,14 @@ namespace UnsignedYasuo
             ComboMenu = menu.AddSubMenu("Combo", "combomenu");
 
             ComboMenu.AddGroupLabel("Combo Settings");
-            ComboMenu.Add("CBB", new CheckBox("Beyblade"));
             ComboMenu.Add("CQ", new CheckBox("Use Q"));
             ComboMenu.Add("CE", new CheckBox("Use E"));
             ComboMenu.Add("CEQ", new CheckBox("Use EQ"));
             ComboMenu.Add("CI", new CheckBox("Use Items"));
             ComboMenu.Add("CEUT", new CheckBox("E Under Turret", false));
+            ComboMenu.Add("CBB", new CheckBox("Beyblade"));
+            ComboMenu.Add("CBBoKP", new CheckBox("Beyblade only on Keypress"));
+            ComboMenu.Add("CBBKP", new KeyBind("Beyblade Keybind", false, KeyBind.BindTypes.HoldActive, 27, 0));
 
             UltMenu = menu.AddSubMenu("Ultimate", "ultimate");
             UltMenu.AddGroupLabel("Ultimate Settings");
