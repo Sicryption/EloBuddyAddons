@@ -15,7 +15,7 @@ namespace UnsignedYasuo
 {
     class YasuoFunctions
     {
-        //E Animation Time = 0.5f seconds
+        //E Animation Time = 0.5f seconds approx
         public static bool IsDashing
         {
             get
