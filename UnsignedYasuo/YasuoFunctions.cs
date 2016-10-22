@@ -138,7 +138,10 @@ namespace UnsignedYasuo
                 if (enemy != null && YasuoCalcs.ShouldEQ(enemy))
                 {
                     Program.E.Cast(enemy);
-                    CastQ(enemy, true, true);
+                    Core.DelayAction(delegate
+                    {
+                        CastQ(enemy, true, true);
+                    }, YasuoCalcs.GetQReadyTimeInt());
                 }
             }
 
@@ -263,50 +266,14 @@ namespace UnsignedYasuo
                 if (enemy != null && YasuoCalcs.ShouldEQ(enemy) && YasuoCalcs.WillQBeReady())
                 {
                     Program.E.Cast(enemy);
-                    CastQ(enemy, true);
+                    Core.DelayAction(delegate
+                    {
+                        CastQ(enemy, true);
+                    }, YasuoCalcs.GetQReadyTimeInt());
                 }
             }
         }
-
-        public enum Status
-        {
-            Q,
-            Q3,
-            E,
-            EQBeforeQ,
-            EQAfterQ,
-            E3QBeforeQ,
-            E3QAfterQ,
-            Standing
-        }
-        public static Status YasuoStatus = Status.Standing;
-        public static float StartEQTime = 0;
-
-        public static float curTime = 0;
-
-        public static void HandleStatus()
-        {
-            if ((YasuoStatus == Status.Q || YasuoStatus == Status.Q3) && Program.Q.IsOnCooldown)
-                YasuoStatus = Status.Standing;
-            else if ((YasuoStatus == Status.E 
-                || YasuoStatus == Status.EQBeforeQ 
-                || YasuoStatus == Status.E3QBeforeQ
-                || YasuoStatus == Status.E3QAfterQ
-                || YasuoStatus == Status.EQAfterQ) 
-                && Program.E.State != SpellState.Surpressed)
-                YasuoStatus = Status.Standing;
-
-            foreach (var propertyInfo in Player.Instance.GetType().GetProperties().Where(x => !x.Name.Contains("_")))
-            {
-                Console.WriteLine($"Name : {propertyInfo.Name} | Value : {propertyInfo.GetValue(Player.Instance)}");
-            }
-        }
         
-        public static void HarrassUpdate()
-        {
-
-        }
-
         //complete
         public static void Harrass()
         {
@@ -338,7 +305,10 @@ namespace UnsignedYasuo
                 {
                     Program.E.Cast(target);
                     if (YasuoCalcs.GetDashingEnd(target).IsInRange(target, 375) && EQCHECK && YasuoCalcs.WillQBeReady())
-                        CastQ(target, true);
+                        Core.DelayAction(delegate
+                        {
+                            CastQ(target, true);
+                        }, YasuoCalcs.GetQReadyTimeInt());
                 }
             }
         }
@@ -369,16 +339,6 @@ namespace UnsignedYasuo
                 if (Program.R.IsReady() && Program.UltMenu["Ult"].Cast<CheckBox>().CurrentValue)
                     UltHandler();
 
-                #region Q
-                if (QCHECK && QREADY && !IsDashing)
-                {
-                    Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
-
-                    if (enemy != null)
-                        CastQ(enemy);
-                }
-                #endregion
-
                 #region E
                 //if e is ready and menu allows for it to be used
                 if (ECHECK && EREADY)
@@ -394,7 +354,6 @@ namespace UnsignedYasuo
                     //if there isnt any champions to auto, and no enemies will bring you into auto attack range, E to enemy
                     else if (_Player.CountEnemiesInRange(_Player.GetAutoAttackRange()) == 0)
                     {
-
                         //enemy in range
                         if (enemy != null)
                         {
@@ -427,45 +386,44 @@ namespace UnsignedYasuo
                                 {
                                     Program.E.Cast(dashEnemy);
                                     if (YasuoCalcs.GetDashingEnd(dashEnemy).IsInRange(enemy, Program.EQRange) && YasuoCalcs.WillQBeReady() && EQCHECK)
-                                        CastQ(dashEnemy, true);
+                                        Core.DelayAction(delegate
+                                        {
+                                            CastQ(dashEnemy, true);
+                                        }, YasuoCalcs.GetQReadyTimeInt());
                                 }
                             }
                         }
                     }
                 }
                 #endregion
+                
+                #region Q
+                if (QCHECK && QREADY && !IsDashing)
+                {
+                    Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
+
+                    if (enemy != null)
+                        CastQ(enemy);
+                }
+                #endregion
             }
         }
 
-        //complete
+        //perfect
         public static void Flee()
         {
-            if (Program.FleeMode.Get<CheckBox>("UseE").CurrentValue && Program.E.IsReady() && !IsDashing)
+            if (Program.FleeMode.Get<CheckBox>("FleeE").CurrentValue && Program.E.IsReady() && !IsDashing)
             {
-                Vector3 cursorPos = Game.CursorPos;
+                Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(_Player.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
 
-                Obj_AI_Base fleeObject = ObjectManager.Get<Obj_AI_Base>().Where(a =>
-                    !a.IsDead &&
-                    a.IsEnemy &&
-                    a.IsInRange(_Player, Program.E.Range) &&
-                    YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos) <= _Player.Distance(Game.CursorPos) &&
-                    !a.HasBuff("YasuoDashWrapper") &&
-                    (!YasuoCalcs.IsUnderTurret(YasuoCalcs.GetDashingEnd(a)) || Program.FleeMode.Get<CheckBox>("FleeEUT").CurrentValue)).OrderBy(a => a.Distance(Game.CursorPos)).FirstOrDefault();
+                List<Obj_AI_Base> dashableEnemies = EntityManager.Enemies.Where(a => !a.IsDead && YasuoCalcs.ERequirements(a, Program.FleeMode.Get<CheckBox>("FleeEUT").CurrentValue) && a.IsInRange(_Player.Position, Program.E.Range) && sector.IsInside(a)).OrderBy(a=>YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos)).ToList();
+                Obj_AI_Base selectedDashUnit = dashableEnemies.FirstOrDefault();
 
-                if (fleeObject != null)
+                if (selectedDashUnit != null)
                 {
-                    //had to comment this out due to .Direction no longer working
-                    /*
-                    float angle1 = _Player.Position.To2D().AngleBetween(YasuoCalcs.GetDashingEnd(fleeObject).To2D());
-                    float angle2 = _Player.Position.To2D().AngleBetween(Game.CursorPos.To2D());
-                    
-                    //angle1 = 20 angle 2 = 40
-                    if (Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) >= 20 ||
-                        Math.Abs(YasuoCalcs.RadiansToDegrees(angle2)) - Math.Abs(YasuoCalcs.RadiansToDegrees(angle1)) >= 20)*/
-                        Program.E.Cast(fleeObject);
-
-                    if (Program.Q.IsReady() && Program.FleeMode.Get<CheckBox>("FleeQ").CurrentValue && Program.Q.Range != 1000)
-                        Program.Q.Cast(fleeObject.Position);
+                    Program.E.Cast(selectedDashUnit);
+                    if(YasuoCalcs.WillQBeReady() && Program.FleeMode.Get<CheckBox>("FleeQ").CurrentValue && !_Player.HasBuff("yasuoq3w") && EntityManager.Enemies.Where(a=>!a.IsDead && a.Distance(YasuoCalcs.GetDashingEnd(selectedDashUnit)) <= 350).Count() >= 1)
+                        Core.DelayAction(delegate { Program.Q.Cast(_Player.Position); }, (int)(YasuoCalcs.GetQReadyTime() * 1000));
                 }
             }
         }
@@ -473,6 +431,8 @@ namespace UnsignedYasuo
         //if q cd is 1.33 and enemy champion does not have yasuodashwrapper. do eq to minion, f, eq to champion, r - keyblade
         public static void Beyblade()
         {
+            //if yasuo has e ready, and has flash ready, and has ult ready, and has 3rd q
+            //at the beginning
             if (!IsDashing
                 && _Player.HasBuff("yasuoq3w")
                 && YasuoCalcs.WillQBeReady()
@@ -481,10 +441,10 @@ namespace UnsignedYasuo
                 && Program.Flash.IsReady()
                 && Program.R.IsReady())
             {
+                //get all enemies that are in yasuos beyblade range
                 AIHeroClient enemy = ObjectManager.Get<AIHeroClient>().Where(a =>
                     a != null
                     && _Player.Distance(a) <= Program.BeybladeRange
-                    //&& _Player.Distance(a) >= Program.E.Range + (Program.EQRange / 2) add this back when put into the combo
                     && a.IsEnemy
                     && !a.IsDead).OrderBy(a => a.Distance(_Player)).FirstOrDefault();
 
@@ -518,7 +478,7 @@ namespace UnsignedYasuo
 
                 if (enemy != null)
                 {
-                    Program.Q.Cast(enemy.Position);
+                    Core.DelayAction(delegate { Program.Q.Cast(enemy.Position); }, YasuoCalcs.GetQReadyTimeInt());
 
                     if (_Player.Position.Distance(enemy) >= 400 && _Player.Position.Distance(enemy) <= 400 + (Program.EQRange / 2))
                         Program.Flash.Cast(_Player.Position.Extend(enemy, 400).To3D());
@@ -674,22 +634,12 @@ namespace UnsignedYasuo
 
                 Vector3 position = Program.Q.GetBestLinearCastPosition(enemies, 0, _Player.Position.To2D()).CastPosition;
                 if (position != null && position != Vector3.Zero)
-                {
                     Program.Q.Cast(position);
-                    if(_Player.HasBuff("yasuoq3w"))
-                        YasuoStatus = Status.Q3;
-                    else
-                        YasuoStatus = Status.Q;
-                }
                 //Chat.Print(position);
             }
             else if (EQ)
             {
                 Program.Q.Cast(_Player.Position);
-                if (_Player.HasBuff("yasuoq3w"))
-                    YasuoStatus = Status.E3QAfterQ;
-                else
-                    YasuoStatus = Status.EQAfterQ;
             }
         }
         public static void CastR(bool UltAtLastSecond)

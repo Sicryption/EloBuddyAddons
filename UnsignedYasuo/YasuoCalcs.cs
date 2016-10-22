@@ -151,6 +151,10 @@ namespace UnsignedYasuo
         {
             return Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.Q).CooldownExpires - Game.Time);
         }
+        public static int GetQReadyTimeInt()
+        {
+            return (int)(Math.Max(0, _Player.Spellbook.GetSpell(SpellSlot.Q).CooldownExpires - Game.Time) * 1000);
+        }
         public static Vector3 GetDashingEnd(Obj_AI_Base target)
         {
             if (!target.IsValidTarget())

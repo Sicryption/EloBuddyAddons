@@ -154,6 +154,7 @@ namespace UnsignedYasuo
             DrawingsMenu.Add("DW", new CheckBox("Draw W"));
             DrawingsMenu.Add("DE", new CheckBox("Draw E"));
             DrawingsMenu.Add("DR", new CheckBox("Draw R"));
+            DrawingsMenu.Add("DFS", new CheckBox("Draw Flee Sector"));
             DrawingsMenu.Add("DKB", new CheckBox("Draw Airblade"));
             DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
 
@@ -173,8 +174,6 @@ namespace UnsignedYasuo
             Game.OnTick += WindWall.GameOnTick;
             Game.OnUpdate += WindWall.GameOnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
-            Obj_AI_Base.OnBuffGain += OnBuffGain;
-            Obj_AI_Base.OnBuffLose += OnBuffLose;
             Obj_AI_Base.OnCreate += WindWall.OnCreate;
             Obj_AI_Base.OnDelete += WindWall.OnDelete;
             Obj_AI_Base.OnUpdatePosition += WindWall.OnUpdate;
@@ -202,11 +201,16 @@ namespace UnsignedYasuo
             if (DrawingsMenu["DW"].Cast<CheckBox>().CurrentValue && W.IsLearned)
                 Drawing.DrawCircle(_Player.Position, W.Range, System.Drawing.Color.White);
             if (DrawingsMenu["DR"].Cast<CheckBox>().CurrentValue && R.IsLearned)
-                Drawing.DrawCircle(_Player.Position, Program.R.Range, System.Drawing.Color.BlueViolet);
-
+                Drawing.DrawCircle(_Player.Position, R.Range, System.Drawing.Color.BlueViolet);
             if (DrawingsMenu["DT"].Cast<CheckBox>().CurrentValue)
                 foreach (Obj_AI_Turret t in EntityManager.Turrets.Enemies)
                     Drawing.DrawCircle(t.Position, TurretRange, System.Drawing.Color.BlueViolet);
+
+            if (DrawingsMenu["DFS"].Cast<CheckBox>().CurrentValue)
+            {
+                Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(_Player.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
+                sector.Draw(System.Drawing.Color.Red, 5);
+            }
         }
 
         private static void Game_OnTick(EventArgs args)
@@ -237,17 +241,6 @@ namespace UnsignedYasuo
                 Chat.Print("Nice Penta! Make sure to screenshot it and post it on the UnsignedYasuo thread to show off!");
                 PentaKills = _Player.PentaKills;
             }
-        }
-
-        static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs buff)
-        {
-            if (sender.IsMe && buff.Buff.Name == "yasuoq3w")
-                Q =  new Spell.Skillshot(SpellSlot.Q, 1000, SkillShotType.Linear);
-        }
-        static void OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs buff)
-        {
-            if (sender.IsMe && buff.Buff.Name == "yasuoq3w")
-                Q =  new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear);
         }
 
         static void OnHitChanceSliderChange(ValueBase sender, EventArgs args)
