@@ -25,3 +25,6 @@ Shroom Tracker:
 
 Pick a Card:
 - A simple addon to go with other Twisted Fate scripts to help select cards easier.
+
+EloBuddy Helper:
+- A program I use to help debug when creating scripts.
