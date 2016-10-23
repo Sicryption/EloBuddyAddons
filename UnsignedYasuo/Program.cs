@@ -6,6 +6,8 @@ using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using SharpDX;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace UnsignedYasuo
 {
@@ -156,6 +158,7 @@ namespace UnsignedYasuo
             DrawingsMenu.Add("DR", new CheckBox("Draw R"));
             DrawingsMenu.Add("DFS", new CheckBox("Draw Flee Sector"));
             DrawingsMenu.Add("DKB", new CheckBox("Draw Airblade"));
+            DrawingsMenu.Add("DWD", new CheckBox("Draw Wall Dashes"));
             DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
 
             Spellbook spell = _Player.Spellbook;
@@ -192,6 +195,11 @@ namespace UnsignedYasuo
             if (_Player.IsDead)
                 return;
 
+			if (DrawingsMenu["DWD"].Cast<CheckBox>().CurrentValue && E.IsLearned)
+                foreach (Obj_AI_Base ob in ObjectManager.Get<Obj_AI_Base>().Where(a => !a.IsDead && a.IsInRange(_Player, E.Range) && YasuoCalcs.ERequirements(a, true) && a.IsEnemy && a.IsTargetable))
+                    DrawLineIfWallBetween(_Player.Position, YasuoCalcs.GetDashingEnd(ob));
+
+			
             if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
                 Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.Red);
             if (DrawingsMenu["DKB"].Cast<CheckBox>().CurrentValue && Q.IsLearned && E.IsLearned && Flash != null && Flash.IsReady() && R.IsLearned && R.IsReady())
@@ -210,6 +218,42 @@ namespace UnsignedYasuo
             {
                 Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(_Player.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
                 sector.Draw(System.Drawing.Color.Red, 5);
+            }
+        }
+		
+		        private static void DrawLineIfWallBetween(Vector3 startPos, Vector3 endPos)
+        {
+            List<Vector3> inbetweenPoints = new List<Vector3>();
+            Vector2 wallStartPosition = Vector2.Zero;
+            Vector2 wallEndPosition = Vector2.Zero;
+
+            //get every point between yasuo's position and the end position of the dash extended to a range of 1000. 
+            //1 point is every 1/100 of total length
+            for (int i = 0; i <= 100; i++)
+                inbetweenPoints.Add(startPos.Extend(startPos.Extend(endPos, 1000), i * (startPos.Distance(startPos.Extend(endPos, 1000)) / 100)).To3D());
+
+            //for every point in the list of points, find the beginning and the end of the wal
+            foreach (Vector2 vec in inbetweenPoints)
+            {
+                if (vec.IsWall())
+                {
+                    if (wallStartPosition == Vector2.Zero)
+                        wallStartPosition = vec;
+                }
+                else if (wallEndPosition == Vector2.Zero && wallStartPosition != Vector2.Zero)
+                    wallEndPosition = vec;
+            }
+
+            //draw the wall in the color blue
+            if (wallStartPosition != Vector2.Zero && wallEndPosition != Vector2.Zero)
+            {
+                Drawing.DrawLine(wallStartPosition.To3D().WorldToScreen(), wallEndPosition.To3D().WorldToScreen(), 10, System.Drawing.Color.Black);
+
+                //if the end point of yasuos dash brings him at least halfway between the two points (closer to the wall end than to the walls beginning)
+                if (endPos.Distance(wallEndPosition) < endPos.Distance(wallStartPosition))
+                    Drawing.DrawLine(startPos.WorldToScreen(), startPos.Extend(endPos, 1000).To3D().WorldToScreen(), 3, System.Drawing.Color.Green);
+                else
+                    Drawing.DrawLine(startPos.WorldToScreen(), startPos.Extend(endPos, 1000).To3D().WorldToScreen(), 3, System.Drawing.Color.Red);
             }
         }
 
