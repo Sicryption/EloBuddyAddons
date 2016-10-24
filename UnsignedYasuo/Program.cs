@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using EloBuddy;
 using EloBuddy.SDK;
 using EloBuddy.SDK.Enumerations;
@@ -6,8 +10,6 @@ using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using SharpDX;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace UnsignedYasuo
 {
@@ -53,6 +55,8 @@ namespace UnsignedYasuo
             {
                 Range = 1200
             };
+
+            Orbwalker.DisableMovement = true;
 
             menu = MainMenu.AddMenu("Unsigned Yasuo", "UnsignedYasuo");
             menu.Add("ABOUT", new Label("This Addon was designed by Chaos"));
@@ -159,6 +163,7 @@ namespace UnsignedYasuo
             DrawingsMenu.Add("DFS", new CheckBox("Draw Flee Sector"));
             DrawingsMenu.Add("DKB", new CheckBox("Draw Airblade"));
             DrawingsMenu.Add("DWD", new CheckBox("Draw Wall Dashes"));
+            DrawingsMenu.Add("DWDPM", new CheckBox("Draw Wall Prediction Manager", false));
             DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
 
             Spellbook spell = _Player.Spellbook;
@@ -194,12 +199,20 @@ namespace UnsignedYasuo
         {
             if (_Player.IsDead)
                 return;
+			if (DrawingsMenu["DWDPM"].Cast<CheckBox>().CurrentValue && E.IsLearned)
+                foreach (Obj_AI_Base ob in ObjectManager.Get<Obj_AI_Base>().Where(a => !a.IsDead && a.IsVisible && a.IsInRange(_Player, E.Range) && YasuoCalcs.ERequirements(a, true) && a.IsEnemy && a.IsTargetable))
+                    DrawLineIfWallBetween(_Player.Position, ob);
 
-			if (DrawingsMenu["DWD"].Cast<CheckBox>().CurrentValue && E.IsLearned)
-                foreach (Obj_AI_Base ob in ObjectManager.Get<Obj_AI_Base>().Where(a => !a.IsDead && a.IsInRange(_Player, E.Range) && YasuoCalcs.ERequirements(a, true) && a.IsEnemy && a.IsTargetable))
-                    DrawLineIfWallBetween(_Player.Position, YasuoCalcs.GetDashingEnd(ob));
+            if (DrawingsMenu["DWD"].Cast<CheckBox>().CurrentValue && E.IsLearned)
+                foreach (WallDash wd in YasuoWallDashDatabase.wallDashDatabase)
+                    if (EntityManager.MinionsAndMonsters.Combined.Where(a => !a.IsDead && a.Name == wd.unitName && a.ServerPosition.Distance(wd.dashUnitPosition) <= 2 && a.Distance(_Player) <= 2500).FirstOrDefault() != null)
+                    {
+                        wd.startPosition.DrawArrow(wd.endPosition, System.Drawing.Color.Red, 1);
+                        Geometry.Polygon.Circle dashCircle = new Geometry.Polygon.Circle(wd.endPosition, 120);
+                        dashCircle.Draw(System.Drawing.Color.Red, 1);
+                        
+                    }
 
-			
             if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
                 Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.Red);
             if (DrawingsMenu["DKB"].Cast<CheckBox>().CurrentValue && Q.IsLearned && E.IsLearned && Flash != null && Flash.IsReady() && R.IsLearned && R.IsReady())
@@ -221,8 +234,10 @@ namespace UnsignedYasuo
             }
         }
 		
-		        private static void DrawLineIfWallBetween(Vector3 startPos, Vector3 endPos)
+        private static void DrawLineIfWallBetween(Vector3 startPos, Obj_AI_Base target)
         {
+            Vector3 endPos = YasuoCalcs.GetDashingEnd(target);
+
             List<Vector3> inbetweenPoints = new List<Vector3>();
             Vector2 wallStartPosition = Vector2.Zero;
             Vector2 wallEndPosition = Vector2.Zero;
@@ -247,14 +262,41 @@ namespace UnsignedYasuo
             //draw the wall in the color blue
             if (wallStartPosition != Vector2.Zero && wallEndPosition != Vector2.Zero)
             {
+                double wallWidth = Math.Round(wallStartPosition.Distance(wallEndPosition)),
+                    distanceToWall = Math.Round(startPos.Distance(wallStartPosition)),
+                    totalDistance = Math.Round(wallStartPosition.Distance(wallEndPosition) + startPos.Distance(wallStartPosition)),
+                    monsterDist = Math.Round(target.Position.Distance(wallStartPosition));
+
                 Drawing.DrawLine(wallStartPosition.To3D().WorldToScreen(), wallEndPosition.To3D().WorldToScreen(), 10, System.Drawing.Color.Black);
 
                 //if the end point of yasuos dash brings him at least halfway between the two points (closer to the wall end than to the walls beginning)
-                if (endPos.Distance(wallEndPosition) < endPos.Distance(wallStartPosition))
+                //and the wall has to be thinner than yasuo's total dash range. TESTED THIS TO CONFIRM IT WORKS
+                //if (endPos.Distance(wallEndPosition) < endPos.Distance(wallStartPosition) && wallStartPosition.Distance(wallEndPosition) <= Program.E.Range)
+                if(totalDistance <= 630)
                     Drawing.DrawLine(startPos.WorldToScreen(), startPos.Extend(endPos, 1000).To3D().WorldToScreen(), 3, System.Drawing.Color.Green);
                 else
                     Drawing.DrawLine(startPos.WorldToScreen(), startPos.Extend(endPos, 1000).To3D().WorldToScreen(), 3, System.Drawing.Color.Red);
+                Drawing.DrawText(wallStartPosition.To3D().WorldToScreen(), System.Drawing.Color.Purple, wallStartPosition.Distance(wallEndPosition).ToString(), 15);
+                Drawing.DrawText(startPos.Extend(endPos, 1000).To3D().WorldToScreen(), System.Drawing.Color.Purple, (wallStartPosition.Distance(wallEndPosition) + startPos.Distance(wallStartPosition)).ToString(), 15);
+                Drawing.DrawCircle(endPos, 50, System.Drawing.Color.White);
             }
+        }
+
+        private static void PrintWallDash()
+        {
+            /*if (Game.CursorPos2D.Distance(endPos.WorldToScreen()) <= 50 E.IsReady())
+                {
+                //Console.WriteLine("Wall Width: {0}, Distance: {1}, MonsterDist: {3}, Total: {2}, Result = ", wallWidth, distanceToWall, totalDistance, monsterDist);
+
+                string innerData = " unitName = \"" + target.Name +
+                    "\", startPosition = new Vector3(" + startPos.X + "f, " + startPos.Y + "f, " + startPos.Z +
+                    "f), dashUnitPosition = new Vector3(" + target.Position.X + "f, " + target.Position.Y + "f, " + target.Position.Z +
+                    "f), endPosition = new Vector3(" + endPos.X + "f, " + endPos.Y + "f, " + endPos.Z + "f)";
+
+                Console.WriteLine("new WallDash() {" + innerData + "},");
+
+                E.Cast(target);
+            }*/
         }
 
         private static void Game_OnTick(EventArgs args)

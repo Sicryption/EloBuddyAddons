@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="WallDash.cs" />
     <Compile Include="WindWall.cs" />
     <Compile Include="EvadeInfo\SpellDatabase.cs" />
     <Compile Include="EvadeInfo\SpellInfo.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="YasuoFunctions.cs" />
+    <Compile Include="YasuoWallDashDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

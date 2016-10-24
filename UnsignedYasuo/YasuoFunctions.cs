@@ -114,6 +114,8 @@ namespace UnsignedYasuo
         //complete
         public static void LastHit()
         {
+            Orbwalker.MoveTo(Game.CursorPos);
+
             bool QCHECK = Program.LastHit["LHQ"].Cast<CheckBox>().CurrentValue;
             bool Q3CHECK = Program.LastHit["LHQ3"].Cast<CheckBox>().CurrentValue;
             bool ECHECK = Program.LastHit["LHE"].Cast<CheckBox>().CurrentValue;
@@ -157,6 +159,8 @@ namespace UnsignedYasuo
         //complete
         public static void LaneClear()
         {
+            Orbwalker.MoveTo(Game.CursorPos);
+
             bool QCHECK = Program.LaneClear["LCQ"].Cast<CheckBox>().CurrentValue;
             bool Q3CHECK = Program.LaneClear["LC3Q"].Cast<CheckBox>().CurrentValue;
             bool ECHECK = Program.LaneClear["LCE"].Cast<CheckBox>().CurrentValue;
@@ -277,6 +281,8 @@ namespace UnsignedYasuo
         //complete
         public static void Harrass()
         {
+            Orbwalker.MoveTo(Game.CursorPos);
+
             bool QCHECK = Program.Harass["HQ"].Cast<CheckBox>().CurrentValue;
             bool ECHECK = Program.Harass["HE"].Cast<CheckBox>().CurrentValue;
             bool EQCHECK = Program.Harass["HEQ"].Cast<CheckBox>().CurrentValue;
@@ -314,8 +320,10 @@ namespace UnsignedYasuo
         }
 
         //complete
-        public static void Combo()  
+        public static void Combo()
         {
+            Orbwalker.MoveTo(Game.CursorPos);
+
             if (_Player.CountEnemiesInRange(Program.R.Range) >= 1)
             {
                 #region variables
@@ -408,22 +416,52 @@ namespace UnsignedYasuo
                 #endregion
             }
         }
-
+        
         //perfect
         public static void Flee()
         {
+            WallDash activeDash = null;
+
+            //walldash
+            foreach (WallDash wd in YasuoWallDashDatabase.wallDashDatabase)
+                if (EntityManager.MinionsAndMonsters.Combined.Where(a => !a.IsDead && a.Name == wd.unitName && a.ServerPosition.Distance(wd.dashUnitPosition) <= 2).FirstOrDefault() != null)
+                {
+                    Geometry.Polygon.Circle dashCircle = new Geometry.Polygon.Circle(wd.endPosition, 120);
+                    if (dashCircle.IsInside(Game.CursorPos))
+                    {
+                        activeDash = wd;
+                        break;
+                    }
+                }
+
             if (Program.FleeMode.Get<CheckBox>("FleeE").CurrentValue && Program.E.IsReady() && !IsDashing)
             {
-                Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(_Player.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
-
-                List<Obj_AI_Base> dashableEnemies = EntityManager.Enemies.Where(a => !a.IsDead && YasuoCalcs.ERequirements(a, Program.FleeMode.Get<CheckBox>("FleeEUT").CurrentValue) && a.IsInRange(_Player.Position, Program.E.Range) && sector.IsInside(a)).OrderBy(a=>YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos)).ToList();
-                Obj_AI_Base selectedDashUnit = dashableEnemies.FirstOrDefault();
-
-                if (selectedDashUnit != null)
+                if (activeDash == null)
                 {
-                    Program.E.Cast(selectedDashUnit);
-                    if(YasuoCalcs.WillQBeReady() && Program.FleeMode.Get<CheckBox>("FleeQ").CurrentValue && !_Player.HasBuff("yasuoq3w") && EntityManager.Enemies.Where(a=>!a.IsDead && a.Distance(YasuoCalcs.GetDashingEnd(selectedDashUnit)) <= 350).Count() >= 1)
-                        Core.DelayAction(delegate { Program.Q.Cast(_Player.Position); }, (int)(YasuoCalcs.GetQReadyTime() * 1000));
+                    Orbwalker.MoveTo(Game.CursorPos);
+                    Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(_Player.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
+
+                    List<Obj_AI_Base> dashableEnemies = EntityManager.Enemies.Where(a => !a.IsDead && YasuoCalcs.ERequirements(a, Program.FleeMode.Get<CheckBox>("FleeEUT").CurrentValue) && a.IsInRange(_Player.Position, Program.E.Range) && sector.IsInside(a)).OrderBy(a => YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos)).ToList();
+                    Obj_AI_Base selectedDashUnit = dashableEnemies.FirstOrDefault();
+
+                    if (selectedDashUnit != null)
+                    {
+                        Program.E.Cast(selectedDashUnit);
+                        if (YasuoCalcs.WillQBeReady() && Program.FleeMode.Get<CheckBox>("FleeQ").CurrentValue && !_Player.HasBuff("yasuoq3w") && EntityManager.Enemies.Where(a => !a.IsDead && a.Distance(YasuoCalcs.GetDashingEnd(selectedDashUnit)) <= 350).Count() >= 1)
+                            Core.DelayAction(delegate { Program.Q.Cast(_Player.Position); }, (int)(YasuoCalcs.GetQReadyTime() * 1000));
+                    }
+                }
+                else
+                {
+                    if (_Player.Position.To2D() == activeDash.startPosition.To2D())
+                    {
+                        Obj_AI_Base target = EntityManager.MinionsAndMonsters.Combined.Where(a => a.Name == activeDash.unitName).FirstOrDefault();
+
+                        if (target != null)
+                            Program.E.Cast(target);
+                    }
+                    else
+                        Orbwalker.MoveTo(activeDash.startPosition);
                 }
             }
         }
