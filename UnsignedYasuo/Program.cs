@@ -304,8 +304,6 @@ namespace UnsignedYasuo
             if (_Player.IsDead)
                 return;
 
-            //YasuoFunctions.HandleStatus();
-
             Q = YasuoFunctions.GetQType();
             YasuoFunctions.AutoHarrass();
             YasuoFunctions.UseItemsAndIgnite(YasuoFunctions.Mode.PotionManager);
