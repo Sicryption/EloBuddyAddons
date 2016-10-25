@@ -212,8 +212,7 @@ namespace UnsignedEvade
         {
             if (_Player.IsDead)
                 return;
-
-
+            
             if(MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Player Direction"))
                 Drawing.DrawText(_Player.Position.WorldToScreen(), Geometry.drawColor, _Player.Direction.ToString(), 15);
 

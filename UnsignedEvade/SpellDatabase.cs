@@ -2174,9 +2174,31 @@ namespace UnsignedEvade
             },
             #endregion
             #region Kennen
+            //aa
+            new SpellInfo()
+            {
+                MissileName = "KennenMegaProc",
+                ChampionName = "Kennen",
+                MissileSpeed = 1700f,
+                MissileMinSpeed = 1700f,
+                MissileMaxSpeed = 1700f,
+                Range = 200f,
+                Width = 0f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.Stun,
+                Slot = SpellInfo.SpellSlot.Auto,
+            },
             //q
             new SpellInfo()
             {
+                SpellName = "KennenShurikenHurlMissile1",
+                MissileName = "KennenShurikenHurlMissile1",
+                ChampionName = "Kennen",
+                Range = 1050f,
+                MissileSpeed = 1700f,
+                MissileMinSpeed = 1700f,
+                MissileMaxSpeed = 1700f,
+                Width = 50f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -2184,13 +2206,30 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "KennenBringTheLight",
+                ChampionName = "Kennen",
+                Range = 725f,
+                MissileSpeed = 20f,
+                MissileMinSpeed = 20f,
+                MissileMaxSpeed = 20f,
+                Width = 0f,
+                Radius = 900f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
-                CCtype = SpellInfo.CrowdControlType.None,
+                CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
+                SpellName = "KennenLightningRush",
+                ChampionName = "Kennen",
+                Range = 200f,
+                MissileSpeed = 20f,
+                MissileMinSpeed = 20f,
+                MissileMaxSpeed = 20f,
+                Radius = 100f,
+                Delay = 2.25f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.E,
@@ -2198,6 +2237,13 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "KennenShurikenStorm",
+                ChampionName = "Kennen",
+                MissileSpeed = 779.9f,
+                MissileMinSpeed = 779.9f,
+                MissileMaxSpeed = 779.9f,
+                Radius = 550f,
+                Delay = 3.25f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.R,
@@ -2436,6 +2482,8 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "LeonaShieldOfDaybreak",
+                ChampionName = "Leona",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -2443,6 +2491,16 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "LeonaSolarBarrier",
+                ChampionName = "Leona",
+                Range = 200f,
+                MissileSpeed = 828.5f,
+                MissileMinSpeed = 828.5f,
+                MissileMaxSpeed = 828.5f,
+                Width = 0f,
+                Radius = 500f,
+                ConeDegrees = 45f,
+                Delay = 3.25f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -2450,6 +2508,15 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "LeonaZenithBlade",
+                MissileName = "LeonaZenithBladeMissile",
+                ChampionName = "Leona",
+                MissileSpeed = 2000f,
+                MissileMinSpeed = 2000f,
+                MissileMaxSpeed = 2000f,
+                Range = 900f,
+                Width = 70f,
+                DashType = SpellInfo.Dashtype.Linear,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Root,
                 Slot = SpellInfo.SpellSlot.E,
@@ -2457,7 +2524,13 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellName = "LeonaSolarFlare",
+                ChampionName = "Leona",
+                Range = 1200f,
+                Radius = 120f,
+                SecondRadius = 225f,
+                Delay = 0.625f + 0.25f,
+                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.R,
             },
