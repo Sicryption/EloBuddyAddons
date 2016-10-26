@@ -86,8 +86,6 @@ namespace UnsignedEvade
             Drawing.DrawLine(SW.WorldToScreen(), NW.WorldToScreen(), 3, drawColor);
             Drawing.DrawLine(NW.WorldToScreen(), NE.WorldToScreen(), 3, drawColor);
             Drawing.DrawLine(NE.WorldToScreen(), SE.WorldToScreen(), 3, drawColor);
-
-            Drawing.DrawText(position.WorldToScreen(), drawColor, "Corki W", 16);
         }
 
         public static void DrawCircularSkillshot(Vector3 position, float radius, float secondRadius = 0)

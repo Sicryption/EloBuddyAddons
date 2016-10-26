@@ -30,7 +30,46 @@ namespace UnsignedEvade
             {
                 ParticleName = "Ziggs_Base_E_placedMine.troy",
                 Radius = 90f,
-                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,   
+                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
+            },
+            //Karma Mantra-Q
+            new ParticleInfo()
+            {
+                ParticleName = "Karma_Base_Q_impact_R_01.troy",
+                Radius = 250f,
+                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
+            },
+            //Anivia W
+            new ParticleInfo()
+            {
+                ParticleName = "cryo_Crystalize.troy",
+                Length = 150,
+                Width = 150,
+                XOffset = 0,
+                YOffset = 0,
+                SpellType = ParticleInfo.SpellTypeInfo.Wall,
+            },
+            //Anivia R
+            new ParticleInfo()
+            {
+                ParticleName = "cryo_storm_red_team.troy",
+                Radius = 400f,
+                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
+                otherNames = new List<string>() { "cryo_storm_blue_team.troy", }
+            },
+            //Illaoi Q
+            new ParticleInfo()
+            {
+                ParticleName = "Illaoi_Base_Q_IndicatorRed.troy",
+                //"Illaoi_Base_Q_tentacle.troy",
+                //"Illaoi_Base_Q_cas.troy",
+                //"Illaoi_Base_Q_tarMinion.troy",
+                Length = 1000,
+                Width = 400,
+                XOffset = 0,
+                YOffset = 0,
+                SpellType = ParticleInfo.SpellTypeInfo.Wall,
+                otherNames = new List<string>() { "cryo_storm_blue_team.troy", }
             },
         };
 

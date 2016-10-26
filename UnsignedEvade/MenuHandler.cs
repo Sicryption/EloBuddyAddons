@@ -43,6 +43,8 @@ namespace UnsignedEvade
             CreateCheckbox(ref DebugMenu, "Show Friendly Targeted Spells", false);
             CreateCheckbox(ref DebugMenu, "Show Particles", false);
             CreateCheckbox(ref DebugMenu, "Show All Object Names", false);
+            CreateCheckbox(ref DebugMenu, "Show Buff Gains", false);
+            CreateCheckbox(ref DebugMenu, "Show Buff Losses", false);
         }
 
         private static CheckBox CreateCheckbox(ref Menu menu, string name, bool defaultValue = true)

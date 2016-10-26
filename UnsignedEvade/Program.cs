@@ -46,6 +46,24 @@ namespace UnsignedEvade
             GameObject.OnCreate += GameObject_OnCreate;
             Obj_AI_Base.OnSpellCast += AIHeroClient_OnSpellCast;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
+            Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
+            Obj_AI_Base.OnBuffLose += Obj_AI_Base_OnBuffLose;
+        }
+
+        private static void Obj_AI_Base_OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
+        {
+            if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Buff Losses"))
+                Console.WriteLine(args.Buff.Name);
+        }
+
+        private static void Obj_AI_Base_OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
+        {
+            if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Buff Gains"))
+                Console.WriteLine(args.Buff.Name);
+
+            foreach (SpellInfo info in activeSpells.Where(a => a.BuffName != ""))
+                if (args.Buff.Name == info.BuffName && args.Buff.Caster.Name == info.caster.Name)
+                    info.target = sender;
         }
 
         private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
@@ -244,6 +262,12 @@ namespace UnsignedEvade
                                     KeepList.Add(info);
                             }
                         }
+                        else if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted)
+                        {
+                            if (info.DashType == SpellInfo.Dashtype.Linear)
+                                if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay)
+                                    KeepList.Add(info);
+                        }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
                         {
                             float timeSinceCast = Game.Time - info.TimeOfCast;
@@ -260,6 +284,7 @@ namespace UnsignedEvade
                         {
                             float timeSinceCast = Game.Time - info.TimeOfCast;
                             float timeItTakesToCast = info.Delay + info.TravelTime;
+
                             if (timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0)
                                 KeepList.Add(info);
                         }
@@ -315,7 +340,13 @@ namespace UnsignedEvade
                             Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                     }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted && (info.target.Name == Player.Instance.Name || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Friendly Targeted Spells")))
-                        Geometry.DrawTargetedSpell(info.missile.Position, info.target);
+                    {
+                        //lee sin does not have a target set. the target set is the one hovered over.
+                        if (info.DashType == SpellInfo.Dashtype.Linear && info.target != null)
+                            Geometry.DrawTargetedSpell(info.caster.Position, info.target);
+                        else if (info.DashType == SpellInfo.Dashtype.None && (info.target.Name == Player.Instance.Name || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Friendly Targeted Spells")))
+                            Geometry.DrawTargetedSpell(info.missile.Position, info.target);
+                    }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
                     {
                         if (info.missile != null)
@@ -333,6 +364,7 @@ namespace UnsignedEvade
             foreach(Obj_GeneralParticleEmitter particle in ObjectManager.Get<Obj_GeneralParticleEmitter>())
             {
                 ParticleInfo info = ParticleDatabase.GetParticleInfo(particle.Name);
+
                 if (info != null)
                 {
                     if (info.SpellType == ParticleInfo.SpellTypeInfo.Wall)

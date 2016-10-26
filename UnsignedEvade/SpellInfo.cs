@@ -76,7 +76,7 @@ namespace UnsignedEvade
         {
             get
             {
-                if (travelTime == -1f || MissileSpeed == 0)
+                if (travelTime == -1f || MissileSpeed == null || MissileSpeed == 0)
                     return 0f;
                 else if(travelTime == 0)
                     travelTime = startPosition.Distance(endPosition) / MissileSpeed;
