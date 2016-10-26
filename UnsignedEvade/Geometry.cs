@@ -50,27 +50,27 @@ namespace UnsignedEvade
                     endPosition = enemiesThatWillBeHit[(int)collisionCount - 1].Position;
             }
 
-            Vector2 northernMostPoint = (startPosition.Y >= endPosition.Y) ? startPosition.To2D() : endPosition.To2D();
-            Vector2 southernMostPoint =  (startPosition.Y >= endPosition.Y) ? endPosition.To2D() : startPosition.To2D();
-            
-            Vector2 betweenVector = new Vector2(northernMostPoint.X - southernMostPoint.X, northernMostPoint.Y - southernMostPoint.Y);
+            Vector3 northernMostPoint = (startPosition.Y >= endPosition.Y) ? startPosition : endPosition;
+            Vector3 southernMostPoint =  (startPosition.Y >= endPosition.Y) ? endPosition : startPosition;
+
+            Vector3 betweenVector = new Vector3(northernMostPoint.X - southernMostPoint.X, northernMostPoint.Y - southernMostPoint.Y, 0f);
             Vector2 betweenVector2 = new Vector2(betweenVector.Y, -betweenVector.X);
             double Length = Math.Sqrt(betweenVector2.X * betweenVector2.X + betweenVector2.Y * betweenVector2.Y); //Thats length of perpendicular
             Vector2 NewVector = new Vector2((float)(betweenVector2.X / Length), (float)(betweenVector2.Y / Length)); //Now N is normalized perpendicular
-            
-            Vector2 NEPoint = new Vector2(southernMostPoint.X + NewVector.X * (width / 2), southernMostPoint.Y + NewVector.Y * (width / 2));
-            Vector2 NWPoint = new Vector2(southernMostPoint.X - NewVector.X * (width / 2), southernMostPoint.Y - NewVector.Y * (width / 2));
-            Vector2 SEPoint = new Vector2(northernMostPoint.X + NewVector.X * (width / 2), northernMostPoint.Y + NewVector.Y * (width / 2));
-            Vector2 SWPoint = new Vector2(northernMostPoint.X - NewVector.X * (width / 2), northernMostPoint.Y - NewVector.Y * (width / 2));
+
+            Vector3 NEPoint = new Vector3(southernMostPoint.X + NewVector.X * (width / 2), southernMostPoint.Y + NewVector.Y * (width / 2), startPosition.Z);
+            Vector3 NWPoint = new Vector3(southernMostPoint.X - NewVector.X * (width / 2), southernMostPoint.Y - NewVector.Y * (width / 2), startPosition.Z);
+            Vector3 SEPoint = new Vector3(northernMostPoint.X + NewVector.X * (width / 2), northernMostPoint.Y + NewVector.Y * (width / 2), startPosition.Z);
+            Vector3 SWPoint = new Vector3(northernMostPoint.X - NewVector.X * (width / 2), northernMostPoint.Y - NewVector.Y * (width / 2), startPosition.Z);
             
             //top
-            Drawing.DrawLine(NEPoint.To3D().WorldToScreen(), NWPoint.To3D().WorldToScreen(), 3, drawColor);
+            Drawing.DrawLine(NEPoint.WorldToScreen(), NWPoint.WorldToScreen(), 3, drawColor);
             //bottom
-            Drawing.DrawLine(SEPoint.To3D().WorldToScreen(), SWPoint.To3D().WorldToScreen(), 3, drawColor);
+            Drawing.DrawLine(SEPoint.WorldToScreen(), SWPoint.WorldToScreen(), 3, drawColor);
             //right
-            Drawing.DrawLine(NEPoint.To3D().WorldToScreen(), SEPoint.To3D().WorldToScreen(), 3, drawColor);
+            Drawing.DrawLine(NEPoint.WorldToScreen(), SEPoint.WorldToScreen(), 3, drawColor);
             //left
-            Drawing.DrawLine(NWPoint.To3D().WorldToScreen(), SWPoint.To3D().WorldToScreen(), 3, drawColor);
+            Drawing.DrawLine(NWPoint.WorldToScreen(), SWPoint.WorldToScreen(), 3, drawColor);
         }
 
         public static void DrawRectangle(int length, int width, Vector3 position, int xoffset = 0, int yoffset = 0)
@@ -96,21 +96,28 @@ namespace UnsignedEvade
                 Drawing.DrawCircle(position, secondRadius, drawColor);
         }
 
-        public static void DrawConeSkillshot(Vector3 startPosition, Vector3 endPosition, float coneAngle)
+        public static void DrawConeSkillshot(Vector3 startPosition, Vector3 endPosition, float coneAngle, float range)
         {
-            //drawing won't look like a cone, instead will look like <>
 
-            Vector2 centerPoint = startPosition.WorldToScreen();
-            Vector2 endPoint = endPosition.WorldToScreen();
+            EloBuddy.SDK.Geometry.Polygon.Sector cone = new EloBuddy.SDK.Geometry.Polygon.Sector(startPosition, endPosition, (float)(coneAngle * 2 * Math.PI / 180), range);
+            cone.Draw(drawColor, 3);
+            
+        }
+        public static void DrawWall(Vector3 startPosition, Vector3 endPosition, float width, float radius)
+        {
+            Vector2 startPos = startPosition.To2D(),
+                endPos = endPosition.To2D(),
+                PerpendicularPos1 = startPos.Extend(endPos, radius / 2).Perpendicular(),
+                PerpendicularPos2 = startPos.Perpendicular(),
+                temp = new Vector2(endPos.X - PerpendicularPos1.X, endPos.Y - PerpendicularPos1.Y),
+                PerpendicularPos3 = startPos.Extend(endPos, radius / 2).Perpendicular2(),
+                PerpendicularPos4 = startPos.Perpendicular2(),
+                temp2 = new Vector2(endPos.X - PerpendicularPos3.X, endPos.Y - PerpendicularPos3.Y);
 
-            Vector2 leftPoint = centerPoint.RotateAroundPoint(endPoint, (float)(coneAngle * Math.PI / 180));
-            Vector2 rightPoint = centerPoint.RotateAroundPoint(endPoint, -(float)(coneAngle * Math.PI / 180));
+            Vector3 leftPoint = (PerpendicularPos2 + temp).To3D() + new Vector3(0, 0, startPosition.Z),
+                rightPoint = (PerpendicularPos4 + temp2).To3D() + new Vector3(0, 0, startPosition.Z);
 
-            //Drawing.DrawLine(centerPoint, leftPoint, 3, System.Drawing.Color.Red);
-            //Drawing.DrawLine(centerPoint, rightPoint, 3, System.Drawing.Color.Red);
-            //Drawing.DrawLine(leftPoint, endPoint, 3, System.Drawing.Color.Red);
-            //Drawing.DrawLine(rightPoint, endPoint, 3, System.Drawing.Color.Red);
-            Drawing.DrawLine(centerPoint, endPoint, 3, drawColor);
+            DrawLinearSkillshot(leftPoint, rightPoint, width, 0, 0, 0);
         }
     }
 }

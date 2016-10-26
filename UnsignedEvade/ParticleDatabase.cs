@@ -57,10 +57,10 @@ namespace UnsignedEvade
                 SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
                 otherNames = new List<string>() { "cryo_storm_blue_team.troy", }
             },
-            //Illaoi Q
+            //Illaoi Tentacles
             new ParticleInfo()
             {
-                ParticleName = "Illaoi_Base_Q_IndicatorRed.troy",
+               // ParticleName = "Illaoi_Base_Q_IndicatorBLU.troy",
                 //"Illaoi_Base_Q_tentacle.troy",
                 //"Illaoi_Base_Q_cas.troy",
                 //"Illaoi_Base_Q_tarMinion.troy",
@@ -69,7 +69,13 @@ namespace UnsignedEvade
                 XOffset = 0,
                 YOffset = 0,
                 SpellType = ParticleInfo.SpellTypeInfo.Wall,
-                otherNames = new List<string>() { "cryo_storm_blue_team.troy", }
+            },
+            //Morgana W
+            new ParticleInfo()
+            {
+                ParticleName = "Morgana_Base_W_Tar_red.troy",
+                Radius = 280f,
+                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
             },
         };
 

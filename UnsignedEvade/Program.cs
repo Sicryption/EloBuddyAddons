@@ -49,7 +49,6 @@ namespace UnsignedEvade
             Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
             Obj_AI_Base.OnBuffLose += Obj_AI_Base_OnBuffLose;
         }
-
         private static void Obj_AI_Base_OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
         {
             if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Buff Losses"))
@@ -138,7 +137,7 @@ namespace UnsignedEvade
         {
             if (sender == null)
                 return;
-
+            
             //projectile
             if (sender.Name == "missile")
             {
@@ -235,8 +234,14 @@ namespace UnsignedEvade
                 Drawing.DrawText(_Player.Position.WorldToScreen(), Geometry.drawColor, _Player.Direction.ToString(), 15);
 
             if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show All Object Names"))
-                foreach (GameObject ob in ObjectManager.Get<GameObject>())
-                    Drawing.DrawText(ob.Position.WorldToScreen(), Geometry.drawColor, ob.Name, 15);
+            {
+                int index = 0;
+                foreach (GameObject ob in ObjectManager.Get<GameObject>().Where(a => a.Position.Distance(Game.CursorPos) <= 500))
+                {
+                    Drawing.DrawText(ob.Position.WorldToScreen() + (new Vector2(0, -15f) * index), Geometry.drawColor, ob.Name, 15);
+                    index++;
+                }
+            }
 
             #region clear screen when object is destroyed
             //when removing object from below add it to this list then cross reference in another method and reset.
@@ -270,14 +275,24 @@ namespace UnsignedEvade
                         }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
                         {
-                            float timeSinceCast = Game.Time - info.TimeOfCast;
                             float timeItTakesToCast = info.Delay + info.TravelTime;
+                            float timeSinceCast = Game.Time - info.TimeOfCast;
+
                             if (timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0)
                                 KeepList.Add(info);
                         }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSkillshot)
                         {
-                            if (((info.BuffName == "" || info.caster.HasBuff(info.BuffName)) || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0))
+                            float timeItTakesToCast = info.Delay + info.TravelTime;
+                            float timeSinceCast = Game.Time - info.TimeOfCast;
+                            if (((info.BuffName != "" && info.caster.HasBuff(info.BuffName)) || timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0))
+                                KeepList.Add(info);
+                        }
+                        else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall)
+                        {
+                            float timeSinceCast = Game.Time - info.TimeOfCast;
+                            float timeItTakesToCast = info.Delay + info.TravelTime;
+                            if (timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0)
                                 KeepList.Add(info);
                         }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive)
@@ -285,7 +300,7 @@ namespace UnsignedEvade
                             float timeSinceCast = Game.Time - info.TimeOfCast;
                             float timeItTakesToCast = info.Delay + info.TravelTime;
 
-                            if (timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0)
+                            if (timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0 || (info.BuffName != "" && info.caster.HasBuff(info.BuffName)))
                                 KeepList.Add(info);
                         }
                         break;
@@ -355,9 +370,11 @@ namespace UnsignedEvade
                             Geometry.DrawCircularSkillshot(info.endPosition, info.Radius, info.SecondRadius);
                     }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSkillshot)
-                        Geometry.DrawConeSkillshot(info.caster.Position, info.endPosition, info.ConeDegrees);
+                        Geometry.DrawConeSkillshot(info.startPosition, info.endPosition, info.ConeDegrees, info.Range);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive)
                         Geometry.DrawCircularSkillshot(info.caster.Position, info.Radius, info.SecondRadius);
+                    else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall)
+                        Geometry.DrawWall(info.startPosition, info.endPosition, info.Width, info.Radius);
                 }
             }
 

@@ -17,11 +17,18 @@ namespace UnsignedEvade
                 Radius = 100f,
             },
             
-            //jinx and caitlyn traps
+            //GP Barrel
             new Trap()
             {
                 Name = "Barrel",
                 Radius = 325f,
+            },
+            
+            //teemo shroom
+            new Trap()
+            {
+                Name = "Noxious Trap",
+                Radius = 125f,
             },
         };
 
