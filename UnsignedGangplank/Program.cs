@@ -52,6 +52,7 @@ namespace UnsignedGP
             ComboMenu.Add("RU", new CheckBox("Use R"));
             ComboMenu.Add("IU", new CheckBox("Use Items"));//complete
             ComboMenu.Add("IgU", new CheckBox("Use Ignite"));//complete
+            ComboMenu.Add("BarrelSettings", new ComboBox("First Barrel Usage: ", 0, "None", "EloBuddy Prediction", "On Closest Enemy", "On Lowest HP Enemy", "On Lowest % HP Enemy", "Between Enemy and Me"));
 
             LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
             LaneClear.AddGroupLabel("Lane Clear Settings");

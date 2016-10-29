@@ -371,10 +371,49 @@ namespace UnsignedGP
                     }
                 }
             }
-            //then check if an enemy is within 2 barrel of an existing barrel
+            //then check if an enemy is within 2 barrel of an existing barrel and do 3 barrel combo
             if (Program.E.AmmoQuantity >= 2 && Program.E.IsReady() && cont)
             {
 
+            }
+
+            //first barrel placement
+            if(NearbyBarrels.Count() == 0 && Program.E.IsReady() && GP.CanCast && cont && Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
+            {
+                if(Program.ComboMenu.Get<ComboBox>("BarrelSettings").SelectedText == "EloBuddy Prediction")
+                {
+                    Spell.Skillshot.BestPosition prediction = Program.E.GetBestCircularCastPosition(EntityManager.Heroes.Enemies);
+                    if(prediction.CastPosition != null && prediction.CastPosition != Vector3.Zero && prediction.CastPosition.CountEnemyHeroesInRangeWithPrediction((int)Program.E.Range, 0) >= 1)
+                        Program.E.Cast(prediction.CastPosition);
+                }
+
+                else if (Program.ComboMenu.Get<ComboBox>("BarrelSettings").SelectedText == "On Closest Enemy")
+                {
+                    AIHeroClient closestEnemy = EntityManager.Heroes.Enemies.Where(a => !a.IsDead && a.IsHPBarRendered && a.IsInRange(GP, Program.E.Range)).OrderBy(a => a.Distance(GP)).FirstOrDefault();
+                    if (closestEnemy != null)
+                        Program.E.Cast(closestEnemy.Position);
+                }
+
+                else if (Program.ComboMenu.Get<ComboBox>("BarrelSettings").SelectedText == "On Lowest HP Enemy")
+                {
+                    AIHeroClient closestEnemy = EntityManager.Heroes.Enemies.Where(a => !a.IsDead && a.IsHPBarRendered && a.IsInRange(GP, Program.E.Range)).OrderBy(a => a.Health).FirstOrDefault();
+                    if (closestEnemy != null)
+                        Program.E.Cast(closestEnemy.Position);
+                }
+
+                else if (Program.ComboMenu.Get<ComboBox>("BarrelSettings").SelectedText == "On Lowest % HP Enemy")
+                {
+                    AIHeroClient closestEnemy = EntityManager.Heroes.Enemies.Where(a => !a.IsDead && a.IsHPBarRendered && a.IsInRange(GP, Program.E.Range)).OrderBy(a => a.HealthPercent).FirstOrDefault();
+                    if (closestEnemy != null)
+                        Program.E.Cast(closestEnemy.Position);
+                }
+
+                else if (Program.ComboMenu.Get<ComboBox>("BarrelSettings").SelectedText == "Between Enemy and Me")
+                {
+                    Spell.Skillshot.BestPosition prediction = Program.E.GetBestCircularCastPosition(EntityManager.Heroes.Enemies);
+                    if (prediction.CastPosition != null && prediction.CastPosition != Vector3.Zero && prediction.CastPosition.CountEnemyHeroesInRangeWithPrediction((int)Program.E.Range, 0) >= 1)
+                        Program.E.Cast(GP.Position.Extend(prediction.CastPosition, Program.E.Range / 2).To3D());
+                }
             }
         }
 
