@@ -15,711 +15,579 @@ namespace UnsignedYasuo
 {
     class YasuoFunctions
     {
-        //E Animation Time = 0.5f seconds approx
-        public static bool IsDashing
-        {
-            get
-            {
-                if (Program.E.State == SpellState.Surpressed
-                    && !Program._Player.HasBuffOfType(BuffType.Suppression))
-                    return true;
-                else
-                    return false;
-            }
-        }
+        public static bool didActionThisTick = false;
 
-        public enum AttackSpell
-        {
-            Q,
-            E,
-            EQ,
-            R,
-            AA,
-            DashQ,
-            Ignite,
-            Hydra,
-            BilgewaterCutlass
-        }
-        public enum Mode
-        {
-            Combo,
-            LaneClear,
-            Harass,
-            PotionManager
-        }
-
-        public static Obj_AI_Base GetEnemy(GameObjectType type, AttackSpell spell, bool EUNDERTURRET = false)
-        {
-            float range = 0;
-            if (spell == AttackSpell.E || spell == AttackSpell.EQ)
-                range = Program.E.Range;
-            else if (spell == AttackSpell.Q || spell == AttackSpell.DashQ)
-                range = Program.Q.Range;
-            else if (spell == AttackSpell.Ignite)
-                range = Program.Ignite.Range;
-            //is in sight range
-            else if (spell == AttackSpell.R)
-                range = Program.R.Range;
-            else if (spell == AttackSpell.Hydra)
-                range = 400;
-            else if (spell == AttackSpell.BilgewaterCutlass)
-                range = 550;
-            else if (spell == AttackSpell.AA)
-                range = _Player.GetAutoAttackRange();
-
-            return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                && a.Type == type
-                && a.IsInRange(_Player, range)
-                && !a.IsDead
-                && !a.IsInvulnerable
-                &&
-                ((AttackSpell.Q == spell && !IsDashing)
-                || (AttackSpell.DashQ == spell && IsDashing)
-                || (spell == AttackSpell.E && YasuoCalcs.ERequirements(a, EUNDERTURRET))
-                || (spell == AttackSpell.EQ && YasuoCalcs.ERequirements(a, EUNDERTURRET) && a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange))
-                || (AttackSpell.Q != spell && AttackSpell.E != spell && AttackSpell.EQ != spell && AttackSpell.DashQ != spell))
-                && a.IsValidTarget(range)).OrderBy(a => a.HealthPercent).FirstOrDefault();
-        }
-
-        public static Obj_AI_Base GetEnemyKS(GameObjectType type, AttackSpell spell, bool EUNDERTURRET = false)
-        {
-            float range = 0;
-            if (spell == AttackSpell.E || spell == AttackSpell.EQ)
-                range = Program.E.Range;
-            else if (spell == AttackSpell.Q)
-                range = Program.Q.Range;
-            else if (spell == AttackSpell.Ignite)
-                range = Program.Ignite.Range;
-            else if (spell == AttackSpell.AA)
-                range = _Player.GetAutoAttackRange();
-
-            return ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy
-                && a.Type == type
-                && a.IsInRange(_Player, range)
-                && !a.IsDead
-                && !a.IsInvulnerable
-                && a.IsValidTarget(range)
-                &&
-                ((spell == AttackSpell.Q && a.Health <= YasuoCalcs.Q(a) && !IsDashing) ||
-                (spell == AttackSpell.E && a.Health <= YasuoCalcs.E(a) && YasuoCalcs.ERequirements(a, EUNDERTURRET)) ||
-                (spell == AttackSpell.EQ &&
-                        a.Health <= (YasuoCalcs.Q(a) + YasuoCalcs.E(a)) &&
-                        YasuoCalcs.ERequirements(a, EUNDERTURRET) &&
-                        a.IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQRange)) ||
-                (spell == AttackSpell.Ignite && a.Health <= YasuoCalcs.Ignite(a)))).FirstOrDefault();
-        }
-
-        public static AIHeroClient _Player { get { return ObjectManager.Player; } }
+        public static AIHeroClient Yasuo { get { return ObjectManager.Player; } }
 
         //complete
         public static void LastHit()
         {
-            Orbwalker.MoveTo(Game.CursorPos);
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.LastHit, "Use E"))
+                didActionThisTick = CastE(EntityManager.Enemies, true, MenuHandler.GetCheckboxValue(MenuHandler.LastHit, "Use E Under Tower"));
 
-            bool QCHECK = Program.LastHit["LHQ"].Cast<CheckBox>().CurrentValue;
-            bool Q3CHECK = Program.LastHit["LHQ3"].Cast<CheckBox>().CurrentValue;
-            bool ECHECK = Program.LastHit["LHE"].Cast<CheckBox>().CurrentValue;
-            bool EQCHECK = Program.LastHit["LHEQ"].Cast<CheckBox>().CurrentValue;
-            bool EUNDERTURRET = Program.LastHit["LHEUT"].Cast<CheckBox>().CurrentValue;
+            if (!didActionThisTick && 
+                (MenuHandler.GetCheckboxValue(MenuHandler.LastHit, "Use Q") && !Yasuo.HasBuff("YasuoQ3W")) 
+                || (MenuHandler.GetCheckboxValue(MenuHandler.LastHit, "Use Q3") && Yasuo.HasBuff("YasuoQ3W")))
+                didActionThisTick = CastQ(EntityManager.Enemies, true);
 
-            bool QREADY = Program.Q.IsReady();
-            bool EREADY = Program.E.IsReady();
-
-            if (QCHECK && QREADY && !IsDashing)
-            {
-                Obj_AI_Base target = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
-
-                if ((Program.Q.Range == 1000 && Q3CHECK) || Program.Q.Range == 475)
-                    CastQ(target, false, true);
-            }
-
-            if (EQCHECK && EREADY && YasuoCalcs.WillQBeReady())
-            {
-                Obj_AI_Base enemy = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.EQ, EUNDERTURRET);
-
-                if (enemy != null && YasuoCalcs.ShouldEQ(enemy))
-                {
-                    Program.E.Cast(enemy);
-                    Core.DelayAction(delegate
-                    {
-                        CastQ(enemy, true, true);
-                    }, YasuoCalcs.GetQReadyTimeInt());
-                }
-            }
-
-            if (ECHECK && EREADY)
-            {
-                Obj_AI_Base enemy = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.E, EUNDERTURRET);
-
-                if (enemy != null)
-                    Program.E.Cast(enemy);
-            }
+            if (MenuHandler.GetCheckboxValue(MenuHandler.LastHit, "Use EQ"))
+                didActionThisTick = CastEQ(EntityManager.Enemies, true, MenuHandler.GetCheckboxValue(MenuHandler.LastHit, "Use E Under Tower"));
+            
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.LastHit, "Use Items"))
+                didActionThisTick = CastItems(EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList(), true);
         }
 
         //complete
         public static void LaneClear()
         {
-            Orbwalker.MoveTo(Game.CursorPos);
+            if (!didActionThisTick && 
+                (MenuHandler.GetCheckboxValue(MenuHandler.LaneClear, "Use Q") && !Yasuo.HasBuff("YasuoQ3W"))
+                || (MenuHandler.GetCheckboxValue(MenuHandler.LaneClear, "Use Q3") && Yasuo.HasBuff("YasuoQ3W")))
+                didActionThisTick = CastQ(EntityManager.Enemies, false);
 
-            bool QCHECK = Program.LaneClear["LCQ"].Cast<CheckBox>().CurrentValue;
-            bool Q3CHECK = Program.LaneClear["LC3Q"].Cast<CheckBox>().CurrentValue;
-            bool ECHECK = Program.LaneClear["LCE"].Cast<CheckBox>().CurrentValue;
-            bool EQCHECK = Program.LaneClear["LCEQ"].Cast<CheckBox>().CurrentValue;
-            bool EUNDERTURRET = Program.LaneClear["LCEUT"].Cast<CheckBox>().CurrentValue;
-            bool ELastHit = Program.LaneClear["LCELH"].Cast<CheckBox>().CurrentValue;
-            bool ITEMSCHECK = Program.LaneClear["LCI"].Cast<CheckBox>().CurrentValue;
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.LaneClear, "Use E"))
+                didActionThisTick = CastE(EntityManager.Enemies, MenuHandler.GetCheckboxValue(MenuHandler.LaneClear, "Use E only for Last Hit"), MenuHandler.GetCheckboxValue(MenuHandler.LaneClear, "Use E Under Tower"));
 
-            bool QREADY = Program.Q.IsReady();
-            bool EREADY = Program.E.IsReady();
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.LaneClear, "Use EQ"))
+                didActionThisTick = CastEQ(EntityManager.Enemies, false, MenuHandler.GetCheckboxValue(MenuHandler.LaneClear, "Use E Under Tower"));
 
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.LaneClear, "Use Items"))
+                didActionThisTick = CastItems(EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList(), false);
+        }
 
-            if (ITEMSCHECK)
-                UseItemsAndIgnite(Mode.LaneClear);
+        public static void JungleClear()
+        {
+            if (!didActionThisTick &&
+                (MenuHandler.GetCheckboxValue(MenuHandler.JungleClear, "Use Q") && !Yasuo.HasBuff("YasuoQ3W"))
+                || (MenuHandler.GetCheckboxValue(MenuHandler.JungleClear, "Use Q3") && Yasuo.HasBuff("YasuoQ3W")))
+                didActionThisTick = CastQ(EntityManager.MinionsAndMonsters.Monsters.ToList().ToObj_AI_BaseList(), false);
 
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.JungleClear, "Use E"))
+                didActionThisTick = CastE(EntityManager.MinionsAndMonsters.Monsters.ToList().ToObj_AI_BaseList(), MenuHandler.GetCheckboxValue(MenuHandler.JungleClear, "Use E only for Last Hit"), true);
 
-            if (QCHECK && QREADY && !IsDashing)
-            {
-                Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.Q);
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.JungleClear, "Use EQ"))
+                didActionThisTick = CastEQ(EntityManager.MinionsAndMonsters.Monsters.ToList().ToObj_AI_BaseList(), false, true);
 
-                if (Program.Q.Range == 475)
-                    CastQ(target);
-                else if (Program.Q.Range == 1000 && Q3CHECK)
-                {
-                    Vector3 CastPosition = Program.Q.GetBestLinearCastPosition(
-                        ObjectManager.Get<Obj_AI_Base>().Where(a => a.IsEnemy && !a.IsDead && a.Distance(_Player) <= Program.Q.Range),
-                        0,
-                        _Player.Position.To2D()).CastPosition;
-
-                    if (CastPosition != null)
-                        Program.Q.Cast(CastPosition);
-                }
-            }
-
-            if (ECHECK && EREADY)
-            {
-                Obj_AI_Base target = null;
-
-                if (ELastHit)
-                    target = GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.E, EUNDERTURRET);
-                else
-                    target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.E, EUNDERTURRET);
-
-                if (target != null)
-                    Program.E.Cast(target);
-            }
-
-            if (!ELastHit && EREADY && YasuoCalcs.WillQBeReady() && EQCHECK)
-            {
-                Obj_AI_Base target = GetEnemy(GameObjectType.obj_AI_Minion, AttackSpell.EQ, EUNDERTURRET);
-
-                if (target != null)
-                {
-                    Program.E.Cast(target);
-                    Core.DelayAction(delegate { CastQ(target, true); }, (int)(YasuoCalcs.GetQReadyTime() * 1000));
-                }
-            }
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.JungleClear, "Use Items"))
+                didActionThisTick = CastItems(EntityManager.MinionsAndMonsters.Monsters.ToList().ToObj_AI_BaseList(), false);
         }
 
         //complete
         public static void KS()
         {
-            bool QCHECK = Program.KSMenu["KSQ"].Cast<CheckBox>().CurrentValue;
-            bool Q3CHECK = Program.KSMenu["KS3Q"].Cast<CheckBox>().CurrentValue;
-            bool ECHECK = Program.KSMenu["KSE"].Cast<CheckBox>().CurrentValue;
-            bool EQCHECK = Program.KSMenu["KSEQ"].Cast<CheckBox>().CurrentValue;
-            bool IgniteCheck = Program.KSMenu["KSI"].Cast<CheckBox>().CurrentValue;
+            if (!didActionThisTick && 
+                (MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Use Q") && !Yasuo.HasBuff("YasuoQ3W"))
+                 || (MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Use Q3") && Yasuo.HasBuff("YasuoQ3W")))
+                didActionThisTick = CastQ(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), true);
 
-            bool QREADY = Program.Q.IsReady();
-            bool EREADY = Program.E.IsReady();
-            bool EUNDERTURRET = Program.KSMenu["KSEUT"].Cast<CheckBox>().CurrentValue;
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Use E"))
+                didActionThisTick = CastE(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), true, MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Use E Under Tower"));
 
-            if (IgniteCheck && Program.Ignite != null && Program.Ignite.IsReady())
-            {
-                var igniteEnemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.Ignite);
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Use EQ"))
+                didActionThisTick = CastEQ(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), true, MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Use E Under Tower"));
 
-                if (igniteEnemy != null)
-                    Program.Ignite.Cast(igniteEnemy);
-            }
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Use Ignite"))
+                didActionThisTick = CastIgnite(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), true);
 
-            //empowered q
-            if (QREADY)
-            {
-                if (
-                     (Program.Q.Range == 1000 && Q3CHECK)
-                     ||
-                     (Program.Q.Range == 475 && QCHECK)
-                    )
-                {
-                    var enemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.Q);
-
-                    CastQ(enemy);
-                }
-            }
-
-            if (EREADY && ECHECK)
-            {
-                var enemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.E, EUNDERTURRET);
-
-                if (enemy != null)
-                    Program.E.Cast(enemy);
-            }
-
-            if (EREADY && EQCHECK)
-            {
-                var enemy = GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.EQ, EUNDERTURRET);
-                if (enemy != null && YasuoCalcs.ShouldEQ(enemy) && YasuoCalcs.WillQBeReady())
-                {
-                    Program.E.Cast(enemy);
-                    Core.DelayAction(delegate
-                    {
-                        CastQ(enemy, true);
-                    }, YasuoCalcs.GetQReadyTimeInt());
-                }
-            }
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Use Items"))
+                didActionThisTick = CastItems(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), true);
         }
-        
+
         //complete
         public static void Harrass()
         {
-            Orbwalker.MoveTo(Game.CursorPos);
+            if (!didActionThisTick && 
+                (MenuHandler.GetCheckboxValue(MenuHandler.Harass, "Use Q") && !Yasuo.HasBuff("YasuoQ3W")) 
+                || (MenuHandler.GetCheckboxValue(MenuHandler.Harass, "Use Q3") && Yasuo.HasBuff("YasuoQ3W")))
+                didActionThisTick = CastQ(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false);
 
-            bool QCHECK = Program.Harass["HQ"].Cast<CheckBox>().CurrentValue;
-            bool ECHECK = Program.Harass["HE"].Cast<CheckBox>().CurrentValue;
-            bool EQCHECK = Program.Harass["HEQ"].Cast<CheckBox>().CurrentValue;
-            bool EUNDERTURRET = Program.Harass["HEUT"].Cast<CheckBox>().CurrentValue;
-            bool ITEMSCHECK = Program.Harass["HI"].Cast<CheckBox>().CurrentValue;
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.Harass, "Use E"))
+                didActionThisTick = CastE(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.Harass, "Use E Under Tower"));
+            
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.Harass, "Use EQ"))
+                didActionThisTick = CastEQ(EntityManager.Enemies.ToList(), false, MenuHandler.GetCheckboxValue(MenuHandler.AutoHarass, "Use E Under Tower"), EntityManager.Heroes.Enemies.ToObj_AI_BaseList());
 
-            bool QREADY = Program.Q.IsReady();
-            bool EREADY = Program.E.IsReady();
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Harass, "Use Items"))
+                didActionThisTick = CastItems(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false);
 
-
-            if (ITEMSCHECK)
-                UseItemsAndIgnite(Mode.Harass);
-
-            if (QCHECK && QREADY && !IsDashing)
-            {
-                Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
-
-                CastQ(enemy);
-            }
-
-            if (ECHECK && EREADY)
-            {
-                Obj_AI_Base target = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.E, EUNDERTURRET);
-
-                if (target != null)
-                {
-                    Program.E.Cast(target);
-                    if (YasuoCalcs.GetDashingEnd(target).IsInRange(target, 375) && EQCHECK && YasuoCalcs.WillQBeReady())
-                        Core.DelayAction(delegate
-                        {
-                            CastQ(target, true);
-                        }, YasuoCalcs.GetQReadyTimeInt());
-                }
-            }
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Harass, "Use R"))
+                didActionThisTick = UltHandler();
         }
 
         //complete
         public static void Combo()
         {
-            Orbwalker.MoveTo(Game.CursorPos);
+            if (!didActionThisTick && 
+                (MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use Q") && !Yasuo.HasBuff("YasuoQ3W"))
+                || (MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use Q3") && Yasuo.HasBuff("YasuoQ3W")))
+                didActionThisTick = CastQ(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false);
 
-            if (_Player.CountEnemiesInRange(Program.R.Range) >= 1)
-            {
-                #region variables
-                bool QCHECK = Program.ComboMenu["CQ"].Cast<CheckBox>().CurrentValue;
-                bool ECHECK = Program.ComboMenu["CE"].Cast<CheckBox>().CurrentValue;
-                bool EQCHECK = Program.ComboMenu["CEQ"].Cast<CheckBox>().CurrentValue;
-                bool ITEMSCHECK = Program.ComboMenu["CI"].Cast<CheckBox>().CurrentValue;
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E"))
+                didActionThisTick = CastE(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
+            
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E to Gapclose"))
+                didActionThisTick = EGapClose(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
 
-                bool QREADY = Program.Q.IsReady();
-                bool EREADY = Program.E.IsReady();
-                bool RREADY = Program.R.IsReady();
-                bool EUNDERTURRET = Program.ComboMenu["CEUT"].Cast<CheckBox>().CurrentValue;
-                #endregion
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use EQ"))
+                didActionThisTick = CastEQ(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
 
-                if (ITEMSCHECK)
-                    UseItemsAndIgnite(Mode.Combo);
-                
-                if (Program.ComboMenu["CBB"].Cast<CheckBox>().CurrentValue && (!Program.ComboMenu["CBBoKP"].Cast<CheckBox>().CurrentValue || Program.ComboMenu.Get<KeyBind>("CBBKP").CurrentValue))
-                    Beyblade();
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use Items"))
+                didActionThisTick = CastItems(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false);
 
-                if (Program.R.IsReady() && Program.UltMenu["Ult"].Cast<CheckBox>().CurrentValue)
-                    UltHandler();
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use R"))
+                didActionThisTick = UltHandler();
 
-                #region E
-                //if e is ready and menu allows for it to be used
-                if (ECHECK && EREADY)
-                {
-                    Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.E, EUNDERTURRET);
-                    Obj_AI_Base EnemyToDashCloserToChampion = YasuoCalcs.GetBestDashEnemyToChampionWithinAARange(enemy, EUNDERTURRET);
-
-                    //if number of enemies in Auto Attack range is 0, but there are champions yas could dash to, find best enemy to dash to
-                    if (_Player.CountEnemiesInRange(_Player.GetAutoAttackRange()) == 0
-                        && YasuoCalcs.GetEnemyHeroesInRange(Program.E.Range) >= 1
-                        && EnemyToDashCloserToChampion != null)
-                        Program.E.Cast(EnemyToDashCloserToChampion);
-                    //if there isnt any champions to auto, and no enemies will bring you into auto attack range, E to enemy
-                    else if (_Player.CountEnemiesInRange(_Player.GetAutoAttackRange()) == 0)
-                    {
-                        //enemy in range
-                        if (enemy != null)
-                        {
-                            //if can auto attack, don't e, instead auto attack
-                            //this is performed automatically by the orbwalker
-
-                            //if e'ing gets player in auto attack range. e
-                            if (!_Player.IsInAutoAttackRange(enemy)
-                                && YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, _Player.GetAutoAttackRange()))
-                            {
-                                Program.E.Cast(enemy);
-
-                                if (YasuoCalcs.GetDashingEnd(enemy).IsInRange(enemy, Program.EQRange) && EQCHECK && YasuoCalcs.WillQBeReady())
-                                    CastQ(enemy);
-                            }
-                        }
-                        //no enemy in e range, dash to minions to get closer
-                        else
-                        {
-                            //R range is same as Vision Range
-                            enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.R);
-
-                            //if enemy in sight range, this is a double check
-                            if (enemy != null)
-                            {
-                                Obj_AI_Base dashEnemy = YasuoCalcs.GetBestDashMinionToChampion(enemy, EUNDERTURRET);
-
-                                //there is something to dash too
-                                if (dashEnemy != null)
-                                {
-                                    Program.E.Cast(dashEnemy);
-                                    if (YasuoCalcs.GetDashingEnd(dashEnemy).IsInRange(enemy, Program.EQRange) && YasuoCalcs.WillQBeReady() && EQCHECK)
-                                        Core.DelayAction(delegate
-                                        {
-                                            CastQ(dashEnemy, true);
-                                        }, YasuoCalcs.GetQReadyTimeInt());
-                                }
-                            }
-                        }
-                    }
-                }
-                #endregion
-                
-                #region Q
-                if (QCHECK && QREADY && !IsDashing)
-                {
-                    Obj_AI_Base enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
-
-                    if (enemy != null)
-                        CastQ(enemy);
-                }
-                #endregion
-            }
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Beyblade"))
+                didActionThisTick = TryBeyBlade();
         }
-        
-        //perfect
+
+        //complete
         public static void Flee()
         {
             WallDash activeDash = null;
 
-            //walldash
-            foreach (WallDash wd in YasuoWallDashDatabase.wallDashDatabase)
-                if (EntityManager.MinionsAndMonsters.Combined.Where(a => !a.IsDead && a.Name == wd.unitName && a.ServerPosition.Distance(wd.dashUnitPosition) <= 2).FirstOrDefault() != null)
-                {
-                    Geometry.Polygon.Circle dashCircle = new Geometry.Polygon.Circle(wd.endPosition, 120);
-                    if (dashCircle.IsInside(Game.CursorPos))
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Wall Dash") && Program.E.IsReady() && !YasuoCalcs.IsDashing())
+            {
+                //walldash
+                foreach (WallDash wd in YasuoWallDashDatabase.wallDashDatabase.Where(a=>a.startPosition.Distance(Yasuo) <= 1300))
+                    if (EntityManager.MinionsAndMonsters.Combined.Where(a => a.MeetsCriteria() && a.Name == wd.unitName && a.ServerPosition.Distance(wd.dashUnitPosition) <= 2).FirstOrDefault() != null)
                     {
-                        activeDash = wd;
-                        break;
+                        Geometry.Polygon.Circle dashCircle = new Geometry.Polygon.Circle(wd.endPosition, 120);
+                        if (dashCircle.IsInside(Game.CursorPos))
+                        {
+                            activeDash = wd;
+                            break;
+                        }
                     }
-                }
+            }
 
-            if (Program.FleeMode.Get<CheckBox>("FleeE").CurrentValue && Program.E.IsReady() && !IsDashing)
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E"))
             {
                 if (activeDash == null)
                 {
                     Orbwalker.MoveTo(Game.CursorPos);
-                    Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(_Player.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
-
-                    List<Obj_AI_Base> dashableEnemies = EntityManager.Enemies.Where(a => !a.IsDead && YasuoCalcs.ERequirements(a, Program.FleeMode.Get<CheckBox>("FleeEUT").CurrentValue) && a.IsInRange(_Player.Position, Program.E.Range) && sector.IsInside(a)).OrderBy(a => YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos)).ToList();
-                    Obj_AI_Base selectedDashUnit = dashableEnemies.FirstOrDefault();
-
-                    if (selectedDashUnit != null)
+                    if (Program.E.IsReady() && !YasuoCalcs.IsDashing())
                     {
-                        Program.E.Cast(selectedDashUnit);
-                        if (YasuoCalcs.WillQBeReady() && Program.FleeMode.Get<CheckBox>("FleeQ").CurrentValue && !_Player.HasBuff("yasuoq3w") && EntityManager.Enemies.Where(a => !a.IsDead && a.Distance(YasuoCalcs.GetDashingEnd(selectedDashUnit)) <= 350).Count() >= 1)
-                            Core.DelayAction(delegate { Program.Q.Cast(_Player.Position); }, (int)(YasuoCalcs.GetQReadyTime() * 1000));
+                        Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(Yasuo.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
+
+                        List<Obj_AI_Base> dashableEnemies = EntityManager.Enemies.Where(a => !a.IsDead && a.MeetsCriteria() && YasuoCalcs.ERequirements(a, MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower")) && a.IsInRange(Yasuo.Position, Program.E.Range) && sector.IsInside(a)).OrderBy(a => YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos)).ToList();
+                        if (YasuoCalcs.WillQBeReady() && MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Stack Q") && !Yasuo.HasBuff("yasuoq3w"))
+                            CastEQ(dashableEnemies, false, MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower"));
+                        else
+                            CastE(dashableEnemies.FirstOrDefault());
                     }
                 }
                 else
                 {
-                    if (_Player.Position.To2D() == activeDash.startPosition.To2D())
-                    {
-                        Obj_AI_Base target = EntityManager.MinionsAndMonsters.Combined.Where(a => a.Name == activeDash.unitName).FirstOrDefault();
-
-                        if (target != null)
-                            Program.E.Cast(target);
-                    }
+                    if (Yasuo.Position.To2D() == activeDash.startPosition.To2D())
+                        CastE(EntityManager.MinionsAndMonsters.Combined.Where(a => a.Name == activeDash.unitName).ToList().ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower"));
                     else
                         Orbwalker.MoveTo(activeDash.startPosition);
                 }
             }
         }
-        
-        //if q cd is 1.33 and enemy champion does not have yasuodashwrapper. do eq to minion, f, eq to champion, r - keyblade
-        public static void Beyblade()
+
+        //complete
+        public static void AutoHarrass()
         {
-            //if yasuo has e ready, and has flash ready, and has ult ready, and has 3rd q
-            //at the beginning
-            if (!IsDashing
-                && _Player.HasBuff("yasuoq3w")
-                && YasuoCalcs.WillQBeReady()
+            if (Yasuo.IsRecalling() || Yasuo.IsUnderEnemyturret() || 
+                Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo) ||
+                Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass) ||
+                Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
+                return;
+
+            if (!didActionThisTick && 
+                (MenuHandler.GetCheckboxValue(MenuHandler.AutoHarass, "Use Q") && !Yasuo.HasBuff("YasuoQ3W"))
+                || (MenuHandler.GetCheckboxValue(MenuHandler.AutoHarass, "Use Q3") && Yasuo.HasBuff("YasuoQ3W")))
+                didActionThisTick = CastQ(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false);
+
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.AutoHarass, "Use E"))
+                didActionThisTick = CastE(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.AutoHarass, "Use E Under Tower"));
+
+            //dashes to minions and EQ's if it hits the enemies
+            if (!didActionThisTick && 
+                MenuHandler.GetCheckboxValue(MenuHandler.AutoHarass, "Use EQ"))
+                didActionThisTick = CastEQ(EntityManager.Enemies.ToList(), false, MenuHandler.GetCheckboxValue(MenuHandler.AutoHarass, "Use E Under Tower"), EntityManager.Heroes.Enemies.ToObj_AI_BaseList());
+
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.AutoHarass, "Use Items"))
+                didActionThisTick = CastItems(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false);
+
+        }
+
+        //Items need testing. Should work.
+        public static bool CastItems(List<Obj_AI_Base> enemies, bool ks)
+        {
+            #region Item Initialization
+            InventorySlot QSS = (MenuHandler.GetCheckboxValue(MenuHandler.Items, "Use Quick Silver Sash")) ? Yasuo.GetItem(ItemId.Quicksilver_Sash) : null,
+                MercurialsScimitar = (MenuHandler.GetCheckboxValue(MenuHandler.Items, "Use Mercurials Scimitar")) ? Yasuo.GetItem(ItemId.Mercurial_Scimitar) : null,
+                RavenousHydra = (MenuHandler.GetCheckboxValue(MenuHandler.Items, "Use Ravenous Hydra")) ? Yasuo.GetItem(ItemId.Ravenous_Hydra) : null,
+                TitanicHydra = (MenuHandler.GetCheckboxValue(MenuHandler.Items, "Use Titanic Hydra")) ? Yasuo.GetItem(ItemId.Titanic_Hydra) : null,
+                Tiamat = (MenuHandler.GetCheckboxValue(MenuHandler.Items, "Use Tiamat")) ? Yasuo.GetItem(ItemId.Tiamat) : null,
+                Youmuus = (MenuHandler.GetCheckboxValue(MenuHandler.Items, "Use Youmuus")) ? Yasuo.GetItem(ItemId.Youmuus_Ghostblade) : null,
+                BOTRK = (MenuHandler.GetCheckboxValue(MenuHandler.Items, "Use Blade of the Ruined King")) ? Yasuo.GetItem(ItemId.Blade_of_the_Ruined_King) : null,
+                BilgewaterCutlass = (MenuHandler.GetCheckboxValue(MenuHandler.Items, "Use Bilgewater Cutlass")) ? Yasuo.GetItem(ItemId.Bilgewater_Cutlass) : null,
+                HextechGunblade = (MenuHandler.GetCheckboxValue(MenuHandler.Items, "Use Hextech Gunblade")) ? Yasuo.GetItem(ItemId.Hextech_Gunblade) : null;
+            #endregion
+
+            #region QSS
+            if (!didActionThisTick &&
+                QSS.MeetsCriteria() &&
+                (Yasuo.HasBuffOfType(BuffType.Blind)
+                || Yasuo.HasBuffOfType(BuffType.Charm)
+                || Yasuo.HasBuffOfType(BuffType.Fear)
+                || Yasuo.HasBuffOfType(BuffType.Knockback)
+                || Yasuo.HasBuffOfType(BuffType.Silence)
+                || Yasuo.HasBuffOfType(BuffType.Slow)
+                || Yasuo.HasBuffOfType(BuffType.Snare)
+                || Yasuo.HasBuffOfType(BuffType.Stun)
+                || Yasuo.HasBuffOfType(BuffType.Taunt))
+                //not being knocked back by dragon
+                && !Yasuo.HasBuff("moveawaycollision")
+                //not standing on raka silence
+                && !Yasuo.HasBuff("sorakaepacify"))
+                didActionThisTick = QSS.Cast();
+            #endregion
+
+            #region Mercurials Scimitar
+            if (!didActionThisTick &&
+                MercurialsScimitar.MeetsCriteria() &&
+                (Yasuo.HasBuffOfType(BuffType.Blind)
+                || Yasuo.HasBuffOfType(BuffType.Charm)
+                || Yasuo.HasBuffOfType(BuffType.Fear)
+                || Yasuo.HasBuffOfType(BuffType.Knockback)
+                || Yasuo.HasBuffOfType(BuffType.Silence)
+                || Yasuo.HasBuffOfType(BuffType.Slow)
+                || Yasuo.HasBuffOfType(BuffType.Snare)
+                || Yasuo.HasBuffOfType(BuffType.Stun)
+                || Yasuo.HasBuffOfType(BuffType.Taunt))
+                //not being knocked back by dragon
+                && !Yasuo.HasBuff("moveawaycollision")
+                //not standing on raka silence
+                && !Yasuo.HasBuff("sorakaepacify"))
+                didActionThisTick = MercurialsScimitar.Cast();
+            #endregion
+
+            #region Ravenous Hydra
+            if (!didActionThisTick &&
+                RavenousHydra.MeetsCriteria()
+                && enemies.Where(a => a.IsInRange(Yasuo, 400)).FirstOrDefault() != null
+                && (!ks || enemies.Where(a=> a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Yasuo, a, ItemId.Ravenous_Hydra)).FirstOrDefault() != null))
+                didActionThisTick = RavenousHydra.Cast();
+            #endregion
+
+            #region Titanic Hydra
+            if (!didActionThisTick &&
+                TitanicHydra.MeetsCriteria()
+                && enemies.Where(a => a.IsInRange(Yasuo, Yasuo.GetAutoAttackRange())).FirstOrDefault() != null
+                && !Orbwalker.CanAutoAttack
+                && !Orbwalker.IsAutoAttacking
+                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Yasuo, a, ItemId.Titanic_Hydra)).FirstOrDefault() != null))
+                didActionThisTick = TitanicHydra.Cast();
+            #endregion
+
+            #region Tiamat
+            if (!didActionThisTick &&
+                Tiamat.MeetsCriteria()
+                && enemies.Where(a => a.IsInRange(Yasuo, 400)).FirstOrDefault() != null
+                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Yasuo, a, ItemId.Tiamat)).FirstOrDefault() != null))
+                didActionThisTick = Tiamat.Cast();
+            #endregion
+
+            #region Youmuus
+            if (!didActionThisTick &&
+                Youmuus.MeetsCriteria()
+                && Yasuo.CountEnemyHeroesInRangeWithPrediction((int)Yasuo.GetAutoAttackRange(), 0) >= 1)
+                didActionThisTick = Youmuus.Cast();
+            #endregion
+
+            //all targeted spells that must be used on champions must be called after this
+            enemies = enemies.Where(a => a.Type == GameObjectType.AIHeroClient).ToList();
+
+            #region Hextech Gunblade
+            if (!didActionThisTick &&
+                HextechGunblade.MeetsCriteria()
+                && enemies.Where(a => a.IsInRange(Yasuo, 700)).FirstOrDefault() != null
+                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Yasuo, a, ItemId.Hextech_Gunblade)).FirstOrDefault() != null))
+                didActionThisTick = HextechGunblade.Cast(enemies.OrderBy(a=>a.Health).FirstOrDefault());
+            #endregion
+
+            #region BOTRK
+            if (!didActionThisTick &&
+                BOTRK.MeetsCriteria()
+                && enemies.Where(a => a.IsInRange(Yasuo, 550)).FirstOrDefault() != null
+                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Yasuo, a, ItemId.Blade_of_the_Ruined_King)).FirstOrDefault() != null))
+                didActionThisTick = BOTRK.Cast(enemies.OrderBy(a => a.Health).FirstOrDefault());
+            #endregion
+
+            #region Bilgewater Cutlass
+            if (!didActionThisTick &&
+                BilgewaterCutlass.MeetsCriteria()
+                && enemies.Where(a => a.IsInRange(Yasuo, 550)).FirstOrDefault() != null
+                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Yasuo, a, ItemId.Bilgewater_Cutlass)).FirstOrDefault() != null))
+                didActionThisTick = BilgewaterCutlass.Cast(enemies.OrderBy(a => a.Health).FirstOrDefault());
+            #endregion
+
+            return false;
+        }
+
+        public static bool CastE(List<Obj_AI_Base> enemies, bool ks, bool goUnderEnemyTower)
+        {
+            if (!Program.E.IsReady() || YasuoCalcs.IsDashing())
+                return false;
+
+            Obj_AI_Base unit = enemies.Where(a =>
+            a.IsInRange(Yasuo, Program.E.Range) 
+            && (!ks || YasuoCalcs.E(a) >= a.Health)
+            && a.MeetsCriteria()
+            && YasuoCalcs.ERequirements(a, goUnderEnemyTower)
+            ).FirstOrDefault();
+
+            if (unit != null)
+                return CastE(unit);
+            return false;
+        }
+        public static bool CastIgnite(List<Obj_AI_Base> enemies, bool ks)
+        {
+            if (!Program.Ignite.IsReady())
+                return false;
+
+            Obj_AI_Base unit = enemies.Where(a =>
+                a.IsInRange(Yasuo, Program.Ignite.Range)
+                && (!ks || YasuoCalcs.Ignite(a) >= a.Health)
+                && a.MeetsCriteria()).FirstOrDefault();
+
+            if (unit != null)
+                return Program.Ignite.Cast(unit);
+            return false;
+        }
+        
+        public static bool CastE(Obj_AI_Base unit)
+        {
+            if (!Program.E.IsReady() || YasuoCalcs.IsDashing())
+                return false;
+
+            if (unit != null)
+                return Program.E.Cast(unit);
+            return false;
+        }
+
+        public static bool EGapClose(List<Obj_AI_Base> targets, bool goUnderEnemyTower)
+        {
+            if (!Program.E.IsReady() || YasuoCalcs.IsDashing())
+                return false;
+
+            //if none of the targets are in auto attack range
+            if (targets.Where(a => a.IsInRange(Yasuo, Yasuo.GetAutoAttackRange())).FirstOrDefault() == null)
+            {
+                //get the closest target
+                Obj_AI_Base closestEnemy = targets.Where(a=> a.MeetsCriteria() && a.IsInRange(Yasuo, 5000)).OrderBy(b => b.Distance(Yasuo)).FirstOrDefault();
+                
+                //get all enemies in my E range
+                List<Obj_AI_Base> enemiesInERange = EntityManager.Enemies.Where(a => a.MeetsCriteria() && YasuoCalcs.ERequirements(a, goUnderEnemyTower) && a.IsInRange(Yasuo, Program.E.Range)).ToList();
+
+                if (closestEnemy != null)
+                {
+                    Obj_AI_Base enemyToDashTo = enemiesInERange.OrderBy(a => YasuoCalcs.GetDashingEnd(a).Distance(closestEnemy)).FirstOrDefault();
+
+                    if (YasuoCalcs.GetDashingEnd(enemyToDashTo).Distance(closestEnemy) < Yasuo.Distance(closestEnemy))
+                        return CastE(enemyToDashTo);
+                }
+            }
+            return false;
+        }
+
+        public static bool CastEQ(List<Obj_AI_Base> dashEnemies, bool ks, bool goUnderEnemyTower, List<Obj_AI_Base> EQEnemies = null)
+        {
+            if (!Program.E.IsReady() || !YasuoCalcs.WillQBeReady() || Yasuo.GetNearbyEnemies(Program.E.Range).Count() == 0 || YasuoCalcs.IsDashing())
+                return false;
+
+            if (EQEnemies == null)
+                EQEnemies = dashEnemies;
+
+            int numberOfEnemiesHitWithEQ = 0;
+            Obj_AI_Base unitToDashTo = null;
+
+            List<Obj_AI_Base> possibleDashUnits = dashEnemies.Where(a => a.MeetsCriteria() && a.IsInRange(Yasuo, Program.E.Range) && YasuoCalcs.ERequirements(a, goUnderEnemyTower) && a.Health > YasuoCalcs.E(a)).ToList();
+            foreach(Obj_AI_Base possibleDashUnit in possibleDashUnits)
+            {
+                List<Obj_AI_Base> unitsHitWithEQ = EQEnemies.Where(a => a.MeetsCriteria() && a.IsInRange(YasuoCalcs.GetDashingEnd(possibleDashUnit), Program.EQ.Range)).ToList();
+                if (ks)
+                    unitsHitWithEQ = unitsHitWithEQ.Where(a => a.Health <= YasuoCalcs.Q(a) || (a.Name == possibleDashUnit.Name && a.Health <= YasuoCalcs.Q(a) + YasuoCalcs.E(a))).ToList();
+
+                if(numberOfEnemiesHitWithEQ < unitsHitWithEQ.Count())
+                {
+                    numberOfEnemiesHitWithEQ = unitsHitWithEQ.Count();
+                    unitToDashTo = possibleDashUnit;
+                }
+            }
+
+            if(unitToDashTo != null && numberOfEnemiesHitWithEQ >= 1)
+            {   
+                CastE(unitToDashTo);
+                if(YasuoCalcs.GetQReadyTimeInt() == 0)
+                    CastEQsQ();
+                else
+                    Core.DelayAction(delegate { CastEQsQ(); }, YasuoCalcs.GetQReadyTimeInt());
+                return true;
+            }
+            return false;
+        }
+
+        public static bool CastEQsQ()
+        {
+            return Program.Q.Cast(Yasuo.Position + new Vector3(50, 0, 0));
+        }
+
+        public static bool CastQ(List<Obj_AI_Base> enemies, bool ks)
+        {
+            if (!Program.Q.IsReady() || YasuoCalcs.IsDashing())
+                return false;
+
+            Spell.Skillshot.BestPosition position;
+            if (Yasuo.HasBuff("YasuoQ3W"))
+                position = Program.Q3.GetBestLinearCastPosition(enemies.Where(a => a.MeetsCriteria() && (!ks || YasuoCalcs.Q(a) >= a.Health) && a.IsInRange(Yasuo, Program.Q3.Range)));
+            else
+                position = Program.Q.GetBestLinearCastPosition(enemies.Where(a => a.MeetsCriteria() && (!ks || YasuoCalcs.Q(a) >= a.Health) && a.IsInRange(Yasuo, Program.Q.Range)));
+
+            if (position.CastPosition != null && position.CastPosition != Vector3.Zero && position.HitNumber != 0)
+            {
+                if (Yasuo.HasBuff("YasuoQ3W"))
+                    return Program.Q3.Cast(position.CastPosition);
+                else
+                    return Program.Q.Cast(position.CastPosition);
+            }
+            return false;
+        }
+        
+        public static bool UltHandler()
+        {
+            if (!Program.R.IsReady())
+                return false;
+
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Ult, "Use R for Flow") &&
+                Yasuo.Mana != 100)
+                return CastR();
+
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Ult, "Use R on All Enemies in Range") &&
+                EntityManager.Heroes.Enemies.Where(a=>a.MeetsCriteria() && a.IsInRange(Yasuo, Program.R.Range) && a.IsKnockedUp()).Count() == Yasuo.CountEnemyHeroesInRangeWithPrediction(2000, 0))
+                return CastR();
+
+            if (!didActionThisTick &&
+                MenuHandler.GetCheckboxValue(MenuHandler.Ult, "Use R at 10% HP") &&
+                Yasuo.HealthPercent <= 0.10f &&
+                Yasuo.Mana != 100)
+                return CastR(true);
+
+            if (!didActionThisTick &&
+                EntityManager.Heroes.Enemies.Where(a=>a.MeetsCriteria() && a.IsInRange(Yasuo, Program.R.Range) && a.IsKnockedUp()).Count() >= MenuHandler.GetSliderValue(MenuHandler.Ult, "Use R on x Enemies or more:"))
+                return CastR(true);
+
+            return false;
+        }
+
+        public static bool CastR(bool force = false)
+        {
+            List<AIHeroClient> enemiesKnockedUp = EntityManager.Heroes.Enemies.Where(a => a.MeetsCriteria() && a.IsInRange(Yasuo, Program.R.Range) && a.IsKnockedUp()).ToList();
+            float timeTilLastEnemyIsPutDown = enemiesKnockedUp.OrderBy(a => a.TimeLeftOnKnockup()).FirstOrDefault().TimeLeftOnKnockup();
+            
+            if (!force && MenuHandler.GetCheckboxValue(MenuHandler.Ult, "Use R at Last Second") &&
+                timeTilLastEnemyIsPutDown <= 0.1f)
+                    return Program.R.Cast();
+            else if (force || !MenuHandler.GetCheckboxValue(MenuHandler.Ult, "Use R at Last Second"))
+                    return Program.R.Cast();
+
+            return false;
+        }
+
+        private static bool TryBeyBlade()
+        {
+            int beyBladeRange = (int)(Program.E.Range + Program.Flash.Range + (Program.EQ.Range / 2)),
+                flashEQRange = (int)(Program.Flash.Range + (Program.EQ.Range / 2));
+
+
+            //if yasuo has 3rd q ready and everything needed to beyblade
+            if (!YasuoCalcs.IsDashing()
+                && Yasuo.HasBuff("yasuoq3w")
+                && Program.Q.IsReady()
                 && Program.E.IsReady()
                 && Program.Flash != null
                 && Program.Flash.IsReady()
                 && Program.R.IsReady())
             {
-                //get all enemies that are in yasuos beyblade range
-                AIHeroClient enemy = ObjectManager.Get<AIHeroClient>().Where(a =>
-                    a != null
-                    && _Player.Distance(a) <= Program.BeybladeRange
-                    && a.IsEnemy
-                    && !a.IsDead).OrderBy(a => a.Distance(_Player)).FirstOrDefault();
+                //not in EQ range, and is in beyblade range
+                List<AIHeroClient> EnemiesInRange = EntityManager.Heroes.Enemies.Where(a =>
+                    a.MeetsCriteria() && !a.IsInRange(Yasuo, Program.E.Range + (Program.EQ.Range / 2)) && a.IsInRange(Yasuo, beyBladeRange)).ToList();
 
-                if (enemy != null)
+                if (EnemiesInRange.Count() != 0)
                 {
-                    Obj_AI_Base minion = ObjectManager.Get<Obj_AI_Base>().Where(a =>
-                        a.IsEnemy
-                        && a != enemy
-                        && !a.HasBuff("YasuoDashWrapper")
-                        && !a.IsDead
-                        && _Player.Distance(a) <= Program.E.Range
-                        && YasuoCalcs.GetDashingEnd(a).Distance(enemy) <= Program.Flash.Range + (Program.EQRange / 2)).FirstOrDefault();
+                    List<Obj_AI_Base> DashableUnits = EntityManager.MinionsAndMonsters.EnemyMinions.Where(a =>
+                        //meets criteria
+                        a.MeetsCriteria()
+                        //if dashing this this unit, it will put is in position to flash range
+                        && YasuoCalcs.GetDashingEnd(a).IsInRange(EnemiesInRange.OrderBy(b => YasuoCalcs.GetDashingEnd(a).Distance(b)).FirstOrDefault(), Program.Flash.Range + (Program.EQ.Range / 2))).ToList().ToObj_AI_BaseList();
 
-                    if (enemy != null && minion != null)
-                        Program.E.Cast(minion);
+                    if (DashableUnits.Count() != 0)
+                    {
+                        Obj_AI_Base dashUnitThatGetsMostChampionsInEQRange = DashableUnits.OrderBy(a =>
+                             //get best cast position start
+                             Prediction.Position.PredictCircularMissileAoe(EnemiesInRange.ToObj_AI_BaseList().ToArray(), flashEQRange, Program.EQ.Radius, 250, int.MaxValue, YasuoCalcs.GetDashingEnd(a)).OrderBy(prediction => prediction.CollisionObjects.Where(unit => EnemiesInRange.Contains(unit)).Count()).FirstOrDefault().CollisionObjects.Where(unit => EnemiesInRange.Contains(unit)).Count()).FirstOrDefault();
+
+                        if (dashUnitThatGetsMostChampionsInEQRange != null)
+                            return CastE(dashUnitThatGetsMostChampionsInEQRange);
+                    }
                 }
             }
-            //if is at the end of a dash
-            else if (_Player.Spellbook.GetSpell(SpellSlot.E).CooldownExpires - Game.Time <= 0.2f
-                && _Player.HasBuff("yasuoq3w")
+
+            if (Yasuo.HasBuff("yasuoq3w")
                 && Program.R.IsReady()
-                && Program.E.State == SpellState.Surpressed
-                //if q just came on cooldown (so started eq)
-                //cd time (1.33) - time left (1) <= .3f (.3 of a second window)
-                && _Player.Spellbook.GetSpell(SpellSlot.E).Cooldown - (_Player.Spellbook.GetSpell(SpellSlot.E).CooldownExpires - Game.Time ) <= 0.3f)
-                //and is doing beyblade)
+                && YasuoCalcs.IsDashing()
+                && Program.Flash.IsReady()
+                && Program.Q.IsReady())
             {
-                AIHeroClient enemy = EntityManager.Heroes.Enemies.OrderBy(a=>a.CountEnemiesInRange(Program.EQRange)).Where(a =>
-                _Player.Distance(a) <= Program.BeybladeRange
-                && !a.IsDead).FirstOrDefault();
+                List<AIHeroClient> EnemiesInRange = EntityManager.Heroes.Enemies.Where(a =>
+                    a.MeetsCriteria() && a.IsInRange(Yasuo, beyBladeRange)).ToList();
 
-                if (enemy != null)
+                PredictionResult predictionResult = Prediction.Position.PredictCircularMissileAoe(EnemiesInRange.ToObj_AI_BaseList().ToArray(), flashEQRange, Program.EQ.Radius, 250, int.MaxValue, Yasuo.Position)
+                    .OrderBy(prediction => prediction.CollisionObjects.Where(unit => EnemiesInRange.Contains(unit)).Count()).FirstOrDefault();
+
+                if (predictionResult.CastPosition != null && predictionResult.CastPosition != Vector3.Zero && predictionResult.CollisionObjects.Where(a=>EnemiesInRange.Contains(a)).Count() >= 1)
                 {
-                    Core.DelayAction(delegate { Program.Q.Cast(enemy.Position); }, YasuoCalcs.GetQReadyTimeInt());
-
-                    if (_Player.Position.Distance(enemy) >= 400 && _Player.Position.Distance(enemy) <= 400 + (Program.EQRange / 2))
-                        Program.Flash.Cast(_Player.Position.Extend(enemy, 400).To3D());
-                    else if (_Player.Position.Distance(enemy) < 400)
-                        Program.Flash.Cast(enemy.Position);
+                    CastEQsQ();
+                    if (!predictionResult.CastPosition.IsInRange(Yasuo, Program.Flash.Range) && predictionResult.CastPosition.IsInRange(Yasuo, flashEQRange))
+                        return Program.Flash.Cast(Yasuo.Position.Extend(predictionResult.CastPosition, Program.Flash.Range).To3D());
+                    //is in flash range, but is not in EQ range. Might delete this so it stops flashing during every EQ possible...
+                    else if (predictionResult.CastPosition.IsInRange(Yasuo, Program.Flash.Range) && !predictionResult.CastPosition.IsInRange(Yasuo, Program.EQ.Range))
+                        return Program.Flash.Cast(predictionResult.CastPosition);
                 }
             }
-        }
 
-        //complete
-        public static void UseItemsAndIgnite(Mode mode)
-        {
-            InventorySlot[] items = _Player.InventoryItems;
-            GameObjectType type = GameObjectType.AIHeroClient;
-            if (mode == Mode.LaneClear)
-                type = GameObjectType.obj_AI_Minion;
-
-            foreach (InventorySlot item in items)
-            {
-                if (item.CanUseItem())
-                {
-                    bool useTiamat = Program.Items.Get<CheckBox>("ItemsT").CurrentValue;
-                    bool useRavenous = Program.Items.Get<CheckBox>("ItemsRH").CurrentValue;
-                    bool useTitanic = Program.Items.Get<CheckBox>("ItemsTH").CurrentValue;
-                    bool useCutlass = Program.Items.Get<CheckBox>("ItemsBC").CurrentValue;
-                    bool useYoumuus = Program.Items.Get<CheckBox>("ItemsY").CurrentValue;
-                    bool useBORK = Program.Items.Get<CheckBox>("ItemsBORK").CurrentValue;
-                    bool useQSS = Program.Items.Get<CheckBox>("ItemsQSS").CurrentValue;
-                    bool useMercScim = Program.Items.Get<CheckBox>("ItemsMS").CurrentValue;
-                    bool QSSBlind = Program.Items.Get<CheckBox>("QSSBlind").CurrentValue;
-                    bool QSSCharm = Program.Items.Get<CheckBox>("QSSCharm").CurrentValue;
-                    bool QSSFear = Program.Items.Get<CheckBox>("QSSFear").CurrentValue;
-                    bool QSSKB = Program.Items.Get<CheckBox>("QSSKB").CurrentValue;
-                    bool QSSSilence = Program.Items.Get<CheckBox>("QSSSilence").CurrentValue;
-                    bool QSSSlow = Program.Items.Get<CheckBox>("QSSSlow").CurrentValue;
-                    bool QSSSnare = Program.Items.Get<CheckBox>("QSSSnare").CurrentValue;
-                    bool QSSStun = Program.Items.Get<CheckBox>("QSSStun").CurrentValue;
-                    bool QSSTaunt = Program.Items.Get<CheckBox>("QSSTaunt").CurrentValue;
-                    bool usePotions = Program.Items.Get<CheckBox>("ItemsPotions").CurrentValue;
-                    int PotionPercent = Program.Items.Get<Slider>("PotSlider").CurrentValue;
-
-                    if (((item.Id == ItemId.Blade_of_the_Ruined_King && useBORK) 
-                        || (item.Id == ItemId.Bilgewater_Cutlass && useCutlass)) &&
-                        (mode == Mode.Combo || mode == Mode.Harass))
-                    {
-                        var enemy = GetEnemy(type, AttackSpell.BilgewaterCutlass);
-
-                        if (enemy != null)
-                            item.Cast(enemy);
-                    }
-
-                    if ((item.Id == ItemId.Tiamat_Melee_Only && useTiamat)
-                        || (item.Id == ItemId.Ravenous_Hydra_Melee_Only && useRavenous)
-                        || (item.Id == ItemId.Titanic_Hydra && useTitanic))
-                    {
-                        var enemy = GetEnemy(type, AttackSpell.Hydra);
-
-                        if (enemy != null)
-                            item.Cast();
-                    }
-
-                    if ((item.Id == ItemId.Youmuus_Ghostblade && useYoumuus)
-                        && (mode == Mode.Combo || mode == Mode.Harass)
-                        && _Player.CountEnemiesInRange(Program.Q.Range) >= 1)
-                        item.Cast();
-
-                    if (((item.Id == ItemId.Quicksilver_Sash && useQSS)
-                        || (item.Id == ItemId.Mercurial_Scimitar && useMercScim))
-                        && 
-                        ((_Player.HasBuffOfType(BuffType.Blind) && QSSBlind)
-                        || (_Player.HasBuffOfType(BuffType.Charm) && QSSCharm)
-                        || (_Player.HasBuffOfType(BuffType.Fear) && QSSFear)
-                        || (_Player.HasBuffOfType(BuffType.Knockback) && QSSKB)
-                        //not standing on raka silence
-                        || (_Player.HasBuffOfType(BuffType.Silence) && QSSSilence && !_Player.HasBuff("sorakaepacify"))
-                        || (_Player.HasBuffOfType(BuffType.Slow) && QSSSlow)
-                        || (_Player.HasBuffOfType(BuffType.Snare) && QSSSnare)
-                        || (_Player.HasBuffOfType(BuffType.Stun) && QSSStun)
-                        || (_Player.HasBuffOfType(BuffType.Taunt) && QSSTaunt))
-                        //not being knocked back by dragon
-                        && !_Player.HasBuff("moveawaycollision"))
-                        item.Cast();
-                    if((item.Id == ItemId.Health_Potion || item.Id == ItemId.Refillable_Potion || item.Id == ItemId.Hunters_Potion || item.Id == ItemId.Corrupting_Potion)
-                        &&
-                        usePotions &&
-                        _Player.HealthPercent <= PotionPercent &&
-                        !_Player.HasBuff("RegenerationPotion") &&
-                        !_Player.HasBuff("ItemCrystalFlask") &&
-                        !_Player.HasBuff("ItemCrystalFlaskJungle") &&
-                        !_Player.HasBuff("ItemDarkCrystalFlask"))
-                        item.Cast();
-                }
-            }
-        }
-        
-        //complete
-        public static void AutoHarrass()
-        {
-            if (_Player.IsUnderEnemyturret())
-                return;
-
-            bool QCHECK = Program.Harass["AHQ"].Cast<CheckBox>().CurrentValue;
-            bool Q3CHECK = Program.Harass["AH3Q"].Cast<CheckBox>().CurrentValue;
-            var QRange = Program.Q.Range;
-            if ((QRange == 1000 && Q3CHECK) || (QRange == 475 && QCHECK) && !IsDashing && Program.E.IsReady())
-            {
-                var enemy = GetEnemy(GameObjectType.AIHeroClient, AttackSpell.Q);
-
-                if(enemy != null)
-                    CastQ(enemy);
-            }
-        }
-
-        public static Spell.Skillshot GetQType()
-        {
-            if (_Player.HasBuff("yasuoq3w") && !IsDashing)
-                return new Spell.Skillshot(SpellSlot.Q, 1000, SkillShotType.Linear)
-                {
-                    Width = 55,
-                    CastDelay = 400,
-                    Speed = int.MaxValue,
-                    AllowedCollisionCount = int.MaxValue
-                };
-
-            else if (IsDashing)
-                return new Spell.Skillshot(SpellSlot.Q, 375, SkillShotType.Circular);
-            else
-                return new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear)
-                {
-                    CastDelay = 250,
-                    Width = 25,
-                    Speed = 1500,
-                    AllowedCollisionCount = int.MaxValue
-                };
-        }
-        
-        public static void CastQ(Obj_AI_Base target, bool EQ = false, bool lastHit = false)
-        {
-            if (!Program.Q.IsReady() || target == null || target.Position == Vector3.Zero && _Player.CanAttack)
-                return;
-
-            if (!EQ && !IsDashing && (Program.E.IsReady() || !Program.E.IsLearned))
-            {
-                IEnumerable<Obj_AI_Base> enemies = ObjectManager.Get<Obj_AI_Base>().Where(
-                    a => a.IsEnemy 
-                    && !a.IsDead 
-                    && a.Type == target.Type
-                    && (a.Type == GameObjectType.obj_AI_Minion
-                    || a.Type == GameObjectType.AIHeroClient
-                    || a.Type == GameObjectType.NeutralMinionCamp));
-                if (lastHit)
-                    enemies = enemies.Where(a => YasuoCalcs.Q(a) >= a.Health);
-
-                Vector3 position = Program.Q.GetBestLinearCastPosition(enemies, 0, _Player.Position.To2D()).CastPosition;
-                if (position != null && position != Vector3.Zero)
-                    Program.Q.Cast(position);
-                //Chat.Print(position);
-            }
-            else if (EQ)
-            {
-                Program.Q.Cast(_Player.Position);
-            }
-        }
-        public static void CastR(bool UltAtLastSecond)
-        {
-            if (!Program.R.IsReady())
-                return;
-
-            if (UltAtLastSecond)
-            {
-                List<AIHeroClient> Enemies = YasuoCalcs.GetEnemiesKnockedUp();
-                AIHeroClient LowestKnockUpTime = Enemies.OrderBy(a => a.Buffs.OrderBy(b => b.EndTime).FirstOrDefault().EndTime).FirstOrDefault();
-                if (YasuoCalcs.IsLastKnockUpSecond(LowestKnockUpTime))
-                    Program.R.Cast();
-            }
-            else
-                Program.R.Cast();
-        }
-
-        public static void UltHandler()
-        {
-            bool UltIfAllEnemiesKU = Program.UltMenu["UltAEIV"].Cast<CheckBox>().CurrentValue;
-            bool UltIfHalfEnemiesKU = Program.UltMenu["UltHEIV"].Cast<CheckBox>().CurrentValue;
-            bool UltIf10Health = Program.UltMenu["UltLH"].Cast<CheckBox>().CurrentValue;
-            bool UltAtLastSecond = Program.UltMenu["UltLS"].Cast<CheckBox>().CurrentValue;
-            int UltEnemiesKnockedUp = Program.UltMenu["UltREnemies"].Cast<Slider>().CurrentValue;
-
-            #region R
-            if (Program.R.IsReady())
-            {
-                int enemiesKnockedUp = YasuoCalcs.GetNumEnemiesKnockedUp();
-                int enemiesInVision = _Player.CountEnemiesInRange(Program.R.Range);
-
-                if (UltIfAllEnemiesKU && enemiesKnockedUp >= enemiesInVision && enemiesInVision != 0)
-                    CastR(UltAtLastSecond);
-                else if (UltIfHalfEnemiesKU && enemiesKnockedUp >= enemiesInVision / 2 && enemiesInVision != 0)
-                    CastR(UltAtLastSecond);
-                else if (UltEnemiesKnockedUp != 0 && enemiesKnockedUp >= UltEnemiesKnockedUp)
-                    CastR(UltAtLastSecond);
-                else if (UltIf10Health && _Player.HealthPercent <= 10 && enemiesKnockedUp >= 1)
-                    CastR(UltAtLastSecond);
-            }
-            #endregion
+            return false;
         }
     }
 }

@@ -15,29 +15,12 @@ namespace UnsignedYasuo
 {
     internal class Program
     {
-        public static Menu ComboMenu, DrawingsMenu, KSMenu, UltMenu, FleeMode, LaneClear, LastHit, Harass, Items, menu;
-        public static Spell.Skillshot Q;
-        public static Spell.SpellBase W;
-        public static Spell.Targeted E;
+        public static Spell.Skillshot Q, Q3, EQ, Flash;
+        public static Spell.Skillshot W;
+        public static Spell.Targeted E, Ignite;
         public static Spell.Active R;
-        public static Spell.Targeted Ignite;
-        public static Spell.Skillshot Flash;
-        public static HitChance QHitChance = HitChance.Unknown;
-        public static int PentaKills;
-        public static int EQRange = 375,
-            EQRadius = 660,
-            BeybladeRange;
-        public static int TurretRange
-        {
-            get
-            {
-                if (menu.Get<CheckBox>("BTR").CurrentValue)
-                    return 875 + 100;
-                else
-                    return 875;
-            }
-        }
-        public static AIHeroClient _Player { get { return ObjectManager.Player; } }
+        public static AIHeroClient Yasuo { get { return ObjectManager.Player; } }
+        public static int currentPentaKills = 0;
         private static void Main(string[] args)
         {
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;
@@ -48,310 +31,139 @@ namespace UnsignedYasuo
             if (Player.Instance.ChampionName != "Yasuo")
                 return;
 
-            Q = new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear, 250, 0, 25, DamageType.Physical);
-            W = new Spell.Skillshot(SpellSlot.W, 400, SkillShotType.Linear);
-            E = new Spell.Targeted(SpellSlot.E, 475);
-            R = new Spell.Active(SpellSlot.R)
+            #region SpellSetup
+            Q = new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear, 250, int.MaxValue, 55, DamageType.Physical)
             {
-                Range = 1200
+                AllowedCollisionCount = int.MaxValue,
+                SourcePosition = Yasuo.Position
             };
+            Q3 = new Spell.Skillshot(SpellSlot.Q, 1100, SkillShotType.Linear, 300, 1200, 90, DamageType.Physical)
+            {
+                AllowedCollisionCount = int.MaxValue,
+                SourcePosition = Yasuo.Position
+            };
+            W = new Spell.Skillshot(SpellSlot.W, 400, SkillShotType.Cone, 250);
+            EQ = new Spell.Skillshot(SpellSlot.Q, 375, SkillShotType.Circular, 0, int.MaxValue, 375, DamageType.Physical)
+            {
+                AllowedCollisionCount = int.MaxValue
+            };
+            E = new Spell.Targeted(SpellSlot.E, 475, DamageType.Magical)
+            {
+                CastDelay = 250,
+            };
+            R = new Spell.Active(SpellSlot.R, 1200, DamageType.Physical)
+            {
+                CastDelay = 0,
+            };
+            Ignite = new Spell.Targeted(Yasuo.GetSpellSlotFromName("SummonerDot"), 600, DamageType.True)
+            {
+                CastDelay = 0,
+            };
+            Flash = new Spell.Skillshot(Yasuo.GetSpellSlotFromName("SummonerFlash"), 425, SkillShotType.Linear);
+            #endregion
+
+            #region Initializers
+            MenuHandler.Initialize();
+            #endregion
+
+            #region Events
+            Drawing.OnDraw += Drawing_OnDraw;
+            Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
+            Game.OnTick += Game_OnTick;
+            #endregion
+
+            #region Variable Setup
+            currentPentaKills = Yasuo.PentaKills;
+            #endregion
 
             Orbwalker.DisableMovement = true;
-
-            menu = MainMenu.AddMenu("Unsigned Yasuo", "UnsignedYasuo");
-            menu.Add("ABOUT", new Label("This Addon was designed by Chaos"));
-            menu.Add("BTR", new CheckBox("Extend Turret Range (safety precaution)", false));
-            menu.Add("QHitChance", new Slider("Q Hit Chance: Medium", 2, 0, 3));
-
-            ComboMenu = menu.AddSubMenu("Combo", "combomenu");
-
-            ComboMenu.AddGroupLabel("Combo Settings");
-            ComboMenu.Add("CQ", new CheckBox("Use Q"));
-            ComboMenu.Add("CE", new CheckBox("Use E"));
-            ComboMenu.Add("CEQ", new CheckBox("Use EQ"));
-            ComboMenu.Add("CI", new CheckBox("Use Items"));
-            ComboMenu.Add("CEUT", new CheckBox("E Under Turret", false));
-            ComboMenu.Add("CBB", new CheckBox("Beyblade"));
-            ComboMenu.Add("CBBoKP", new CheckBox("Beyblade only on Keypress"));
-            ComboMenu.Add("CBBKP", new KeyBind("Beyblade Keybind", false, KeyBind.BindTypes.HoldActive, 27, 0));
-
-            UltMenu = menu.AddSubMenu("Ultimate", "ultimate");
-            UltMenu.AddGroupLabel("Ultimate Settings");
-            UltMenu.Add("Ult", new CheckBox("Use Ultimate"));
-            UltMenu.Add("UltLS", new CheckBox("Wait until last second?"));
-            UltMenu.Add("UltAEIV", new CheckBox("Ult if all enemies are knocked Up"));
-            UltMenu.Add("UltHEIV", new CheckBox("Ult if 1/2 enemies are knocked Up"));
-            UltMenu.Add("UltLH", new CheckBox("Ult if less than 10% Health", false));
-            UltMenu.Add("UltREnemies", new Slider("Enemies Knocked-Up", 3, 0, 5));
-            
-            Harass = menu.AddSubMenu("Harass", "harass");
-            Harass.AddGroupLabel("Harass Settings");
-            Harass.Add("HQ", new CheckBox("Use Q"));
-            Harass.Add("HE", new CheckBox("Use E"));
-            Harass.Add("HEQ", new CheckBox("Use EQ"));
-            Harass.Add("HEUT", new CheckBox("E Under Turret", false));
-            Harass.Add("HI", new CheckBox("Use Items (Hydra/Tiamat)"));
-            Harass.AddGroupLabel("Auto-Harass Settings");
-            Harass.Add("AHQ", new CheckBox("Auto-Harass with Q"));
-            Harass.Add("AH3Q", new CheckBox("Auto-Harass with 3rd Q", false));
-
-            LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
-            LaneClear.AddGroupLabel("Lane Clear Settings");
-            LaneClear.Add("LCQ", new CheckBox("Use Q"));
-            LaneClear.Add("LC3Q", new CheckBox("Use 3Q"));
-            LaneClear.Add("LCE", new CheckBox("Use E"));
-            LaneClear.Add("LCEQ", new CheckBox("Use EQ"));
-            LaneClear.Add("LCELH", new CheckBox("Only E for Last Hit"));
-            LaneClear.Add("LCEUT", new CheckBox("E Under Turret", false));
-            LaneClear.Add("LCI", new CheckBox("Use Items (Hydra/Tiamat)"));
-            
-            LastHit = menu.AddSubMenu("Last Hit", "lasthitmenu");
-            LastHit.AddGroupLabel("Last Hit Settings");
-            LastHit.Add("LHQ", new CheckBox("Use Q"));
-            LastHit.Add("LHQ3", new CheckBox("Use 3Q"));
-            LastHit.Add("LHE", new CheckBox("Use E"));
-            LastHit.Add("LHEQ", new CheckBox("Use EQ"));
-            LastHit.Add("LHEUT", new CheckBox("E Under Turret", false));
-
-            KSMenu = menu.AddSubMenu("Kill Steal", "ksmenu");
-            KSMenu.AddGroupLabel("Kill Steal Settings");
-            KSMenu.Add("EnableKS", new CheckBox("KS"));
-            KSMenu.Add("KSQ", new CheckBox("KS with Q"));
-            KSMenu.Add("KS3Q", new CheckBox("KS with 3rd Q"));
-            KSMenu.Add("KSE", new CheckBox("KS with E"));
-            KSMenu.Add("KSEQ", new CheckBox("KS with EQ"));
-            KSMenu.Add("KSI", new CheckBox("KS with Ignite"));
-            KSMenu.Add("KSEUT", new CheckBox("E Under Turret", false));
-
-            Items = menu.AddSubMenu("Items", "itemsmenu");
-            Items.AddGroupLabel("Item Settings");
-            Items.Add("ItemsT", new CheckBox("Use Tiamat"));
-            Items.Add("ItemsRH", new CheckBox("Use Ravenous Hydra"));
-            Items.Add("ItemsTH", new CheckBox("Use Titanic Hydra"));
-            Items.Add("ItemsBC", new CheckBox("Use Bilgewater Cutlass"));
-            Items.Add("ItemsBORK", new CheckBox("Use Blade of the Ruined King"));
-            Items.Add("ItemsY", new CheckBox("Use Youmuus"));
-            Items.Add("ItemsQSS", new CheckBox("Use Quick Silversash"));
-            Items.Add("ItemsMS", new CheckBox("Use Mercurial Scimitar"));
-            Items.Add("ItemsPotions", new CheckBox("Use Potions"));
-            Items.AddGroupLabel("QSS/Merc Scimitar Settings");
-            Items.Add("QSSBlind", new CheckBox("Blind"));
-            Items.Add("QSSCharm", new CheckBox("Charm"));
-            Items.Add("QSSFear", new CheckBox("Fear"));
-            Items.Add("QSSKB", new CheckBox("Knockback"));
-            Items.Add("QSSSilence", new CheckBox("Silence"));
-            Items.Add("QSSSlow", new CheckBox("Slow"));
-            Items.Add("QSSSnare", new CheckBox("Snare"));
-            Items.Add("QSSStun", new CheckBox("Stun"));
-            Items.Add("QSSTaunt", new CheckBox("Taunt"));
-            Items.AddGroupLabel("Potion Settings");
-            Items.Add("PotSlider", new Slider("Use Potion at Health Percent", 65, 1, 100));
-
-            FleeMode = menu.AddSubMenu("Flee", "fleemenu");
-            FleeMode.AddGroupLabel("Flee Settings");
-            FleeMode.Add("FleeE", new CheckBox("Use E"));
-            FleeMode.Add("FleeEUT", new CheckBox("Use E under tower"));
-            FleeMode.Add("FleeQ", new CheckBox("Use Q until 3 stacks"));
-            //FleeMode.Add("FleeCamps", new CheckBox("Dash to Jungle Camps"));
-
-            DrawingsMenu = menu.AddSubMenu("Drawings", "drawingsmenu");
-            DrawingsMenu.AddGroupLabel("Drawings Settings");
-            DrawingsMenu.Add("DQ", new CheckBox("Draw Q"));
-            DrawingsMenu.Add("DW", new CheckBox("Draw W"));
-            DrawingsMenu.Add("DE", new CheckBox("Draw E"));
-            DrawingsMenu.Add("DR", new CheckBox("Draw R"));
-            DrawingsMenu.Add("DFS", new CheckBox("Draw Flee Sector"));
-            DrawingsMenu.Add("DKB", new CheckBox("Draw Airblade"));
-            DrawingsMenu.Add("DWD", new CheckBox("Draw Wall Dashes"));
-            DrawingsMenu.Add("DWDPM", new CheckBox("Draw Wall Prediction Manager", false));
-            DrawingsMenu.Add("DT", new CheckBox("Draw Turret Range", false));
-
-            Spellbook spell = _Player.Spellbook;
-            SpellDataInst Sum1 = spell.GetSpell(SpellSlot.Summoner1);
-            SpellDataInst Sum2 = spell.GetSpell(SpellSlot.Summoner2);
-            if (Sum1.Name == "SummonerDot")
-                Ignite = new Spell.Targeted(SpellSlot.Summoner1, 600);
-            else if (Sum2.Name == "SummonerDot")
-                Ignite = new Spell.Targeted(SpellSlot.Summoner2, 600);
-            if (Sum1.Name == "SummonerFlash")
-                Flash = new Spell.Skillshot(SpellSlot.Summoner1, 400, SkillShotType.Circular);
-            else if (Sum2.Name == "SummonerFlash")
-                Flash = new Spell.Skillshot(SpellSlot.Summoner2, 400, SkillShotType.Circular);
-            
-            Game.OnTick += Game_OnTick;
-            Game.OnTick += WindWall.GameOnTick;
-            Game.OnUpdate += WindWall.GameOnUpdate;
-            Drawing.OnDraw += Drawing_OnDraw;
-            Obj_AI_Base.OnCreate += WindWall.OnCreate;
-            Obj_AI_Base.OnDelete += WindWall.OnDelete;
-            Obj_AI_Base.OnUpdatePosition += WindWall.OnUpdate;
-            menu.Get<Slider>("QHitChance").OnValueChange += OnHitChanceSliderChange;
-            UnsignedEvade.SpellDatabase.Initialize();
-            WindWall.OnGameLoad();
-            PentaKills = _Player.PentaKills;
-
-            BeybladeRange = (int)(E.Range + Flash.Range + (EQRange / 2));
-
-            OnHitChanceSliderChange(menu.Get<Slider>("QHitChance"), null);
-        }
-        
-        private static void Drawing_OnDraw(EventArgs args)
-        {
-            if (_Player.IsDead)
-                return;
-			if (DrawingsMenu["DWDPM"].Cast<CheckBox>().CurrentValue && E.IsLearned)
-                foreach (Obj_AI_Base ob in ObjectManager.Get<Obj_AI_Base>().Where(a => !a.IsDead && a.IsVisible && a.IsInRange(_Player, E.Range) && YasuoCalcs.ERequirements(a, true) && a.IsEnemy && a.IsTargetable))
-                    DrawLineIfWallBetween(_Player.Position, ob);
-
-            if (DrawingsMenu["DWD"].Cast<CheckBox>().CurrentValue && E.IsLearned)
-                foreach (WallDash wd in YasuoWallDashDatabase.wallDashDatabase)
-                    if (EntityManager.MinionsAndMonsters.Combined.Where(a => !a.IsDead && a.Name == wd.unitName && a.ServerPosition.Distance(wd.dashUnitPosition) <= 2 && a.Distance(_Player) <= 2500).FirstOrDefault() != null)
-                    {
-                        wd.startPosition.DrawArrow(wd.endPosition, System.Drawing.Color.Red, 1);
-                        Geometry.Polygon.Circle dashCircle = new Geometry.Polygon.Circle(wd.endPosition, 120);
-                        dashCircle.Draw(System.Drawing.Color.Red, 1);
-                        
-                    }
-
-            if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
-                Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.Red);
-            if (DrawingsMenu["DKB"].Cast<CheckBox>().CurrentValue && Q.IsLearned && E.IsLearned && Flash != null && Flash.IsReady() && R.IsLearned && R.IsReady())
-                Drawing.DrawCircle(_Player.Position, BeybladeRange, System.Drawing.Color.OrangeRed);
-            if (DrawingsMenu["DE"].Cast<CheckBox>().CurrentValue && E.IsLearned)
-                Drawing.DrawCircle(_Player.Position, E.Range, System.Drawing.Color.Green);
-            if (DrawingsMenu["DW"].Cast<CheckBox>().CurrentValue && W.IsLearned)
-                Drawing.DrawCircle(_Player.Position, W.Range, System.Drawing.Color.White);
-            if (DrawingsMenu["DR"].Cast<CheckBox>().CurrentValue && R.IsLearned)
-                Drawing.DrawCircle(_Player.Position, R.Range, System.Drawing.Color.BlueViolet);
-            if (DrawingsMenu["DT"].Cast<CheckBox>().CurrentValue)
-                foreach (Obj_AI_Turret t in EntityManager.Turrets.Enemies)
-                    Drawing.DrawCircle(t.Position, TurretRange, System.Drawing.Color.BlueViolet);
-
-            if (DrawingsMenu["DFS"].Cast<CheckBox>().CurrentValue)
-            {
-                Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(_Player.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
-                sector.Draw(System.Drawing.Color.Red, 5);
-            }
-        }
-		
-        private static void DrawLineIfWallBetween(Vector3 startPos, Obj_AI_Base target)
-        {
-            Vector3 endPos = YasuoCalcs.GetDashingEnd(target);
-
-            List<Vector3> inbetweenPoints = new List<Vector3>();
-            Vector2 wallStartPosition = Vector2.Zero;
-            Vector2 wallEndPosition = Vector2.Zero;
-
-            //get every point between yasuo's position and the end position of the dash extended to a range of 1000. 
-            //1 point is every 1/100 of total length
-            for (int i = 0; i <= 100; i++)
-                inbetweenPoints.Add(startPos.Extend(startPos.Extend(endPos, 1000), i * (startPos.Distance(startPos.Extend(endPos, 1000)) / 100)).To3D());
-
-            //for every point in the list of points, find the beginning and the end of the wal
-            foreach (Vector2 vec in inbetweenPoints)
-            {
-                if (vec.IsWall())
-                {
-                    if (wallStartPosition == Vector2.Zero)
-                        wallStartPosition = vec;
-                }
-                else if (wallEndPosition == Vector2.Zero && wallStartPosition != Vector2.Zero)
-                    wallEndPosition = vec;
-            }
-
-            //draw the wall in the color blue
-            if (wallStartPosition != Vector2.Zero && wallEndPosition != Vector2.Zero)
-            {
-                double wallWidth = Math.Round(wallStartPosition.Distance(wallEndPosition)),
-                    distanceToWall = Math.Round(startPos.Distance(wallStartPosition)),
-                    totalDistance = Math.Round(wallStartPosition.Distance(wallEndPosition) + startPos.Distance(wallStartPosition)),
-                    monsterDist = Math.Round(target.Position.Distance(wallStartPosition));
-
-                Drawing.DrawLine(wallStartPosition.To3D().WorldToScreen(), wallEndPosition.To3D().WorldToScreen(), 10, System.Drawing.Color.Black);
-
-                //if the end point of yasuos dash brings him at least halfway between the two points (closer to the wall end than to the walls beginning)
-                //and the wall has to be thinner than yasuo's total dash range. TESTED THIS TO CONFIRM IT WORKS
-                //if (endPos.Distance(wallEndPosition) < endPos.Distance(wallStartPosition) && wallStartPosition.Distance(wallEndPosition) <= Program.E.Range)
-                if(totalDistance <= 630)
-                    Drawing.DrawLine(startPos.WorldToScreen(), startPos.Extend(endPos, 1000).To3D().WorldToScreen(), 3, System.Drawing.Color.Green);
-                else
-                    Drawing.DrawLine(startPos.WorldToScreen(), startPos.Extend(endPos, 1000).To3D().WorldToScreen(), 3, System.Drawing.Color.Red);
-                Drawing.DrawText(wallStartPosition.To3D().WorldToScreen(), System.Drawing.Color.Purple, wallStartPosition.Distance(wallEndPosition).ToString(), 15);
-                Drawing.DrawText(startPos.Extend(endPos, 1000).To3D().WorldToScreen(), System.Drawing.Color.Purple, (wallStartPosition.Distance(wallEndPosition) + startPos.Distance(wallStartPosition)).ToString(), 15);
-                Drawing.DrawCircle(endPos, 50, System.Drawing.Color.White);
-            }
-        }
-
-        private static void PrintWallDash()
-        {
-            /*if (Game.CursorPos2D.Distance(endPos.WorldToScreen()) <= 50 E.IsReady())
-                {
-                //Console.WriteLine("Wall Width: {0}, Distance: {1}, MonsterDist: {3}, Total: {2}, Result = ", wallWidth, distanceToWall, totalDistance, monsterDist);
-
-                string innerData = " unitName = \"" + target.Name +
-                    "\", startPosition = new Vector3(" + startPos.X + "f, " + startPos.Y + "f, " + startPos.Z +
-                    "f), dashUnitPosition = new Vector3(" + target.Position.X + "f, " + target.Position.Y + "f, " + target.Position.Z +
-                    "f), endPosition = new Vector3(" + endPos.X + "f, " + endPos.Y + "f, " + endPos.Z + "f)";
-
-                Console.WriteLine("new WallDash() {" + innerData + "},");
-
-                E.Cast(target);
-            }*/
         }
 
         private static void Game_OnTick(EventArgs args)
         {
-            if (_Player.IsDead)
+            if (Yasuo.IsDead)
                 return;
 
-            Q = YasuoFunctions.GetQType();
+            YasuoFunctions.didActionThisTick = false;
+            
             YasuoFunctions.AutoHarrass();
-            YasuoFunctions.UseItemsAndIgnite(YasuoFunctions.Mode.PotionManager);
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
-                YasuoFunctions.Combo();
-            if (KSMenu["EnableKS"].Cast<CheckBox>().CurrentValue)
-                YasuoFunctions.KS();
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LastHit))
-                YasuoFunctions.LastHit();
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))
-                YasuoFunctions.Harrass();
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear) ||
-                Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear))
-                YasuoFunctions.LaneClear();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
                 YasuoFunctions.Flee();
-            if (_Player.PentaKills > PentaKills)
+            else if(Orbwalker.ActiveModesFlags != Orbwalker.ActiveModes.None)
+            {
+                Orbwalker.MoveTo(Game.CursorPos);
+
+                if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
+                    YasuoFunctions.Combo();
+                if (MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Activate Killsteal"))
+                    YasuoFunctions.KS();
+                if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LastHit))
+                    YasuoFunctions.LastHit();
+                if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))
+                    YasuoFunctions.Harrass();
+                if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear))
+                    YasuoFunctions.JungleClear();
+                if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear))
+                    YasuoFunctions.LaneClear();
+            }
+
+            if (Yasuo.PentaKills > currentPentaKills)
             {
                 Chat.Print("Nice Penta! Make sure to screenshot it and post it on the UnsignedYasuo thread to show off!");
-                PentaKills = _Player.PentaKills;
+                
+                currentPentaKills = Yasuo.PentaKills;
             }
         }
 
-        static void OnHitChanceSliderChange(ValueBase sender, EventArgs args)
+        private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-            Slider slider = sender.Cast<Slider>();
-            int value = slider.CurrentValue;
+            if (sender.Name == Yasuo.Name && args.SData.Name == "YasuoDashWrapper")
+                YasuoCalcs.YasuoLastEStartTime = args.Time;
+        }
 
-            if (value == 0)
+        //complete
+        private static void Drawing_OnDraw(EventArgs args)
+        {
+            if (Yasuo.IsDead)
+                return;
+
+            System.Drawing.Color drawColor = System.Drawing.Color.Blue;
+
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Q") && !Yasuo.HasBuff("YasuoQ3W") && Q.IsLearned)
+                Q.DrawRange(drawColor);
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Q") && Yasuo.HasBuff("YasuoQ3W") && Q.IsLearned)
+                Q3.DrawRange(drawColor);
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw W") && W.IsLearned)
+                W.DrawRange(drawColor);
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw E") && E.IsLearned)
+                E.DrawRange(drawColor);
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw EQ") && E.IsLearned && Q.IsLearned)
+                EQ.DrawRange(drawColor);
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw R") && R.IsLearned)
+                R.DrawRange(drawColor);
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Beyblade") && R.IsLearned && Flash != null && E.IsLearned && Q.IsLearned)
+                Drawing.DrawCircle(Yasuo.Position, E.Range + Flash.Range + (EQ.Range / 2), drawColor);
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Turret Range"))
+                foreach (Obj_AI_Turret turret in EntityManager.Turrets.Enemies.Where(a => !a.IsDead))
+                    turret.DrawCircle((int)turret.GetAutoAttackRange() + 35, drawColor);
+
+            Obj_AI_Base hoverObject = EntityManager.Enemies.Where(a => !a.IsDead && a.IsTargetable && a.IsInRange(Yasuo, E.Range) && a.Distance(Game.CursorPos) <= 75).OrderBy(a => a.Distance(Game.CursorPos)).FirstOrDefault();
+            if (hoverObject != null)
             {
-                slider.DisplayName = "Q Hit Chance: Any";
-                QHitChance = HitChance.Unknown;
+                if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw EQ on Target"))
+                    Drawing.DrawCircle(YasuoCalcs.GetDashingEnd(hoverObject), EQ.Range, drawColor);
+                if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw E End Position on Target"))
+                    Drawing.DrawLine(Yasuo.Position.WorldToScreen(), YasuoCalcs.GetDashingEnd(hoverObject).WorldToScreen(), 3, drawColor);
             }
-            else if (value == 1)
-            {
-                slider.DisplayName = "Q Hit Chance: " + HitChance.Low.ToString();
-                QHitChance = HitChance.Low;
-            }
-            else if (value == 2)
-            {
-                slider.DisplayName = "Q Hit Chance: " + HitChance.Medium.ToString();
-                QHitChance = HitChance.Medium;
-            }
-            else if (value == 3)
-            {
-                slider.DisplayName = "Q Hit Chance: " + HitChance.High.ToString();
-                QHitChance = HitChance.High;
-            }
+
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Wall Dashes") && E.IsLearned)
+                foreach (WallDash wd in YasuoWallDashDatabase.wallDashDatabase.Where(a=>a.startPosition.Distance(Yasuo) <= 1300))
+                    if (EntityManager.MinionsAndMonsters.Combined.Where(a => a.MeetsCriteria() && a.Name == wd.unitName && a.ServerPosition.Distance(wd.dashUnitPosition) <= 2).FirstOrDefault() != null)
+                    {
+                        wd.startPosition.DrawArrow(wd.endPosition, System.Drawing.Color.Red, 1);
+                        Geometry.Polygon.Circle dashCircle = new Geometry.Polygon.Circle(wd.endPosition, 120);
+                        dashCircle.Draw(System.Drawing.Color.Red, 1);
+                    }
         }
     }
 }

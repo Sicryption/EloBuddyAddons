@@ -26,8 +26,7 @@ namespace UnsignedEvade
             None
         }
 
-        public static List<SpellInfo> SpellList = new List<SpellInfo>();
-        static SpellInfo[] SpellInfoList = new SpellInfo[]
+        public static List<SpellInfo> SpellList = new List<SpellInfo>()
         {
             #region Aatrox
             new SpellInfo()
@@ -2457,12 +2456,6 @@ namespace UnsignedEvade
                     CollisionCount = 0
                 }
             #endregion
-    };
-
-        public static void Initialize()
-        {
-            foreach (SpellInfo spell in SpellInfoList)
-                SpellList.Add(spell);
-        }
+        };
     }
 }
