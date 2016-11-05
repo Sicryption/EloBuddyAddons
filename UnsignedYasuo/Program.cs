@@ -154,6 +154,80 @@ namespace UnsignedYasuo
                     Drawing.DrawCircle(YasuoCalcs.GetDashingEnd(hoverObject), EQ.Range, drawColor);
                 if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw E End Position on Target"))
                     Drawing.DrawLine(Yasuo.Position.WorldToScreen(), YasuoCalcs.GetDashingEnd(hoverObject).WorldToScreen(), 3, drawColor);
+                if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw E End Position on Target - Detailed"))
+                {
+                    Vector3 startPos = Yasuo.Position,
+                        dashEndPos = YasuoCalcs.GetDashingEnd(hoverObject),
+                        fakeEndPos = startPos.To2D().Extend(dashEndPos.To2D(), 1000).To3D() + new Vector3(0, 0, startPos.Z),
+                        slope = new Vector3(dashEndPos.X - startPos.X, dashEndPos.Y - startPos.Y, 0),
+                        fakeSlope = new Vector3(fakeEndPos.X - startPos.X, fakeEndPos.Y - startPos.Y, 0);
+
+                    List<Vector3> pointsAlongPath = new List<Vector3>();
+                    List<Vector3> straightLinePath = new List<Vector3>();
+
+                    int points = 100;
+
+                    pointsAlongPath.Add(startPos);
+                    
+                    //get all points in a line from start to fake end
+                    for(int i = 0; i < points; i++)
+                        straightLinePath.Add(startPos + (i * (fakeSlope / points)));
+
+                    bool isWall = false;
+
+                    //get all wall start and end positions
+                    for (int i = 0; i < points; i++)
+                    {
+                        //wall start
+                        if (!isWall && straightLinePath[i].IsWall())
+                        {
+                            pointsAlongPath.Add(straightLinePath[i]);
+                            isWall = true;
+                        }
+                        //wall end
+                        if (isWall && !straightLinePath[i].IsWall())
+                        {
+                            pointsAlongPath.Add(straightLinePath[i]);
+                            isWall = false;
+                        }
+                    }
+
+                    pointsAlongPath.Add(fakeEndPos);
+
+                    for(int i = 0; i < pointsAlongPath.Count() - 1; i++)
+                    {
+                        System.Drawing.Color color = (pointsAlongPath[i].IsWall()) ? System.Drawing.Color.Red : System.Drawing.Color.Green;
+                        Drawing.DrawLine(pointsAlongPath[i].WorldToScreen(), pointsAlongPath[i + 1].WorldToScreen(), 2, color);
+                    }
+
+                    Vector3 closestWall = pointsAlongPath.Where(a => a.IsWall()).OrderBy(a => a.Distance(dashEndPos)).FirstOrDefault(),
+                        closestWallsEndPosition = (pointsAlongPath.IndexOf(closestWall) + 1 == pointsAlongPath.Count) ? Vector3.Zero : pointsAlongPath[pointsAlongPath.IndexOf(closestWall) + 1];
+
+                    Drawing.DrawText(closestWall.WorldToScreen(), drawColor, "start", 15);
+                    Drawing.DrawText(closestWallsEndPosition.WorldToScreen(), drawColor, "end", 15);
+                    Drawing.DrawText(((closestWall + closestWallsEndPosition) / 2).WorldToScreen(), drawColor, closestWall.Distance(closestWallsEndPosition).ToString(), 15);
+                    Drawing.DrawText(dashEndPos.WorldToScreen(), drawColor, startPos.Distance(closestWallsEndPosition).ToString(), 15);
+
+                    //none of the points are a wall so the end point is the dash position
+                    if (!pointsAlongPath.Any(a => a.IsWall()))
+                        Drawing.DrawCircle(dashEndPos, 50, drawColor);
+                    // OR none of the walls are in the E range
+                    else if (pointsAlongPath.Where(a => a.IsWall()).OrderBy(a => a.Distance(startPos)).FirstOrDefault() != null &&
+                        pointsAlongPath.Where(a => a.IsWall()).OrderBy(a => a.Distance(startPos)).FirstOrDefault().Distance(startPos) > E.Range)
+                        Drawing.DrawCircle(dashEndPos, 50, drawColor);
+                    //or the dashing end is not a wall
+                    else if (!dashEndPos.IsWall())
+                        Drawing.DrawCircle(dashEndPos, 50, drawColor);
+                    //find the nearest wall to the dash position
+                    else if (closestWall != Vector3.Zero && closestWallsEndPosition != Vector3.Zero &&
+                        closestWall != null && closestWallsEndPosition != null &&
+                        closestWallsEndPosition.Distance(dashEndPos) < closestWall.Distance(dashEndPos) &&
+                        startPos.Distance(closestWallsEndPosition) <= 630)
+                        Drawing.DrawCircle(closestWallsEndPosition, 50, drawColor);
+                    //the end position is the first wall
+                    else
+                        Drawing.DrawCircle(pointsAlongPath.First(a => a.IsWall()), 50, drawColor);
+                }
             }
 
             if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Wall Dashes") && E.IsLearned)
@@ -165,5 +239,53 @@ namespace UnsignedYasuo
                         dashCircle.Draw(System.Drawing.Color.Red, 1);
                     }
         }
+
+        private static void DrawLineIfWallBetween(Vector3 startPos, Obj_AI_Base target)
+         {
+             Vector3 endPos = YasuoCalcs.GetDashingEnd(target);
+ 
+             List<Vector3> inbetweenPoints = new List<Vector3>();
+             Vector2 wallStartPosition = Vector2.Zero;
+             Vector2 wallEndPosition = Vector2.Zero;
+ 
+             //get every point between yasuo's position and the end position of the dash extended to a range of 1000. 
+             //1 point is every 1/100 of total length
+             for (int i = 0; i <= 100; i++)
+                 inbetweenPoints.Add(startPos.Extend(startPos.Extend(endPos, 1000), i* (startPos.Distance(startPos.Extend(endPos, 1000)) / 100)).To3D());
+ 
+             //for every point in the list of points, find the beginning and the end of the wal
+             foreach (Vector2 vec in inbetweenPoints)
+              {
+                 if (vec.IsWall())
+                 {
+                     if (wallStartPosition == Vector2.Zero)
+                         wallStartPosition = vec;
+                 }
+                 else if (wallEndPosition == Vector2.Zero && wallStartPosition != Vector2.Zero)
+                     wallEndPosition = vec;
+             }
+
+            //draw the wall in the color blue
+            if (wallStartPosition != Vector2.Zero && wallEndPosition != Vector2.Zero)
+            {
+                 double wallWidth = Math.Round(wallStartPosition.Distance(wallEndPosition)),
+                    distanceToWall = Math.Round(startPos.Distance(wallStartPosition)),
+                    totalDistance = Math.Round(wallStartPosition.Distance(wallEndPosition) + startPos.Distance(wallStartPosition)),
+                    monsterDist = Math.Round(target.Position.Distance(wallStartPosition));
+
+                Drawing.DrawLine(wallStartPosition.To3D().WorldToScreen(), wallEndPosition.To3D().WorldToScreen(), 10, System.Drawing.Color.Black);
+
+                //if the end point of yasuos dash brings him at least halfway between the two points (closer to the wall end than to the walls beginning)
+                //and the wall has to be thinner than yasuo's total dash range. TESTED THIS TO CONFIRM IT WORKS
+                //if (endPos.Distance(wallEndPosition) < endPos.Distance(wallStartPosition) && wallStartPosition.Distance(wallEndPosition) <= Program.E.Range)
+                if (totalDistance <= 630)
+                    Drawing.DrawLine(startPos.WorldToScreen(), startPos.Extend(endPos, 1000).To3D().WorldToScreen(), 3, System.Drawing.Color.Green);
+                else
+                    Drawing.DrawLine(startPos.WorldToScreen(), startPos.Extend(endPos, 1000).To3D().WorldToScreen(), 3, System.Drawing.Color.Red);
+                Drawing.DrawText(wallStartPosition.To3D().WorldToScreen(), System.Drawing.Color.Purple, wallStartPosition.Distance(wallEndPosition).ToString(), 15);
+                Drawing.DrawText(startPos.Extend(endPos, 1000).To3D().WorldToScreen(), System.Drawing.Color.Purple, (wallStartPosition.Distance(wallEndPosition) + startPos.Distance(wallStartPosition)).ToString(), 15);
+                Drawing.DrawCircle(endPos, 50, System.Drawing.Color.White);
+            }
+         }
     }
 }

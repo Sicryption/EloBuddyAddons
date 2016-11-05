@@ -35,7 +35,8 @@ namespace UnsignedYasuo
             #endregion
 
             #region Set Menu Values
-            AddCheckboxes(ref Combo, "Use Q", "Use Q3", "Use E_false", "Use E to Gapclose", "Use EQ_false", "Use E Under Tower_false", "Use R", "Use Items", "Beyblade");
+            AddCheckboxes(ref Combo, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use R", "Use Items", "Beyblade");
+            AddComboBox(Combo, "Dash Mode: ", 0, "Gapclose", "To Mouse");
             AddCheckboxes(ref Harass, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use R_false", "Use Items");
             AddCheckboxes(ref AutoHarass, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use Items");
             AddCheckboxes(ref LaneClear, "Use Q", "Use Q3", "Use E_false", "Use E only for Last Hit", "Use EQ_false",  "Use E Under Tower_false", "Use Items");
@@ -43,9 +44,10 @@ namespace UnsignedYasuo
             AddCheckboxes(ref LastHit, "Use Q", "Use Q3", "Use E", "Use EQ_false", "Use E Under Tower_false", "Use Items");
             AddCheckboxes(ref Killsteal, "Activate Killsteal", "Use Q", "Use Q3", "Use E", "Use EQ", "Use E Under Tower", "Use Items", "Use Ignite");
             AddCheckboxes(ref Flee, "Use E", "Use E Under Tower", "Stack Q", "Wall Dash");
+            AddSlider(Flee, "Wall Dash Extra Space", 20, 10, 200);
             AddCheckboxes(ref Ult, "Use R at Last Second", "Use R on All Enemies in Range", "Use R for Flow_false", "Use R at 10% HP_false");
             AddSlider(Ult, "Use R on x Enemies or more:", 3, 1, 5);
-            AddCheckboxes(ref Drawing, "Draw Q", "Draw W_false", "Draw E", "Draw E End Position on Target_false", "Draw EQ_false", "Draw EQ on Target_false", "Draw R", "Draw Beyblade_false", "Draw Wall Dashes", "Draw Turret Range");
+            AddCheckboxes(ref Drawing, "Draw Q", "Draw W_false", "Draw E", "Draw E End Position on Target_false", "Draw E End Position on Target - Detailed_false", "Draw EQ_false", "Draw EQ on Target_false", "Draw R", "Draw Beyblade_false", "Draw Wall Dashes", "Draw Turret Range");
             AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
             WindWall.Initialize();
             #endregion

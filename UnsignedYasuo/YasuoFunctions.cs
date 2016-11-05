@@ -142,9 +142,14 @@ namespace UnsignedYasuo
                 MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E"))
                 didActionThisTick = CastE(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
             
-            if (!didActionThisTick && 
-                MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E to Gapclose"))
+            if (!didActionThisTick &&
+                MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "Gapclose")
                 didActionThisTick = EGapClose(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
+
+            if (!didActionThisTick &&
+                MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "To Mouse")
+                didActionThisTick = EToMouse(MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"), 
+                    false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use EQ"), EntityManager.Heroes.Enemies.ToObj_AI_BaseList());
 
             if (!didActionThisTick && 
                 MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use EQ"))
@@ -183,28 +188,95 @@ namespace UnsignedYasuo
                     }
             }
 
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E"))
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E") || activeDash != null)
             {
                 if (activeDash == null)
                 {
                     Orbwalker.MoveTo(Game.CursorPos);
-                    if (Program.E.IsReady() && !YasuoCalcs.IsDashing())
-                    {
-                        Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(Yasuo.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
-
-                        List<Obj_AI_Base> dashableEnemies = EntityManager.Enemies.Where(a => !a.IsDead && a.MeetsCriteria() && YasuoCalcs.ERequirements(a, MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower")) && a.IsInRange(Yasuo.Position, Program.E.Range) && sector.IsInside(a)).OrderBy(a => YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos)).ToList();
-                        if (YasuoCalcs.WillQBeReady() && MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Stack Q") && !Yasuo.HasBuff("yasuoq3w"))
-                            CastEQ(dashableEnemies, false, MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower"));
-                        else
-                            CastE(dashableEnemies.FirstOrDefault());
-                    }
+                    didActionThisTick = EToMouse(MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower"), MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Stack Q"), false);
                 }
                 else
                 {
+                    //first check if the positions are exact
                     if (Yasuo.Position.To2D() == activeDash.startPosition.To2D())
-                        CastE(EntityManager.MinionsAndMonsters.Combined.Where(a => a.Name == activeDash.unitName).ToList().ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower"));
+                        didActionThisTick = CastE(EntityManager.MinionsAndMonsters.Combined.Where(a => a.Name == activeDash.unitName).ToList().ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower"));
                     else
                         Orbwalker.MoveTo(activeDash.startPosition);
+
+                    //if the positions aren't exact
+                    //if (Yasuo.Position.Distance(activeDash.startPosition) > 50)
+                    //    return;
+
+                    Vector3 startPos = Yasuo.Position,
+                        dashEndPos = YasuoCalcs.GetDashingEnd(EntityManager.MinionsAndMonsters.Combined.Where(a=>a.MeetsCriteria() && YasuoCalcs.ERequirements(a, MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower")) && a.Name == activeDash.unitName).FirstOrDefault()),
+                        fakeEndPos = startPos.To2D().Extend(dashEndPos.To2D(), 1000).To3D() + new Vector3(0, 0, startPos.Z),
+                        slope = new Vector3(dashEndPos.X - startPos.X, dashEndPos.Y - startPos.Y, 0),
+                        fakeSlope = new Vector3(fakeEndPos.X - startPos.X, fakeEndPos.Y - startPos.Y, 0),
+                        actualDashPosition = Vector3.Zero;
+                    
+                    List<Vector3> pointsAlongPath = new List<Vector3>();
+                    List<Vector3> straightLinePath = new List<Vector3>();
+
+                    int points = 100;
+
+                    pointsAlongPath.Add(startPos);
+
+                    //get all points in a line from start to fake end
+                    for (int i = 0; i < points; i++)
+                        straightLinePath.Add(startPos + (i * (fakeSlope / points)));
+
+                    bool isWall = false;
+
+                    //get all wall start and end positions
+                    for (int i = 0; i < points; i++)
+                    {
+                        //wall start
+                        if (!isWall && straightLinePath[i].IsWall())
+                        {
+                            pointsAlongPath.Add(straightLinePath[i]);
+                            isWall = true;
+                        }
+                        //wall end
+                        if (isWall && !straightLinePath[i].IsWall())
+                        {
+                            pointsAlongPath.Add(straightLinePath[i]);
+                            isWall = false;
+                        }
+                    }
+
+                    pointsAlongPath.Add(fakeEndPos);
+                    
+                    Vector3 closestWall = pointsAlongPath.Where(a => a.IsWall()).OrderBy(a => a.Distance(dashEndPos)).FirstOrDefault(),
+                        closestWallsEndPosition = (pointsAlongPath.IndexOf(closestWall) + 1 == pointsAlongPath.Count) ? Vector3.Zero : pointsAlongPath[pointsAlongPath.IndexOf(closestWall) + 1];
+
+                    //none of the points are a wall so the end point is the dash position
+                    if (!pointsAlongPath.Any(a => a.IsWall()))
+                        actualDashPosition = dashEndPos;
+                    // OR none of the walls are in the E range
+                    else if (pointsAlongPath.Where(a => a.IsWall()).OrderBy(a => a.Distance(startPos)).FirstOrDefault() != null &&
+                        pointsAlongPath.Where(a => a.IsWall()).OrderBy(a => a.Distance(startPos)).FirstOrDefault().Distance(startPos) > Program.E.Range)
+                        actualDashPosition = dashEndPos;
+                    //or the dashing end is not a wall
+                    else if (!dashEndPos.IsWall())
+                        actualDashPosition = dashEndPos;
+                    //find the nearest wall to the dash position
+                    else if (closestWall != Vector3.Zero && closestWallsEndPosition != Vector3.Zero &&
+                        closestWall != null && closestWallsEndPosition != null &&
+                        closestWallsEndPosition.Distance(dashEndPos) < closestWall.Distance(dashEndPos) &&
+                        startPos.Distance(closestWallsEndPosition) <= 630)
+                        actualDashPosition = closestWallsEndPosition;
+                    //the end position is the first wall
+                    else
+                        actualDashPosition = pointsAlongPath.First(a => a.IsWall());
+
+                    //if the end position is close enough to the walldash position, dash
+                    if (actualDashPosition.Distance(activeDash.endPosition) <= MenuHandler.GetSliderValue(MenuHandler.Flee, "Wall Dash Extra Space"))
+                    {
+                        Chat.Print("did the dash");
+                        didActionThisTick = Program.E.Cast(EntityManager.MinionsAndMonsters.Combined.Where(a => a.MeetsCriteria() && YasuoCalcs.ERequirements(a, MenuHandler.GetCheckboxValue(MenuHandler.Flee, "Use E Under Tower")) && a.Name == activeDash.unitName).FirstOrDefault());
+                    }
+                    else
+                        Chat.Print("did not do the dash");
                 }
             }
         }
@@ -261,7 +333,6 @@ namespace UnsignedYasuo
                 || Yasuo.HasBuffOfType(BuffType.Fear)
                 || Yasuo.HasBuffOfType(BuffType.Knockback)
                 || Yasuo.HasBuffOfType(BuffType.Silence)
-                || Yasuo.HasBuffOfType(BuffType.Slow)
                 || Yasuo.HasBuffOfType(BuffType.Snare)
                 || Yasuo.HasBuffOfType(BuffType.Stun)
                 || Yasuo.HasBuffOfType(BuffType.Taunt))
@@ -280,7 +351,6 @@ namespace UnsignedYasuo
                 || Yasuo.HasBuffOfType(BuffType.Fear)
                 || Yasuo.HasBuffOfType(BuffType.Knockback)
                 || Yasuo.HasBuffOfType(BuffType.Silence)
-                || Yasuo.HasBuffOfType(BuffType.Slow)
                 || Yasuo.HasBuffOfType(BuffType.Snare)
                 || Yasuo.HasBuffOfType(BuffType.Stun)
                 || Yasuo.HasBuffOfType(BuffType.Taunt))
@@ -420,6 +490,26 @@ namespace UnsignedYasuo
             return false;
         }
 
+        public static bool EToMouse(bool goUnderEnemyTower, bool stackQ, bool EQ, List<Obj_AI_Base> EQTargets = null)
+        {
+            if (Program.E.IsReady() && !YasuoCalcs.IsDashing())
+            {
+                Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(Yasuo.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
+
+                List<Obj_AI_Base> dashableEnemies = EntityManager.Enemies.Where(a => !a.IsDead && a.MeetsCriteria() && YasuoCalcs.ERequirements(a, goUnderEnemyTower) && a.IsInRange(Yasuo.Position, Program.E.Range) && sector.IsInside(a)).OrderBy(a => YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos)).ToList();
+                List<Obj_AI_Base> dashableEnemiesWithTargets = dashableEnemies.Where(a => YasuoCalcs.GetDashingEnd(a).CountEnemyHeroesInRangeWithPrediction((int)Program.EQ.Range, 250) >= 1)
+                    .OrderBy(a => YasuoCalcs.GetDashingEnd(a).CountEnemyHeroesInRangeWithPrediction((int)Program.EQ.Range, 250)).ToList();
+
+                if (YasuoCalcs.WillQBeReady() && stackQ && !Yasuo.HasBuff("yasuoq3w") && dashableEnemies.Count != 0)
+                    return CastEQ(dashableEnemies, false, goUnderEnemyTower);
+                else if (YasuoCalcs.WillQBeReady() && EQ && dashableEnemiesWithTargets.Count != 0)
+                    return CastEQ(dashableEnemies, false, goUnderEnemyTower, EQTargets);
+                else
+                    return CastE(dashableEnemies.FirstOrDefault());
+            }
+            return false;
+        }
+
         public static bool CastEQ(List<Obj_AI_Base> dashEnemies, bool ks, bool goUnderEnemyTower, List<Obj_AI_Base> EQEnemies = null)
         {
             if (!Program.E.IsReady() || !YasuoCalcs.WillQBeReady() || Yasuo.GetNearbyEnemies(Program.E.Range).Count() == 0 || YasuoCalcs.IsDashing())
@@ -464,7 +554,9 @@ namespace UnsignedYasuo
 
         public static bool CastQ(List<Obj_AI_Base> enemies, bool ks)
         {
-            if (!Program.Q.IsReady() || YasuoCalcs.IsDashing())
+            if (!Program.Q.IsReady() || YasuoCalcs.IsDashing() || 
+                (Orbwalker.CanAutoAttack && enemies.Where(a=>a.IsInRange(Yasuo, Yasuo.GetAutoAttackRange())).FirstOrDefault() != null)
+                || Orbwalker.IsAutoAttacking)
                 return false;
 
             Spell.Skillshot.BestPosition position;
