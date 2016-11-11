@@ -3301,6 +3301,14 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "JavelinToss",
+                MissileName = "JavelinToss",
+                ChampionName = "Nidalee",
+                Range = 1500f,
+                MissileSpeed = 1300f,
+                MissileMinSpeed = 1300f,
+                MissileMaxSpeed = 1300f,
+                Width = 40f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -3308,20 +3316,36 @@ namespace UnsignedEvade
             //q tiger
             new SpellInfo()
             {
+                SpellName = "Takedown",
+                ChampionName = "Nidalee",
+                Range = 500f,
+                MissileSpeed = 500f,
+                MissileMinSpeed = 500f,
+                MissileMaxSpeed = 500f,
+                Width = 0f,
+                Radius = 20f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
-            //w
+            //w handled as trap
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //w tiger
             new SpellInfo()
             {
+                SpellName = "Pounce",
+                ChampionName = "Nidalee",
+                Range = 200f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Radius = 75f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -3329,6 +3353,15 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "PrimalSurge",
+                ChampionName = "Nidalee",
+                Range = 600f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 350f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -3343,6 +3376,15 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "AspectOfTheCougar",
+                ChampionName = "Nidalee",
+                Range = 20f,
+                MissileSpeed = 943.8f,
+                MissileMinSpeed = 943.8f,
+                MissileMaxSpeed = 943.8f,
+                Width = 0f,
+                Radius = 100f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -4078,6 +4120,16 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "MegaAdhesive",
+                ChampionName = "Singed",
+                Range = 1000f,
+                MissileSpeed = 700f,
+                MissileMinSpeed = 700f,
+                MissileMaxSpeed = 700f,
+                Width = 0f,
+                Delay = 5.25f,
+                Radius = 265f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.W,
@@ -4085,6 +4137,15 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "Fling",
+                ChampionName = "Singed",
+                Range = 125f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 100f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.KnockUp,
                 Slot = SpellInfo.SpellSlot.E,
@@ -4804,6 +4865,15 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                MissileName = "VarusQMissile",
+                //SpellName = "VarusQ",
+                ChampionName = "Varus",
+                MissileSpeed = 1900f,
+                MissileMinSpeed = 1900f,
+                MissileMaxSpeed = 1900f,
+                Range = 2000f,
+                Width = 70f,
+                canVaryInLength = true,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -4818,6 +4888,15 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "VarusEMissile",
+                MissileName = "VarusEMissile",
+                ChampionName = "Varus",
+                Range = 1100f,
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
+                Width = 120f,
+                Radius = 210f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
@@ -4825,6 +4904,14 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "VarusR",
+                MissileName = "VarusRMissile",
+                ChampionName = "Varus",
+                Range = 1250f,
+                MissileSpeed = 1950f,
+                MissileMinSpeed = 1950f,
+                MissileMaxSpeed = 1950f,
+                Width = 120f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.R,
