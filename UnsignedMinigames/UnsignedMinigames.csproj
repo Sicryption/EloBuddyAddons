@@ -143,19 +143,6 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Forge.png" />
-    <None Include="Resources\Sell.png" />
-    <None Include="Resources\Buy.png" />
-    <None Include="Resources\Back Arrow.png" />
-    <None Include="Resources\DummyIcon.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Settings.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\ShopIcon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\Snake.png" />
   </ItemGroup>
   <ItemGroup>
