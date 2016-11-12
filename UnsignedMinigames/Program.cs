@@ -26,7 +26,7 @@ namespace UnsignedMinigames
 
             Game.OnTick += Game_OnTick;
             Game.OnWndProc += Game_OnWndProc;
-            Drawing.OnDraw += Drawing_OnDraw;
+            Drawing.OnEndScene += Drawing_OnEndScene;
         }
 
         private static void Game_OnWndProc(WndEventArgs args)
@@ -53,7 +53,7 @@ namespace UnsignedMinigames
             }
         }
 
-        private static void Drawing_OnDraw(EventArgs args)
+        private static void Drawing_OnEndScene(EventArgs args)
         {
             if(Player.Instance.IsDead || MenuHandler.GetCheckboxValue(MenuHandler.Settings, "Draw when Alive"))
                 DrawManager.Draw();
