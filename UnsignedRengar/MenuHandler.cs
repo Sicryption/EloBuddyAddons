@@ -20,9 +20,18 @@ namespace UnsignedRengar
         public static void Initialize()
         {
             #region CreateMenus
+            mainMenu = MainMenu.AddMenu("Main Menu", "UR Main Menu");
+            Combo = AddSubMenu(mainMenu, "Combo");
+            Drawing = AddSubMenu(mainMenu, "Drawing");
             #endregion
 
             #region Set Menu Values
+            AddCheckboxes(ref Combo, "Use Q", "Use Empowered Q", "Use W", 
+                "Use Empowered W", "Use Empowered W to stop CC", "Use W for damage_false", "Use Empowered W for damage_false", "Use E",
+                "Use Empowered E", "Use Items", "Use Ignite", "Use Smite");
+            AddSlider(Combo, "Use W at % black health", 15, 1, 100);
+            AddSlider(Combo, "Use Empowered W at % black health", 15, 1, 100);
+            AddCheckboxes(ref Drawing, "Draw Q", "Draw W", "Draw E", "Draw R Detection Range", "Draw Arrow to R Target_false");
             #endregion
         }
 
