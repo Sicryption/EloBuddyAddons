@@ -16,12 +16,12 @@ namespace UnsignedRengar
         {
             return Rengar.CalculateDamageOnUnit(target, DamageType.Physical,
                 50 + 40 * Program.Q.Level
-                + (0.4f + 0.2f * Program.Q.Level) * (Rengar.BaseAttackDamage - Rengar.TotalAttackDamage));
+                + (0.4f + (0.2f * Program.Q.Level)) * (Rengar.BaseAttackDamage - Rengar.TotalAttackDamage));
         }
         public static float EmpQ(Obj_AI_Base target)
         {
             return Rengar.CalculateDamageOnUnit(target, DamageType.Physical,
-                104 + 16 * Program.Q.Level
+                104 + 16 * Rengar.Level
                 + 2.4f * (Rengar.BaseAttackDamage - Rengar.TotalAttackDamage));
         }
         public static float W(Obj_AI_Base target)
@@ -33,8 +33,28 @@ namespace UnsignedRengar
         public static float EmpW(Obj_AI_Base target)
         {
             return Rengar.CalculateDamageOnUnit(target, DamageType.Physical,
-                40 + 10 * Program.W.Level
+                40 + 10 * Rengar.Level
                 + 0.8f * Rengar.TotalMagicalDamage);
+        }
+        public static float E(Obj_AI_Base target)
+        {
+            return Rengar.CalculateDamageOnUnit(target, DamageType.Physical,
+                50 * Program.E.Level
+                + 0.7f * Rengar.TotalAttackDamage - Rengar.BaseAttackDamage);
+        }
+        public static float EmpE(Obj_AI_Base target)
+        {
+            return Rengar.CalculateDamageOnUnit(target, DamageType.Physical,
+                35 + (15 * Rengar.Level)
+                + 0.7f * Rengar.TotalAttackDamage - Rengar.BaseAttackDamage);
+        }
+        public static float Ignite(Obj_AI_Base target)
+        {
+            return ((10 + (4 * Rengar.Level)) * 5) - ((target.HPRegenRate / 2) * 5);
+        }
+        public static float Smite()
+        {
+            return new int[] { 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 }[Rengar.Level];
         }
     }
 }

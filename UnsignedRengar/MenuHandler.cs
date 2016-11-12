@@ -15,22 +15,60 @@ namespace UnsignedRengar
 {
     class MenuHandler
     {
-        public static Menu mainMenu, Combo, Harass, AutoHarass, Killsteal, LaneClear, JungleClear, LastHit, Flee, Items, Drawing;
+        public static Menu mainMenu, Combo, Harass, Killsteal, LaneClear, JungleClear, LastHit, Flee, Items, Drawing;
 
         public static void Initialize()
         {
             #region CreateMenus
-            mainMenu = MainMenu.AddMenu("Main Menu", "UR Main Menu");
+            mainMenu = MainMenu.AddMenu("Unsigned Rengar", "Main Menu");
             Combo = AddSubMenu(mainMenu, "Combo");
+            Harass = AddSubMenu(mainMenu, "Harass");
+            Killsteal = AddSubMenu(mainMenu, "Killsteal");
+            LaneClear = AddSubMenu(mainMenu, "Lane Clear");
+            JungleClear = AddSubMenu(mainMenu, "Jungle Clear");
+            LastHit = AddSubMenu(mainMenu, "Last Hit");
+            Flee = AddSubMenu(mainMenu, "Flee");
+            Items = AddSubMenu(mainMenu, "Items");
             Drawing = AddSubMenu(mainMenu, "Drawing");
             #endregion
 
             #region Set Menu Values
+            mainMenu.Add("Creator", new Label("This script is apart of the Unsigned Series made by Chaos"));
+
             AddCheckboxes(ref Combo, "Use Q", "Use Empowered Q", "Use W", 
-                "Use Empowered W", "Use Empowered W to stop CC", "Use W for damage_false", "Use Empowered W for damage_false", "Use E",
+                "Use Empowered W", "Use Empowered W to stop CC", "Use W for damage_false", "Use W for Ferocity", "Use Empowered W for damage_false", "Use E",
                 "Use Empowered E", "Use Items", "Use Ignite", "Use Smite");
             AddSlider(Combo, "Use W at % black health", 15, 1, 100);
             AddSlider(Combo, "Use Empowered W at % black health", 15, 1, 100);
+
+            AddCheckboxes(ref Harass, "Use Q", "Use Empowered Q", "Use W",
+                "Use Empowered W", "Use Empowered W to stop CC", "Use W for damage_false", "Use Empowered W for damage_false", "Use E",
+                "Use Empowered E", "Use Items", "Use Smite");
+            AddSlider(Harass, "Use W at % black health", 15, 1, 100);
+            AddSlider(Harass, "Use Empowered W at % black health", 15, 1, 100);
+
+            AddCheckboxes(ref JungleClear, "Use Q", "Use Empowered Q", "Use W",
+                "Use Empowered W", "Use W for damage_false", "Use Empowered W for damage_false", "Use E",
+                "Use Empowered E", "Use Items", "Use Smite");
+            AddSlider(JungleClear, "Use W at % black health", 15, 1, 100);
+            AddSlider(JungleClear, "Use Empowered W at % black health", 15, 1, 100);
+
+            AddCheckboxes(ref LaneClear, "Use Q", "Use Empowered Q", "Use W",
+                "Use Empowered W", "Use W for damage_false", "Use Empowered W for damage_false", "Use E",
+                "Use Empowered E_false", "Save Ferocity", "Use Items_false");
+            AddSlider(LaneClear, "Use W at % black health", 15, 1, 100);
+            AddSlider(LaneClear, "Use Empowered W at % black health", 15, 1, 100);
+
+            AddCheckboxes(ref LastHit, "Use Q", "Use Empowered Q", "Use W_false",
+                "Use Empowered W_false","Use E", "Use Empowered E_false", "Save Ferocity", "Use Items");
+
+            AddCheckboxes(ref Killsteal, "Killsteal", "Use Q", "Use Empowered Q", "Use W", "Use Empowered W",
+                "Use E", "Use Empowered E", "Use Items", "Use Ignite", "Use Smite");
+
+            AddCheckboxes(ref Flee, "Use E", "Use Empowered E", "Use Empowered W", "Use Empowered W to stop CC", "Jump from Brush");
+
+            AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
+
             AddCheckboxes(ref Drawing, "Draw Q", "Draw W", "Draw E", "Draw R Detection Range", "Draw Arrow to R Target_false");
             #endregion
         }
