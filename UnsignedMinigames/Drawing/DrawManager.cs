@@ -91,8 +91,8 @@ namespace UnsignedMinigames
                 Button Snake = CreateButton("Snake", "Play Snake", TopLeft, ImagePosition.TopLeft);
                 Snake.OnMouseRelease += delegate { ButtonManager.LoadSnake(); };
 
-                Button Tetris = CreateButton("Tetris - Main", "Play Tetris", TopLeft, ImagePosition.TopLeft);
-                Tetris.OnMouseRelease += delegate { ButtonManager.LoadTetris(); };
+                //Button Tetris = CreateButton("Tetris - Main", "Play Tetris", TopLeft, ImagePosition.TopLeft);
+                //Tetris.OnMouseRelease += delegate { ButtonManager.LoadTetris(); };
             }
             else if(MenuState == HUDState.InGameSnake)
             {
