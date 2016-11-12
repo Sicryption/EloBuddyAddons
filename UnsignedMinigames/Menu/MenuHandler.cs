@@ -17,7 +17,7 @@ namespace UnsignedMinigames
 {
     class MenuHandler
     {
-        public static Menu mainMenu, Settings, SnakeMenu;
+        public static Menu mainMenu, Settings, SnakeMenu, TetrisMenu;
 
         public static void Initialize()
         {
@@ -25,8 +25,9 @@ namespace UnsignedMinigames
             mainMenu = MainMenu.AddMenu("UnsignedMinigames", "UnsignedMinigames");
             mainMenu.AddGroupLabel("UnsignedMinigames");
             mainMenu.AddLabel("This Addon was developed by Chaos.");
-            mainMenu.AddLabel("This Addon currently has: Snake");
+            mainMenu.AddLabel("This Addon currently has: Snake and Tetris");
             SnakeMenu = AddSubMenu(mainMenu, "Snake");
+            TetrisMenu = AddSubMenu(mainMenu, "Tetris");
             Settings = AddSubMenu(mainMenu, "Settings");
             #endregion
 
@@ -42,6 +43,7 @@ namespace UnsignedMinigames
             down.OnValueChange += delegate { if (!down.CurrentValue) Snake.SetDirection(Snake.Direction.South); };
             left.OnValueChange += delegate { if (!left.CurrentValue) Snake.SetDirection(Snake.Direction.West); };
             right.OnValueChange += delegate { if (!right.CurrentValue) Snake.SetDirection(Snake.Direction.East); };
+            AddSlider(TetrisMenu, "Game Speed", 10, 1, 100);
             #endregion
         }
 

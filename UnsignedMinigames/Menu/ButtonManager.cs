@@ -13,5 +13,10 @@ namespace UnsignedMinigames
             DrawManager.MenuState = DrawManager.HUDState.InGameSnake;
             Snake.StartGame();
         }
+        public static void LoadTetris()
+        {
+            DrawManager.MenuState = DrawManager.HUDState.InGameTetris;
+            TetrisGame.StartGame();
+        }
     }
 }

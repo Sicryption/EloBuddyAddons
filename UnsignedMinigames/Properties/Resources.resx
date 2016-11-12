@@ -118,27 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Back_Arrow" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Back Arrow.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Buy" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Buy.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="DummyIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\DummyIcon.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Forge" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Forge.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Sell" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Sell.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="Settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Settings.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
-  <data name="ShopIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\ShopIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="Snake" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\Snake.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -150,5 +129,29 @@
   </data>
   <data name="SnakePiece" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SnakePiece.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tetris" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tetris.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tetris___Blue_Piece" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tetris - Blue Piece.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tetris___Dark_Piece" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tetris - Dark Piece.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tetris___Green_Piece" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tetris - Green Piece.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tetris___Orange_Piece" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tetris - Orange Piece.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tetris___Purple_Piece" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tetris - Purple Piece.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tetris___Red_Piece" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tetris - Red Piece.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Tetris___Yellow_Piece" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Tetris - Yellow Piece.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

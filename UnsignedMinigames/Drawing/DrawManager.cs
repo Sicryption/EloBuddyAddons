@@ -17,7 +17,8 @@ namespace UnsignedMinigames
         public enum HUDState
         {
             MainMenu,
-            InGameSnake
+            InGameSnake,
+            InGameTetris
         }
         public static HUDState MenuState = HUDState.MainMenu,
             lastMenuState;
@@ -43,17 +44,19 @@ namespace UnsignedMinigames
 
         public static void InitializeSprites()
         {
-            AddTexture("Settings", Resources.Settings);
-            AddTexture("Shop", Resources.ShopIcon);
-            AddTexture("Dummy", Resources.DummyIcon);
-            AddTexture("Back Arrow", Resources.Back_Arrow);
-            AddTexture("Buy", Resources.Buy);
-            AddTexture("Sell", Resources.Sell);
-            AddTexture("Forge", Resources.Forge);
             AddTexture("Snake", Resources.Snake);
             AddTexture("SnakeBackground", Resources.SnakeBackground);
             AddTexture("SnakePiece", Resources.SnakePiece);
             AddTexture("SnakeMoveWindow", Resources.SnakeMoveWindow);
+            AddTexture("Tetris - Main", Resources.Tetris);
+            AddTexture("Tetris - Blue", Resources.Tetris___Blue_Piece);
+            AddTexture("Tetris - Dark", Resources.Tetris___Dark_Piece);
+            AddTexture("Tetris - Green", Resources.Tetris___Green_Piece);
+            AddTexture("Tetris - Orange", Resources.Tetris___Orange_Piece);
+            AddTexture("Tetris - Purple", Resources.Tetris___Purple_Piece);
+            AddTexture("Tetris - Red", Resources.Tetris___Red_Piece);
+            AddTexture("Tetris - Yellow", Resources.Tetris___Yellow_Piece);
+
             CreateScreen();
         }
 
@@ -87,6 +90,9 @@ namespace UnsignedMinigames
             {
                 Button Snake = CreateButton("Snake", "Play Snake", TopLeft, ImagePosition.TopLeft);
                 Snake.OnMouseRelease += delegate { ButtonManager.LoadSnake(); };
+
+                Button Tetris = CreateButton("Tetris - Main", "Play Tetris", TopLeft, ImagePosition.TopLeft);
+                Tetris.OnMouseRelease += delegate { ButtonManager.LoadTetris(); };
             }
             else if(MenuState == HUDState.InGameSnake)
             {
