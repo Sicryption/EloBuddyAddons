@@ -71,6 +71,7 @@
   <ItemGroup>
     <Compile Include="DodgeManager.cs" />
     <Compile Include="EvadeController.cs" />
+    <Compile Include="CustomExtensions.cs" />
     <Compile Include="Geometry.cs" />
     <Compile Include="MenuHandler.cs" />
     <Compile Include="ParticleDatabase.cs" />

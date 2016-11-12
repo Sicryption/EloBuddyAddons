@@ -277,22 +277,22 @@ namespace UnsignedEvade
                         {
                             float timeItTakesToCast = info.Delay + info.TravelTime;
                             float timeSinceCast = Game.Time - info.TimeOfCast;
-
-                            if (timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0)
+                            
+                            if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
                                 KeepList.Add(info);
                         }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSkillshot)
                         {
                             float timeItTakesToCast = info.Delay + info.TravelTime;
                             float timeSinceCast = Game.Time - info.TimeOfCast;
-                            if (((info.BuffName != "" && info.caster.HasBuff(info.BuffName)) || timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0))
+                            if ((info.BuffName != "" && info.caster.HasBuff(info.BuffName)) || timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
                                 KeepList.Add(info);
                         }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall)
                         {
                             float timeSinceCast = Game.Time - info.TimeOfCast;
                             float timeItTakesToCast = info.Delay + info.TravelTime;
-                            if (timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0)
+                            if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
                                 KeepList.Add(info);
                         }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive)
@@ -300,7 +300,7 @@ namespace UnsignedEvade
                             float timeSinceCast = Game.Time - info.TimeOfCast;
                             float timeItTakesToCast = info.Delay + info.TravelTime;
 
-                            if (timeSinceCast <= timeItTakesToCast || Math.Max(0, info.GetChampionSpell().CooldownExpires - Game.Time) == 0 || (info.BuffName != "" && info.caster.HasBuff(info.BuffName)))
+                            if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown() || (info.BuffName != "" && info.caster.HasBuff(info.BuffName)))
                                 KeepList.Add(info);
                         }
                         break;

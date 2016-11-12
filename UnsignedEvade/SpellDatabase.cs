@@ -264,13 +264,13 @@ namespace UnsignedEvade
                 MissileMinSpeed = 850f,
                 MissileMaxSpeed = 850f,
                 Range = 1100f,
-                Width = 110f,   
+                Width = 110f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //w Handled Under Particle Database
-            new SpellInfo() 
+            new SpellInfo()
             {
                 SpellName = "Crystallize",
                 ChampionName = "Anivia",
@@ -3820,20 +3820,46 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellName = "RengarQ",
+                ChampionName = "Rengar",
+                Range = 325f,
+                MissileSpeed = 3000f,
+                MissileMinSpeed = 3000f,
+                MissileMaxSpeed = 3000f,
+                Width = 55f,
+                Radius = 325f,
+                ConeDegrees = 90f,
+                OtherMissileNames = new string[] { "RengarQ2"},
+                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //q emp
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellName = "RengarQEmp",
+                ChampionName = "Rengar",
+                Range = 300,
+                MissileSpeed = 3000f,
+                MissileMinSpeed = 3000f,
+                MissileMaxSpeed = 3000f,
+                Width = 55f,
+                Radius = 300f,
+                ConeDegrees = 90f,
+                OtherMissileNames = new string[] { "RengarQ2Emp"},
+                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //w
             new SpellInfo()
             {
+                SpellName = "RengarW",
+                ChampionName = "Rengar",
+                Range = 450f,
+                Radius = 450f,
+                ConeDegrees = 45f,
+                
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -3841,6 +3867,11 @@ namespace UnsignedEvade
             //w emp
             new SpellInfo()
             {
+                SpellName = "RengarWEmp",
+                ChampionName = "Rengar",
+                Range = 450f,
+                Radius = 450f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -3848,6 +3879,14 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "RengarE",
+                MissileName = "RengarEMis",
+                ChampionName = "Rengar",
+                Range = 1000f,
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
+                Width = 70f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
@@ -3855,6 +3894,14 @@ namespace UnsignedEvade
             //e emp
             new SpellInfo()
             {
+                SpellName = "RengarEEmp",
+                MissileName = "RengarEEmpMis",
+                ChampionName = "Rengar",
+                Range = 1000f,
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
+                Width = 70f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.E,
@@ -3862,6 +3909,15 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "RengarR",
+                ChampionName = "Rengar",
+                Range = 2000f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 2.959704E-34f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 75f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
