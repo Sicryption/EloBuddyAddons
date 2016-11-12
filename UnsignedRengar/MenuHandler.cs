@@ -69,7 +69,8 @@ namespace UnsignedRengar
 
             AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
 
-            AddCheckboxes(ref Drawing, "Draw Q", "Draw W", "Draw E", "Draw R Detection Range", "Draw Arrow to R Target_false");
+            AddCheckboxes(ref Drawing, "Draw Q", "Draw W", "Draw E", "Draw R Detection Range", "Draw Arrow to R Target_false", "Draw Killable Text", "Draw Enemy Health after Combo");
+            AddSlider(Drawing, "Autos in Combo", 2, 0, 5);
             #endregion
         }
 

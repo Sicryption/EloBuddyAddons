@@ -6,6 +6,7 @@ using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using System.Collections.Generic;
 using System.Linq;
+using SharpDX;
 
 namespace UnsignedRengar
 {
@@ -52,8 +53,26 @@ namespace UnsignedRengar
 
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
+            Drawing.OnEndScene += Drawing_OnEndScene;
         }
-        
+
+        private static void Drawing_OnEndScene(EventArgs args)
+        {
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Enemy Health after Combo"))
+                foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies)
+                {
+                    int hpBarWidth = 96;
+                    float enemyHPPercentAfterCombo = Math.Max((100 * ((enemy.Health - enemy.ComboDamage()) / enemy.MaxHealth)), 0);
+                    Vector2 HPBarOffset = new Vector2(26, 3);
+                    Vector2 CurrentHP = enemy.HPBarPosition + HPBarOffset + new Vector2(100 * enemy.HealthPercent / hpBarWidth, 0);
+                    Vector2 EndHP = enemy.HPBarPosition + HPBarOffset + new Vector2(enemyHPPercentAfterCombo, 0);
+                    if(enemyHPPercentAfterCombo == 0)
+                        Drawing.DrawLine(CurrentHP, EndHP, 9, System.Drawing.Color.Green);
+                    else
+                        Drawing.DrawLine(CurrentHP, EndHP, 9, System.Drawing.Color.Yellow);
+                }
+        }
+
         private static void Drawing_OnDraw(EventArgs args)
         {
             System.Drawing.Color drawColor = System.Drawing.Color.Blue;
@@ -75,7 +94,14 @@ namespace UnsignedRengar
 
             if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Arrow to R Target") && Rengar.HasBuff("RengarR") && closestEnemy != null)
                 Rengar.Position.DrawArrow(closestEnemy.Position, drawColor);
-            }
+            
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Killable Text"))
+            {
+                foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies.Where(a => a.Health < a.ComboDamage()))
+                    Drawing.DrawText(enemy.Position.WorldToScreen(), System.Drawing.Color.Green, "Killable", 15);
+             }
+
+        }
 
         private static void Game_OnTick(EventArgs args)
         {

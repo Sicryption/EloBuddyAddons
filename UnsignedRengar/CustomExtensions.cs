@@ -198,5 +198,20 @@ namespace UnsignedRengar
             else
                 return false;
         }
+        public static float ComboDamage(this AIHeroClient enemy)
+        {
+            float qdmg = Program.Q.IsReady() ? Calculations.Q(enemy) : 0;
+            float wdmg = Program.W.IsReady() ? Calculations.W(enemy) : 0;
+            float edmg = Program.E.IsReady() ? Calculations.E(enemy) : 0;
+            float empQDmg = Program.Q.IsReady() ? Calculations.EmpQ(enemy) : 0;
+            float autoDmg = Player.Instance.GetAutoAttackDamage(enemy) * MenuHandler.Drawing.GetSliderValue("Autos in Combo");
+            float tiamat = Player.Instance.GetItem(ItemId.Tiamat) != null && Player.Instance.GetItem(ItemId.Tiamat).CanUseItem() ? DamageLibrary.GetItemDamage(Player.Instance, enemy, ItemId.Tiamat) : 0;
+            float thydra = Player.Instance.GetItem(ItemId.Titanic_Hydra) != null && Player.Instance.GetItem(ItemId.Titanic_Hydra).CanUseItem() ? DamageLibrary.GetItemDamage(Player.Instance, enemy, ItemId.Titanic_Hydra) : 0;
+            float rhydra = Player.Instance.GetItem(ItemId.Ravenous_Hydra) != null && Player.Instance.GetItem(ItemId.Ravenous_Hydra).CanUseItem() ? DamageLibrary.GetItemDamage(Player.Instance, enemy, ItemId.Ravenous_Hydra) : 0;
+
+            float comboDamage = qdmg + wdmg + edmg + empQDmg + autoDmg + tiamat + thydra + rhydra;
+
+            return comboDamage;
+        }
     }
 }
