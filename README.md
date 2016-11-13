@@ -14,6 +14,19 @@ Unsigned Renekton:
 Unsigned Ryze:
 - Needs to be updated for current Ryze combos.
 
+Unsigned Vi
+- https://www.elobuddy.net/topic/43896-updated-unsigned-vi-1000/
+
+Unsigned JarvanIV
+- https://www.elobuddy.net/topic/43898-updated-unsigned-jarvaniv-1000/
+
+Unsigned Rengar
+- https://www.elobuddy.net/topic/43885-updated-unsigned-rengar-1000-best-logic
+
+Unsigned Minigames
+- Play Minigames when dead!
+- https://www.elobuddy.net/topic/43792-unsigned-minigames-snake-play-games-while-dead/
+
 Unsigned Gangplank:
 - https://www.elobuddy.net/topic/42596-620-unsigned-gangplank/
 
