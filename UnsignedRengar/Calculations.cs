@@ -54,7 +54,7 @@ namespace UnsignedRengar
         }
         public static float Smite()
         {
-            return new int[] { 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 }[Rengar.Level];
+            return new int[] { 0, 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 }[Rengar.Level];
         }
     }
 }
