@@ -27,7 +27,7 @@ namespace UnsignedJarvanIV
             if (menu.GetCheckboxValue("Use EQ") && Program.Q.IsReady() && Program.E.IsReady() && bestQPos.HitNumber >= 1)
             {
                 CastE(bestQPos.CastPosition);
-                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 250);
+                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 100);
             }
 
             if (menu.GetCheckboxValue("Use Q") && JarvanIV.IsAutoCanceling(enemies) && bestQPos.HitNumber >= 1)
@@ -64,7 +64,7 @@ namespace UnsignedJarvanIV
             if (menu.GetCheckboxValue("Use EQ") && Program.Q.IsReady() && Program.E.IsReady() && bestQPos.HitNumber >= 1)
             {
                 CastE(bestQPos.CastPosition);
-                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 250);
+                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 100);
             }
 
             if (menu.GetCheckboxValue("Use Q") && JarvanIV.IsAutoCanceling(enemies) && bestQPos.HitNumber >= 1)
@@ -95,7 +95,7 @@ namespace UnsignedJarvanIV
             if (menu.GetCheckboxValue("Use EQ") && Program.Q.IsReady() && Program.E.IsReady() && bestQPos.HitNumber >= 1)
             {
                 CastE(bestQPos.CastPosition);
-                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 250);
+                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 100);
             }
 
             if (menu.GetCheckboxValue("Use Q") && JarvanIV.IsAutoCanceling(enemies) && bestQPos.HitNumber >= 1)
@@ -127,7 +127,7 @@ namespace UnsignedJarvanIV
                 Vector3 pos = JarvanIV.Position.Extend(Game.CursorPos, Program.E.Range).To3D((int)JarvanIV.Position.Z);
 
                 CastE(pos);
-                Core.DelayAction(new Action(delegate { CastQ(pos); }), 250);
+                Core.DelayAction(new Action(delegate { CastQ(pos); }), 100);
             }
         }
 
@@ -143,7 +143,7 @@ namespace UnsignedJarvanIV
             if (menu.GetCheckboxValue("Use EQ") && Program.Q.IsReady() && Program.E.IsReady() && bestQPos.HitNumber >= 1)
             {
                 CastE(bestQPos.CastPosition);
-                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 250);
+                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 100);
             }
 
             if (menu.GetCheckboxValue("Use Q") && JarvanIV.IsAutoCanceling(enemies) && bestQPos.HitNumber >= 1)
@@ -177,7 +177,7 @@ namespace UnsignedJarvanIV
             if (menu.GetCheckboxValue("Use EQ") && Program.Q.IsReady() && Program.E.IsReady() && bestQPos.HitNumber >= 1)
             {
                 CastE(bestQPos.CastPosition);
-                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 250);
+                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 100);
             }
 
             if (menu.GetCheckboxValue("Use Q") && JarvanIV.IsAutoCanceling(enemies) && bestQPos.HitNumber >= 1)
@@ -202,7 +202,7 @@ namespace UnsignedJarvanIV
             if (menu.GetCheckboxValue("Use EQ") && Program.Q.IsReady() && Program.E.IsReady() && bestQPos.HitNumber >= 1)
             {
                 CastE(bestQPos.CastPosition);
-                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 250);
+                Core.DelayAction(new Action(delegate { CastQ(bestQPos.CastPosition); }), 100);
             }
 
             if (menu.GetCheckboxValue("Use Q") && JarvanIV.IsAutoCanceling(enemies) && bestQPos.HitNumber >= 1)
