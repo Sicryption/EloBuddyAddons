@@ -40,7 +40,6 @@ namespace UnsignedVi
             AddCheckboxes(ref JungleClear, "Use Q", "Use E", "Use Items", "Use Smite");
             AddCheckboxes(ref LaneClear, "Use Q", "Use E", "Use Items");
             AddCheckboxes(ref LastHit, "Use Q", "Use E", "Use Items");
-            AddCheckboxes(ref Harass, "Use Q", "Use E", "Use R_false", "Use Items", "Use Smite");
             AddCheckboxes(ref Killsteal, "Killsteal", "Use Q", "Use E", "Use R_false", "Use Items", "Use Ignite", "Use Smite");
             AddCheckboxes(ref Flee, "Use Q");
             AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
