@@ -39,10 +39,10 @@ namespace UnsignedMinigames
             KeyBind left = AddKeybind(ref SnakeMenu, "Left", KeyBind.BindTypes.HoldActive, 65, 37);
             KeyBind right = AddKeybind(ref SnakeMenu, "Right", KeyBind.BindTypes.HoldActive, 68, 39);
 
-            up.OnValueChange += delegate { if(!up.CurrentValue) Snake.SetDirection(Snake.Direction.North); };
-            down.OnValueChange += delegate { if (!down.CurrentValue) Snake.SetDirection(Snake.Direction.South); };
-            left.OnValueChange += delegate { if (!left.CurrentValue) Snake.SetDirection(Snake.Direction.West); };
-            right.OnValueChange += delegate { if (!right.CurrentValue) Snake.SetDirection(Snake.Direction.East); };
+            up.OnValueChange += delegate { if (Player.Instance.IsDead || GetCheckboxValue(Settings, "Draw when Alive")) if (DrawManager.MenuState == DrawManager.HUDState.InGameSnake) if (!up.CurrentValue) Snake.SetDirection(Snake.Direction.North); };
+            down.OnValueChange += delegate { if (Player.Instance.IsDead || GetCheckboxValue(Settings, "Draw when Alive")) if (DrawManager.MenuState == DrawManager.HUDState.InGameSnake) if (!down.CurrentValue) Snake.SetDirection(Snake.Direction.South); };
+            left.OnValueChange += delegate { if (Player.Instance.IsDead || GetCheckboxValue(Settings, "Draw when Alive")) if (DrawManager.MenuState == DrawManager.HUDState.InGameSnake)  if (!left.CurrentValue) Snake.SetDirection(Snake.Direction.West); };
+            right.OnValueChange += delegate { if (Player.Instance.IsDead || GetCheckboxValue(Settings, "Draw when Alive")) if (DrawManager.MenuState == DrawManager.HUDState.InGameSnake) if (!right.CurrentValue) Snake.SetDirection(Snake.Direction.East); };
             AddSlider(TetrisMenu, "Game Speed", 10, 1, 100);
             #endregion
         }
