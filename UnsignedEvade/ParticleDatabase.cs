@@ -32,11 +32,40 @@ namespace UnsignedEvade
                 Radius = 90f,
                 SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
             },
+            //Lux E 
+            new ParticleInfo()
+            {
+                ParticleName = "Lux_Base_E_mis.troy",
+                Radius = 350f,
+                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
+            },
             //Karma Mantra-Q
             new ParticleInfo()
             {
                 ParticleName = "Karma_Base_Q_impact_R_01.troy",
                 Radius = 250f,
+                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
+            },
+            //Zilean Q on Enemy
+            new ParticleInfo()
+            {
+                ParticleName = "Zilean_Base_Q_Attach_Enemy.troy",
+                Radius = 350f,
+                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
+            },
+            //Zilean Q on Enemy
+            new ParticleInfo()
+            {
+                ParticleName = "Yasuo_Base_W_windwall1.troy",
+                Width = 1,
+                Length = 200,
+                SpellType = ParticleInfo.SpellTypeInfo.Wall,
+            },
+            //Zilean Q on Ground
+            new ParticleInfo()
+            {
+                ParticleName = "Zilean_Base_Q_Ticking_Ground_Audio.troy",
+                Radius = 350f,
                 SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
             },
             //Anivia W
@@ -60,15 +89,14 @@ namespace UnsignedEvade
             //Illaoi Tentacles
             new ParticleInfo()
             {
-               // ParticleName = "Illaoi_Base_Q_IndicatorBLU.troy",
+                ParticleName = "Illaoi_Base_Q_IndicatorBLU.troy",
                 //"Illaoi_Base_Q_tentacle.troy",
                 //"Illaoi_Base_Q_cas.troy",
                 //"Illaoi_Base_Q_tarMinion.troy",
-                Length = 1000,
-                Width = 400,
-                XOffset = 0,
-                YOffset = 0,
-                SpellType = ParticleInfo.SpellTypeInfo.Wall,
+                Length = 800,
+                Width = 250,
+                Delay = 0.4f,
+                SpellType = ParticleInfo.SpellTypeInfo.LinearSkillshot,
             },
             //Morgana W
             new ParticleInfo()

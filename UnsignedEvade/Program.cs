@@ -258,171 +258,211 @@ namespace UnsignedEvade
         {
             if (_Player.IsDead)
                 return;
-            
-            if(MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Player Direction"))
-                Drawing.DrawText(_Player.Position.WorldToScreen(), Geometry.drawColor, _Player.Direction.ToString(), 15);
 
-            if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show All Object Names"))
+            try
             {
-                int index = 0;
-                foreach (GameObject ob in ObjectManager.Get<GameObject>().Where(a => a.Position.Distance(Game.CursorPos) <= 500))
+
+                if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Player Direction"))
+                    Drawing.DrawText(_Player.Position.WorldToScreen(), Geometry.drawColor, _Player.Direction.ToString(), 15);
+
+                if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show All Object Names"))
                 {
-                    Drawing.DrawText(ob.Position.WorldToScreen() + (new Vector2(0, -15f) * index), Geometry.drawColor, ob.Name, 15);
-                    index++;
+                    int index = 0;
+                    foreach (GameObject ob in ObjectManager.Get<GameObject>().Where(a => a.Position.Distance(Game.CursorPos) <= 500))
+                    {
+                        Drawing.DrawText(ob.Position.WorldToScreen() + (new Vector2(0, -15f) * index), Geometry.drawColor, ob.Name, 15);
+                        index++;
+                        //Console.WriteLine(ob.Name);
+                    }
                 }
-            }
-            
-            #region clear screen when object is destroyed
-            //when removing object from below add it to this list then cross reference in another method and reset.
-            List<SpellInfo> KeepList = new List<SpellInfo>();
 
-            foreach (SpellInfo info in activeSpells)
-            {
-                switch (info.CreationType)
+                #region clear screen when object is destroyed
+                //when removing object from below add it to this list then cross reference in another method and reset.
+                List<SpellInfo> KeepList = new List<SpellInfo>();
+
+                foreach (SpellInfo info in activeSpells)
                 {
-                    //Before Cast Delay
-                    case SpellInfo.SpellCreationLocation.OnProcessSpell:
-                        //if is dash and dashtype is linear
+                    switch (info.CreationType)
+                    {
+                        //Before Cast Delay
+                        case SpellInfo.SpellCreationLocation.OnProcessSpell:
+                            //if is dash and dashtype is linear
+                            if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
+                            {
+                                if (info.DashType == SpellInfo.Dashtype.Linear)
+                                {
+                                    if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay)
+                                        KeepList.Add(info);
+                                }
+                                else if (info.DashType == SpellInfo.Dashtype.None)
+                                {
+                                    if (Game.Time - info.TimeOfCast <= info.Delay)
+                                        KeepList.Add(info);
+                                }
+                            }
+                            else if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted)
+                            {
+                                if (info.DashType == SpellInfo.Dashtype.Linear)
+                                    if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay)
+                                        KeepList.Add(info);
+                            }
+                            else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSkillshot)
+                            {
+                                float timeItTakesToCast = info.Delay + info.TravelTime;
+                                float timeSinceCast = Game.Time - info.TimeOfCast;
+                                if ((info.BuffName != "" && info.caster.HasBuff(info.BuffName)) || timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
+                                    KeepList.Add(info);
+                            }
+                            else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall
+                                || info.SpellType == SpellInfo.SpellTypeInfo.CircularWall
+                                || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
+                            {
+                                float timeSinceCast = Game.Time - info.TimeOfCast;
+                                float timeItTakesToCast = info.Delay + info.TravelTime;
+
+                                if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
+                                    KeepList.Add(info);
+                            }
+                            else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive)
+                            {
+                                float timeSinceCast = Game.Time - info.TimeOfCast;
+                                float timeItTakesToCast = info.Delay + info.TravelTime;
+
+                                if ((timeSinceCast <= timeItTakesToCast || info.IsOffCooldown()) && (info.BuffName != "" && info.caster.HasBuff(info.BuffName)))
+                                    KeepList.Add(info);
+                            }
+                            break;
+                        //After Cast Delay
+                        case SpellInfo.SpellCreationLocation.OnSpellCast:
+                            break;
+                        //Projectile
+                        case SpellInfo.SpellCreationLocation.OnObjectCreate:
+                            //linear skillshot
+                            if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
+                            {
+                                if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.SpellCaster != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
+                                    KeepList.Add(info);
+                            }
+                            if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted)
+                            {
+                                if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
+                                    KeepList.Add(info);
+                            }
+                            if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
+                            {
+                                if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
+                                    KeepList.Add(info);
+                            }
+                            break;
+                    }
+                }
+
+                activeSpells = KeepList;
+                #endregion
+
+                foreach (SpellInfo info in activeSpells)
+                {
+                    if (info.caster.IsEnemy || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Friendly Projectiles"))
+                    {
                         if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
                         {
-                            if (info.DashType == SpellInfo.Dashtype.Linear)
+                            if (info.DashType == SpellInfo.Dashtype.None)
                             {
-                                if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay)
-                                    KeepList.Add(info);
+                                if (info.missile != null)
+                                {
+                                    //sivir Q
+                                    if (info.MissileName.ToLower().Contains("return"))
+                                        Geometry.DrawLinearSkillshot(info.missile.Position, info.missile.SpellCaster.Position, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
+                                    else
+                                    {
+                                        //draven R return
+                                        if (info.MissileName == "DravenR" && info.missile.EndPosition.Distance(info.caster.Position) <= 50)
+                                            Geometry.DrawLinearSkillshot(info.missile.Position, info.missile.SpellCaster.Position, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
+                                        else
+                                            Geometry.DrawLinearSkillshot(info.missile.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
+                                    }
+                                }
+                                //for on spell cast spells that dont have missiles
+                                else if (info.MissileName == "")
+                                    Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                             }
-                            else if (info.DashType == SpellInfo.Dashtype.None)
-                            {
-                                if (Game.Time - info.TimeOfCast <= info.Delay)
-                                    KeepList.Add(info);
-                            }
+                            else if (info.DashType == SpellInfo.Dashtype.Linear)
+                                Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                         }
-                        else if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted)
+                        else if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted && (info.target.Name == Player.Instance.Name || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Friendly Targeted Spells")))
                         {
-                            if (info.DashType == SpellInfo.Dashtype.Linear)
-                                if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay)
-                                    KeepList.Add(info);
+                            //lee sin does not have a target set. the target set is the one hovered over.
+                            if (info.DashType == SpellInfo.Dashtype.Linear && info.target != null)
+                                Geometry.DrawTargetedSpell(info.caster.Position, info.target);
+                            else if (info.DashType == SpellInfo.Dashtype.None && (info.target.Name == Player.Instance.Name || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Friendly Targeted Spells")))
+                                Geometry.DrawTargetedSpell(info.missile.Position, info.target);
                         }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
                         {
-                            float timeItTakesToCast = info.Delay + info.TravelTime;
-                            float timeSinceCast = Game.Time - info.TimeOfCast;
-                            
-                            if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
-                                KeepList.Add(info);
+                            if (info.missile != null)
+                                Geometry.DrawCircularSkillshot(info.missile.EndPosition, info.Radius, info.SecondRadius);
+                            else
+                                Geometry.DrawCircularSkillshot(info.endPosition, info.Radius, info.SecondRadius);
                         }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSkillshot)
                         {
-                            float timeItTakesToCast = info.Delay + info.TravelTime;
-                            float timeSinceCast = Game.Time - info.TimeOfCast;
-                            if ((info.BuffName != "" && info.caster.HasBuff(info.BuffName)) || timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
-                                KeepList.Add(info);
-                        }
-                        else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall)
-                        {
-                            float timeSinceCast = Game.Time - info.TimeOfCast;
-                            float timeItTakesToCast = info.Delay + info.TravelTime;
-                            if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
-                                KeepList.Add(info);
+                            if (info.BuffName == "")
+                                Geometry.DrawConeSkillshot(info.startPosition, info.endPosition, info.ConeDegrees, info.Range);
+                            else
+                                Geometry.DrawConeSkillshot(info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.ConeDegrees, info.Range);
                         }
                         else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive)
-                        {
-                            float timeSinceCast = Game.Time - info.TimeOfCast;
-                            float timeItTakesToCast = info.Delay + info.TravelTime;
-
-                            if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown() || (info.BuffName != "" && info.caster.HasBuff(info.BuffName)))
-                                KeepList.Add(info);
-                        }
-                        break;
-                    //After Cast Delay
-                    case SpellInfo.SpellCreationLocation.OnSpellCast:
-                        break;
-                    //Projectile
-                    case SpellInfo.SpellCreationLocation.OnObjectCreate:
-                        //linear skillshot
-                        if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
-                        {
-                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.SpellCaster != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
-                                KeepList.Add(info);
-                        }
-                        if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted)
-                        {
-                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
-                                KeepList.Add(info);
-                        }
-                        if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
-                        {
-                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
-                                KeepList.Add(info);
-                        }   
-                        break;
+                            Geometry.DrawCircularSkillshot(info.caster.Position, info.Radius, info.SecondRadius);
+                        else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall)
+                            Geometry.DrawWall(info.startPosition, info.endPosition, info.Width, info.Radius);
+                        else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularWall)
+                            Geometry.DrawCircularWall(info.endPosition, info.Radius, info.SecondRadius);
+                    }
                 }
-            }
 
-            activeSpells = KeepList;
-            #endregion
-
-            foreach (SpellInfo info in activeSpells)
-            {
-                if (info.caster.IsEnemy || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Friendly Projectiles"))
+                foreach (Obj_GeneralParticleEmitter particle in ObjectManager.Get<Obj_GeneralParticleEmitter>())
                 {
-                    if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
+                    ParticleInfo info = ParticleDatabase.GetParticleInfo(particle.Name);
+
+                    if (info != null)
                     {
-                        if (info.DashType == SpellInfo.Dashtype.None)
+                        if (info.CreationTime == -1f)
+                            info.CreationTime = Game.Time;
+
+                        if (info.SpellType == ParticleInfo.SpellTypeInfo.Wall)
+                            Geometry.DrawRectangle(info.Length, info.Width, particle.Position, info.XOffset, info.YOffset);
+                        else if (info.SpellType == ParticleInfo.SpellTypeInfo.CircularSkillshot)
+                            Geometry.DrawCircularSkillshot(particle.Position, info.Radius);
+                        else if (info.SpellType == ParticleInfo.SpellTypeInfo.LinearSkillshot)
                         {
-                            if (info.missile != null)
+                            if (info.ParticleName == "Illaoi_Base_Q_IndicatorBLU.troy")
                             {
-                                //sivir Q
-                                if (info.MissileName.ToLower().Contains("return"))
-                                    Geometry.DrawLinearSkillshot(info.missile.Position, info.missile.SpellCaster.Position, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
-                                else
-                                    Geometry.DrawLinearSkillshot(info.missile.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
+                                Obj_AI_Base tentacle = ObjectManager.Get<Obj_AI_Base>().Where(a => a.Name == "God" && a.Position.Distance(particle.Position) <= 10).OrderBy(a => a.Distance(particle)).FirstOrDefault();
+
+                                if (tentacle != null && (tentacle.BaseSkinName == "Illaoi" || info.CanDraw()))
+                                    Geometry.DrawLinearSkillshot(tentacle.Position, tentacle.Position.Extend(tentacle.Position + tentacle.Direction, info.Length).To3D((int)tentacle.Position.Z), info.Width, 500, info.Length, 0);
                             }
-                            else
-                                Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                         }
-                        else if (info.DashType == SpellInfo.Dashtype.Linear)
-                            Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                     }
-                    else if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted && (info.target.Name == Player.Instance.Name || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Friendly Targeted Spells")))
-                    {
-                        //lee sin does not have a target set. the target set is the one hovered over.
-                        if (info.DashType == SpellInfo.Dashtype.Linear && info.target != null)
-                            Geometry.DrawTargetedSpell(info.caster.Position, info.target);
-                        else if (info.DashType == SpellInfo.Dashtype.None && (info.target.Name == Player.Instance.Name || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Friendly Targeted Spells")))
-                            Geometry.DrawTargetedSpell(info.missile.Position, info.target);
-                    }
-                    else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
-                    {
-                        if (info.missile != null)
-                            Geometry.DrawCircularSkillshot(info.missile.EndPosition, info.Radius, info.SecondRadius);
-                        else
-                            Geometry.DrawCircularSkillshot(info.endPosition, info.Radius, info.SecondRadius);
-                    }
-                    else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSkillshot)
-                        Geometry.DrawConeSkillshot(info.startPosition, info.endPosition, info.ConeDegrees, info.Range);
-                    else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive)
-                        Geometry.DrawCircularSkillshot(info.caster.Position, info.Radius, info.SecondRadius);
-                    else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall)
-                        Geometry.DrawWall(info.startPosition, info.endPosition, info.Width, info.Radius);
                 }
-            }
-            
-            foreach (Obj_GeneralParticleEmitter particle in ObjectManager.Get<Obj_GeneralParticleEmitter>())
-            {
-                ParticleInfo info = ParticleDatabase.GetParticleInfo(particle.Name);
 
-                if (info != null)
+                foreach (Obj_AI_Minion trap in ObjectManager.Get<Obj_AI_Minion>().Where(a => (a.IsEnemy || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Friendly Projectiles")) && !a.IsDead && TrapDatabase.AllTrapNames().Contains(a.Name)))
                 {
-                    if (info.SpellType == ParticleInfo.SpellTypeInfo.Wall)
-                        Geometry.DrawRectangle(info.Length, info.Width, particle.Position, info.XOffset, info.YOffset);
-                    else if (info.SpellType == ParticleInfo.SpellTypeInfo.CircularSkillshot)
-                        Geometry.DrawCircularSkillshot(particle.Position, info.Radius);
+                    Drawing.DrawCircle(trap.Position, TrapDatabase.getTrap(trap.Name).Radius, Geometry.drawColor);
+                }
+
+                foreach (Obj_AI_Minion tentacle in ObjectManager.Get<Obj_AI_Minion>().Where(a => a.Name == "God"))
+                {
+                    Drawing.DrawCircle(tentacle.Position, 50, Geometry.drawColor);
+                    //Drawing.DrawText(tentacle.Position.WorldToScreen(), Geometry.drawColor, tentacle..ToString(), 15);
+
+                    if (!tentacle.CanCast)
+                        Drawing.DrawCircle(tentacle.Position, 50, System.Drawing.Color.Red);
                 }
             }
-
-            foreach(Obj_AI_Minion trap in ObjectManager.Get<Obj_AI_Minion>().Where(a=>(a.IsEnemy || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Friendly Projectiles")) && !a.IsDead && TrapDatabase.AllTrapNames().Contains(a.Name)))
+            catch (Exception e)
             {
-                Drawing.DrawCircle(trap.Position, TrapDatabase.getTrap(trap.Name).Radius, Geometry.drawColor);
+                Console.WriteLine(e);
             }
         }
        

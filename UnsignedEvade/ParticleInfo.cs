@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EloBuddy;
 
 namespace UnsignedEvade
 {
@@ -14,11 +15,13 @@ namespace UnsignedEvade
             Length,
             XOffset = 0,
             YOffset = 0;
-        public float Radius = 0;
+        public float Radius = 0,
+            CreationTime = -1f,
+            Delay = 0;
         public List<string> otherNames = new List<string>();
 
         public SpellTypeInfo SpellType;
-
+        
         public bool isDangerous = false;
         public enum SpellTypeInfo
         {
@@ -32,6 +35,11 @@ namespace UnsignedEvade
             MovingWall,
             ConeSkillshot,
             None
+        }
+
+        public bool CanDraw()
+        {
+            return CreationTime + Delay <= Game.Time;
         }
     }
 }

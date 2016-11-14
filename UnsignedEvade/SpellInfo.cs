@@ -76,7 +76,7 @@ namespace UnsignedEvade
         {
             get
             {
-                if (travelTime == -1f || MissileSpeed == null || MissileSpeed == 0)
+                if (travelTime == -1f || MissileSpeed == 0)
                     return 0f;
                 else if(travelTime == 0)
                     travelTime = startPosition.Distance(endPosition) / MissileSpeed;
@@ -113,6 +113,7 @@ namespace UnsignedEvade
             Targeted,
             Wall,
             MovingWall,
+            CircularWall,
             ConeSkillshot,
             None
         }
@@ -165,7 +166,11 @@ namespace UnsignedEvade
         }
         public SpellDataInst GetChampionSpell()
         {
-            return caster.Spellbook.GetSpell(GetEBSpellSlot());
+            EloBuddy.SpellSlot slot = GetEBSpellSlot();
+            if(slot != EloBuddy.SpellSlot.Unknown)
+                return caster.Spellbook.GetSpell(slot);
+
+            return null;
         }
     }
 }

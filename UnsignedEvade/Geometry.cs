@@ -81,7 +81,7 @@ namespace UnsignedEvade
             SE = new Vector3(position.X + (length / 2) + xoffset, position.Y - (width / 2) + yoffset, 0f);
             NW = new Vector3(position.X - (length / 2) + xoffset, position.Y + (width / 2) + yoffset, 0f);
             NE = new Vector3(position.X + (length / 2) + xoffset, position.Y + (width / 2) + yoffset, 0f);
-
+            
             Drawing.DrawLine(SW.WorldToScreen(), SE.WorldToScreen(), 3, drawColor);
             Drawing.DrawLine(SW.WorldToScreen(), NW.WorldToScreen(), 3, drawColor);
             Drawing.DrawLine(NW.WorldToScreen(), NE.WorldToScreen(), 3, drawColor);
@@ -118,6 +118,11 @@ namespace UnsignedEvade
                 rightPoint = (PerpendicularPos4 + temp2).To3D() + new Vector3(0, 0, startPosition.Z);
 
             DrawLinearSkillshot(leftPoint, rightPoint, width, 0, 0, 0);
+        }
+        public static void DrawCircularWall(Vector3 position, float radius, float radius2)
+        {
+            Drawing.DrawCircle(position, radius, drawColor);
+            Drawing.DrawCircle(position, radius2, drawColor);
         }
     }
 }
