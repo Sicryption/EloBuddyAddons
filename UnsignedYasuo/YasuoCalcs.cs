@@ -64,9 +64,13 @@ namespace UnsignedYasuo
         public static bool IsInFountain(Vector3 position, GameObjectTeam team)
         {
             float fountainRange = 1050;
-            Vector3 vec3 = (team == GameObjectTeam.Order) ? new Vector3(363, 426, 182) : new Vector3(14340, 14390, 172);
 
-            return position.IsInRange(vec3, fountainRange);
+            if (Game.MapId == GameMapId.SummonersRift)
+            {
+                Vector3 vec3 = (team == GameObjectTeam.Order) ? new Vector3(363, 426, 182) : new Vector3(14340, 14390, 172);
+                return position.IsInRange(vec3, fountainRange);
+            }
+            return false;
         }
         public static bool ERequirements(Obj_AI_Base unit, bool EUNDERTURRET)
         {

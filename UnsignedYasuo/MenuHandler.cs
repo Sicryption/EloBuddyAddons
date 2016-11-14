@@ -36,7 +36,7 @@ namespace UnsignedYasuo
 
             #region Set Menu Values
             AddCheckboxes(ref Combo, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use R", "Use Items", "Beyblade");
-            AddComboBox(Combo, "Dash Mode: ", 0, "Gapclose", "To Mouse");
+            AddComboBox(Combo, "Dash Mode: ", 0, "Gapclose", "To Mouse", "Disable");
             AddCheckboxes(ref Harass, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use R_false", "Use Items");
             AddCheckboxes(ref AutoHarass, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use Items");
             AddCheckboxes(ref LaneClear, "Use Q", "Use Q3", "Use E_false", "Use E only for Last Hit", "Use EQ_false",  "Use E Under Tower_false", "Use Items");

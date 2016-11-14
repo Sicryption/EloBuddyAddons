@@ -133,23 +133,26 @@ namespace UnsignedYasuo
         //complete
         public static void Combo()
         {
-            if (!didActionThisTick && 
+            if (!didActionThisTick &&
                 (MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use Q") && !Yasuo.HasBuff("YasuoQ3W"))
                 || (MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use Q3") && Yasuo.HasBuff("YasuoQ3W")))
                 didActionThisTick = CastQ(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false);
 
-            if (!didActionThisTick && 
+            if (!didActionThisTick &&
                 MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E"))
                 didActionThisTick = CastE(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
-            
-            if (!didActionThisTick &&
-                MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "Gapclose")
-                didActionThisTick = EGapClose(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
 
-            if (!didActionThisTick &&
-                MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "To Mouse")
-                didActionThisTick = EToMouse(MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"), 
-                    false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use EQ"), EntityManager.Heroes.Enemies.ToObj_AI_BaseList());
+            if (MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") != "Disable")
+            {
+                if (!didActionThisTick &&
+                    MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "Gapclose")
+                    didActionThisTick = EGapClose(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
+
+                if (!didActionThisTick &&
+                    MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "To Mouse")
+                    didActionThisTick = EToMouse(MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"),
+                        false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use EQ"), EntityManager.Heroes.Enemies.ToObj_AI_BaseList());
+            }
 
             if (!didActionThisTick && 
                 MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use EQ"))
@@ -426,13 +429,13 @@ namespace UnsignedYasuo
 
         public static bool CastE(List<Obj_AI_Base> enemies, bool ks, bool goUnderEnemyTower)
         {
-            if (!Program.E.IsReady() || YasuoCalcs.IsDashing() || !enemies.Any(a=>a.IsInRange(Yasuo, Program.E.Range)))
+            if (!Program.E.IsReady() || YasuoCalcs.IsDashing() || !enemies.Any(a=>a.MeetsCriteria() && a.IsInRange(Yasuo, Program.E.Range)))
                 return false;
 
             Obj_AI_Base unit = enemies.Where(a =>
-            a.IsInRange(Yasuo, Program.E.Range) 
+            a.MeetsCriteria()
+            && a.IsInRange(Yasuo, Program.E.Range) 
             && (!ks || YasuoCalcs.E(a) >= a.Health)
-            && a.MeetsCriteria()
             && YasuoCalcs.ERequirements(a, goUnderEnemyTower)
             ).FirstOrDefault();
 
@@ -457,7 +460,7 @@ namespace UnsignedYasuo
         
         public static bool CastE(Obj_AI_Base unit)
         {
-            if (!Program.E.IsReady() || YasuoCalcs.IsDashing() || unit.IsInRange(Yasuo, Program.E.Range))
+            if (!Program.E.IsReady() || YasuoCalcs.IsDashing() || !unit.IsInRange(Yasuo, Program.E.Range))
                 return false;
 
             if (unit != null)
