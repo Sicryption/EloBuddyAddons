@@ -141,18 +141,15 @@ namespace UnsignedYasuo
             if (!didActionThisTick &&
                 MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E"))
                 didActionThisTick = CastE(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
+            
+            if (!didActionThisTick &&
+                MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "Gapclose")
+                didActionThisTick = EGapClose(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
 
-            if (MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") != "Disable")
-            {
-                if (!didActionThisTick &&
-                    MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "Gapclose")
-                    didActionThisTick = EGapClose(EntityManager.Heroes.Enemies.ToObj_AI_BaseList(), MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"));
-
-                if (!didActionThisTick &&
-                    MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "To Mouse")
-                    didActionThisTick = EToMouse(MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"),
-                        false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use EQ"), EntityManager.Heroes.Enemies.ToObj_AI_BaseList());
-            }
+            if (!didActionThisTick &&
+                MenuHandler.GetComboBoxText(MenuHandler.Combo, "Dash Mode: ") == "To Mouse")
+                didActionThisTick = EToMouse(MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use E Under Tower"),
+                    false, MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use EQ"), EntityManager.Heroes.Enemies.ToObj_AI_BaseList());
 
             if (!didActionThisTick && 
                 MenuHandler.GetCheckboxValue(MenuHandler.Combo, "Use EQ"))
