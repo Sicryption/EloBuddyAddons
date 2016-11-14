@@ -10,6 +10,8 @@ using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using SharpDX;
 using System.Linq;
+using System.IO;
+using EloBuddy.Sandbox;
 
 /*
 Types of Spells:
@@ -27,6 +29,9 @@ namespace UnsignedEvade
 {
     internal class Program
     {
+        public static readonly string ConfigFolderPath = Path.Combine(SandboxConfig.DataDirectory);
+        public static List<string> SpellsNotInDatabase = new List<string>();
+
         public static List<SpellInfo> activeSpells = new List<SpellInfo>();
 
         public static readonly Random Random = new Random(DateTime.Now.Millisecond);
@@ -36,6 +41,22 @@ namespace UnsignedEvade
             DodgeManager.Initialize();
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;
             Loading.OnLoadingComplete += MenuHandler.Loading_OnLoadingComplete;
+            Game.OnDisconnect += SaveNewSpells;
+            Game.OnEnd += SaveNewSpells;
+        }
+        
+        private static void SaveNewSpells(EventArgs args)
+        {
+            if (!Directory.Exists(ConfigFolderPath + @"\Logs"))
+                Directory.CreateDirectory(ConfigFolderPath + @"\Logs");
+
+            StreamWriter sw = new StreamWriter(ConfigFolderPath + @"\Logs\" + DateTime.Today + " - " + Game.GameId);
+            
+            foreach(string s in SpellsNotInDatabase)
+            {
+                sw.WriteLine(s);
+            }
+            sw.Close();
         }
 
         private static void Loading_OnLoadingComplete(EventArgs args)
@@ -111,23 +132,27 @@ namespace UnsignedEvade
                 if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Debug Projectile Creation"))
                 {
                     string debugText = "";
-                    debugText += "SpellName = \"" + args.SData.Name + "\",\r\n";
-                    debugText += "ChampionName = \"" + sender.BaseSkinName + "\",\r\n";
-                    debugText += "Range = " + sender.Spellbook.GetSpell(args.Slot).SData.CastRange + "f,\r\n";
-                    debugText += "MissileSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileSpeed + "f,\r\n";
+                    debugText += "                SpellName = \"" + args.SData.Name + "\",\r\n";
+                    debugText += "                ChampionName = \"" + sender.BaseSkinName + "\",\r\n";
+                    debugText += "                Range = " + sender.Spellbook.GetSpell(args.Slot).SData.CastRange + "f,\r\n";
+                    debugText += "                MissileSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileSpeed + "f,\r\n";
                     if (sender.Spellbook.GetSpell(args.Slot).SData.MissileMinSpeed.ToString() != "3.402823E+38")
-                        debugText += "MissileMinSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileMinSpeed + "f,\r\n";
+                        debugText += "                MissileMinSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileMinSpeed + "f,\r\n";
                     else
-                        debugText += "MissileMinSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileSpeed + "f,\r\n";
+                        debugText += "                MissileMinSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileSpeed + "f,\r\n";
                     if (sender.Spellbook.GetSpell(args.Slot).SData.MissileMaxSpeed.ToString() != "3.402823E+38")
-                        debugText += "MissileMaxSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileMaxSpeed + "f,\r\n";
+                        debugText += "                MissileMaxSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileMaxSpeed + "f,\r\n";
                     else
-                        debugText += "MissileMaxSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileSpeed + "f,\r\n";
-                    debugText += "Width = " + sender.Spellbook.GetSpell(args.Slot).SData.LineWidth + "f,\r\n";
-                    debugText += "Radius = " + sender.Spellbook.GetSpell(args.Slot).SData.CastRadius + "f,\r\n";
-                    debugText += "ConeDegrees = " + sender.Spellbook.GetSpell(args.Slot).SData.CastConeAngle + "f,\r\n";
+                        debugText += "                MissileMaxSpeed = " + sender.Spellbook.GetSpell(args.Slot).SData.MissileSpeed + "f,\r\n";
+                    debugText += "                Width = " + sender.Spellbook.GetSpell(args.Slot).SData.LineWidth + "f,\r\n";
+                    debugText += "                Radius = " + sender.Spellbook.GetSpell(args.Slot).SData.CastRadius + "f,\r\n";
+                    debugText += "                ConeDegrees = " + sender.Spellbook.GetSpell(args.Slot).SData.CastConeAngle + "f,\r\n";
 
-                    Console.WriteLine(debugText);
+                    if (!SpellsNotInDatabase.Contains(debugText))
+                    {
+                        SpellsNotInDatabase.Add(debugText);
+                        Console.WriteLine(debugText);
+                    }
                 }
             }
             #endregion
@@ -172,31 +197,35 @@ namespace UnsignedEvade
                         if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Debug Projectile Creation"))
                         {
                             string debugText = "";
-                            debugText += "MissileName = \"" + projectile.SData.Name + "\",\r\n";
-                            debugText += "ChampionName = \"" + projectile.SpellCaster.BaseSkinName + "\",\r\n";
-                            debugText += "MissileSpeed = " + projectile.SData.MissileSpeed + "f,\r\n";
+                            debugText += "                MissileName = \"" + projectile.SData.Name + "\",\r\n";
+                            debugText += "                ChampionName = \"" + projectile.SpellCaster.BaseSkinName + "\",\r\n";
+                            debugText += "                MissileSpeed = " + projectile.SData.MissileSpeed + "f,\r\n";
 
 
                             if (projectile.SData.MissileMinSpeed.ToString() != "3.402823E+38")
-                                debugText += "MissileMinSpeed = " + projectile.SData.MissileMinSpeed + "f,\r\n";
+                                debugText += "                MissileMinSpeed = " + projectile.SData.MissileMinSpeed + "f,\r\n";
                             else
-                                debugText += "MissileMinSpeed = " + projectile.SData.MissileSpeed + "f,\r\n";
+                                debugText += "                MissileMinSpeed = " + projectile.SData.MissileSpeed + "f,\r\n";
                             if (projectile.SData.MissileMaxSpeed.ToString() != "3.402823E+38")
-                                debugText += "MissileMaxSpeed = " + projectile.SData.MissileMaxSpeed + "f,\r\n";
+                                debugText += "                MissileMaxSpeed = " + projectile.SData.MissileMaxSpeed + "f,\r\n";
                             else
-                                debugText += "MissileMaxSpeed = " + projectile.SData.MissileSpeed + "f,\r\n";
+                                debugText += "                MissileMaxSpeed = " + projectile.SData.MissileSpeed + "f,\r\n";
 
 
                             if (projectile.SData.Name.ToLower().Contains("basicattack") ||
                                 projectile.SData.Name.ToLower().Contains("critattack"))
-                                debugText += "Range = " + projectile.SpellCaster.GetAutoAttackRange() + "f,\r\n";
+                                debugText += "                Range = " + projectile.SpellCaster.GetAutoAttackRange() + "f,\r\n";
                             else
                             {
-                                debugText += "Range = " + projectile.SData.CastRange + "f,\r\n";
-                                debugText += "Width = " + projectile.SData.LineWidth + "f,\r\n";
+                                debugText += "                Range = " + projectile.SData.CastRange + "f,\r\n";
+                                debugText += "                Width = " + projectile.SData.LineWidth + "f,\r\n";
                             }
 
-                            Console.WriteLine(debugText);
+                            if (!SpellsNotInDatabase.Contains(debugText))
+                            {
+                                SpellsNotInDatabase.Add(debugText);
+                                Console.WriteLine(debugText);
+                            }
                         }
                     #endregion
                 }
@@ -242,7 +271,7 @@ namespace UnsignedEvade
                     index++;
                 }
             }
-
+            
             #region clear screen when object is destroyed
             //when removing object from below add it to this list then cross reference in another method and reset.
             List<SpellInfo> KeepList = new List<SpellInfo>();
@@ -377,8 +406,8 @@ namespace UnsignedEvade
                         Geometry.DrawWall(info.startPosition, info.endPosition, info.Width, info.Radius);
                 }
             }
-
-            foreach(Obj_GeneralParticleEmitter particle in ObjectManager.Get<Obj_GeneralParticleEmitter>())
+            
+            foreach (Obj_GeneralParticleEmitter particle in ObjectManager.Get<Obj_GeneralParticleEmitter>())
             {
                 ParticleInfo info = ParticleDatabase.GetParticleInfo(particle.Name);
 

@@ -56,6 +56,13 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "AatroxQ",
+                ChampionName = "Aatrox",
+                Range = 650f,
+                canVaryInLength = true,
+                Width = 0f,
+                Radius = 285f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.KnockUp,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -63,6 +70,16 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "AatroxW",
+                ChampionName = "Aatrox",
+                Range = 1f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 6.308672E-34f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 100f,
+                ConeDegrees = 45f,
+                OtherMissileNames = new string[] { "AatroxW2" },
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -70,13 +87,31 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                /*ChampionName = "Aatrox",
+                Range = 1050f,
+                MissileSpeed = 1200f,
+                MissileMinSpeed = 1200f,
+                MissileMaxSpeed = 1200f,
+                Width = 15f,
+                ConeDegrees = 45f,
+                OtherMissileNames = new string[] { "AatroxEConeMissile", "AatroxEConeMissile2" },
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
-                Slot = SpellInfo.SpellSlot.E,
+                Slot = SpellInfo.SpellSlot.E,*/
             },
             //r
             new SpellInfo()
             {
+                SpellName = "AatroxR",
+                MissileName = "AatroxRHeal",
+                ChampionName = "Aatrox",
+                Range = 550f,
+                MissileSpeed = 779.9f,
+                MissileMinSpeed = 6.308922E-34f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 550f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
