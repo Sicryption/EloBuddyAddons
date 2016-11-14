@@ -426,7 +426,7 @@ namespace UnsignedYasuo
 
         public static bool CastE(List<Obj_AI_Base> enemies, bool ks, bool goUnderEnemyTower)
         {
-            if (!Program.E.IsReady() || YasuoCalcs.IsDashing())
+            if (!Program.E.IsReady() || YasuoCalcs.IsDashing() || !enemies.Any(a=>a.IsInRange(Yasuo, Program.E.Range)))
                 return false;
 
             Obj_AI_Base unit = enemies.Where(a =>
@@ -442,7 +442,7 @@ namespace UnsignedYasuo
         }
         public static bool CastIgnite(List<Obj_AI_Base> enemies, bool ks)
         {
-            if (!Program.Ignite.IsReady())
+            if (!Program.Ignite.IsReady() || !enemies.Any(a => a.IsInRange(Yasuo, Program.Ignite.Range)))
                 return false;
 
             Obj_AI_Base unit = enemies.Where(a =>
@@ -457,7 +457,7 @@ namespace UnsignedYasuo
         
         public static bool CastE(Obj_AI_Base unit)
         {
-            if (!Program.E.IsReady() || YasuoCalcs.IsDashing())
+            if (!Program.E.IsReady() || YasuoCalcs.IsDashing() || unit.IsInRange(Yasuo, Program.E.Range))
                 return false;
 
             if (unit != null)
@@ -469,21 +469,20 @@ namespace UnsignedYasuo
         {
             if (!Program.E.IsReady() || YasuoCalcs.IsDashing())
                 return false;
-
             //if none of the targets are in auto attack range
             if (targets.Where(a => a.IsInRange(Yasuo, Yasuo.GetAutoAttackRange())).FirstOrDefault() == null)
             {
                 //get the closest target
                 Obj_AI_Base closestEnemy = targets.Where(a=> a.MeetsCriteria() && a.IsInRange(Yasuo, 5000)).OrderBy(b => b.Distance(Yasuo)).FirstOrDefault();
                 
-                //get all enemies in my E range
-                List<Obj_AI_Base> enemiesInERange = EntityManager.Enemies.Where(a => a.MeetsCriteria() && YasuoCalcs.ERequirements(a, goUnderEnemyTower) && a.IsInRange(Yasuo, Program.E.Range)).ToList();
-
                 if (closestEnemy != null)
                 {
+                    //get all enemies in my E range
+                    List<Obj_AI_Base> enemiesInERange = EntityManager.Enemies.Where(a => a.MeetsCriteria() && YasuoCalcs.ERequirements(a, goUnderEnemyTower) && a.IsInRange(Yasuo, Program.E.Range)).ToList();
+
                     Obj_AI_Base enemyToDashTo = enemiesInERange.OrderBy(a => YasuoCalcs.GetDashingEnd(a).Distance(closestEnemy)).FirstOrDefault();
 
-                    if (YasuoCalcs.GetDashingEnd(enemyToDashTo).Distance(closestEnemy) < Yasuo.Distance(closestEnemy))
+                    if (enemyToDashTo != null && YasuoCalcs.GetDashingEnd(enemyToDashTo).Distance(closestEnemy) < Yasuo.Distance(closestEnemy))
                         return CastE(enemyToDashTo);
                 }
             }
@@ -512,7 +511,9 @@ namespace UnsignedYasuo
 
         public static bool CastEQ(List<Obj_AI_Base> dashEnemies, bool ks, bool goUnderEnemyTower, List<Obj_AI_Base> EQEnemies = null)
         {
-            if (!Program.E.IsReady() || !YasuoCalcs.WillQBeReady() || Yasuo.GetNearbyEnemies(Program.E.Range).Count() == 0 || YasuoCalcs.IsDashing())
+            if (!Program.E.IsReady() || !YasuoCalcs.WillQBeReady() || 
+                !dashEnemies.Any(a => a.IsInRange(Yasuo, Program.E.Range)) ||
+                Yasuo.GetNearbyEnemies(Program.E.Range).Count() == 0 || YasuoCalcs.IsDashing())
                 return false;
 
             if (EQEnemies == null)
@@ -555,6 +556,7 @@ namespace UnsignedYasuo
         public static bool CastQ(List<Obj_AI_Base> enemies, bool ks)
         {
             if (!Program.Q.IsReady() || YasuoCalcs.IsDashing() || 
+                !enemies.Any(a => a.IsInRange(Yasuo, Program.Q.Range)) ||
                 (Orbwalker.CanAutoAttack && enemies.Where(a=>a.IsInRange(Yasuo, Yasuo.GetAutoAttackRange())).FirstOrDefault() != null)
                 || Orbwalker.IsAutoAttacking)
                 return false;
