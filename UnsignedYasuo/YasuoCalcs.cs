@@ -40,12 +40,12 @@ namespace UnsignedYasuo
         }
         public static double E(Obj_AI_Base target)
         {
-            double dmgModifier = 1;
+            float dmgModifier = 1f;
             if (Yasuo.HasBuff("yasuodashscalar"))
                 dmgModifier += Yasuo.GetBuff("yasuodashscalar").Count * 0.25f;
 
             return Yasuo.CalculateDamageOnUnit(target, DamageType.Magical,
-                (50 + (20 * Program.E.Level)) + (0.6f * Yasuo.FlatMagicDamageMod));
+                dmgModifier * (50 + (20 * Program.E.Level)) + (0.6f * Yasuo.FlatMagicDamageMod));
         }
         public static float Ignite(Obj_AI_Base target)
         {
