@@ -142,7 +142,7 @@ namespace UnsignedYasuo
             if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw R") && R.IsLearned)
                 R.DrawRange(drawColor);
             if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Beyblade") && R.IsLearned && Flash != null && E.IsLearned && Q.IsLearned)
-                Drawing.DrawCircle(Yasuo.Position, E.Range + Flash.Range + (EQ.Range / 2), drawColor);
+                Drawing.DrawCircle(Yasuo.Position, E.Range + Flash.Range + (EQ.Range / 2), System.Drawing.Color.Red);
             if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Turret Range"))
                 foreach (Obj_AI_Turret turret in EntityManager.Turrets.Enemies.Where(a => !a.IsDead))
                     turret.DrawCircle((int)turret.GetAutoAttackRange() + 35, drawColor);

@@ -47,7 +47,7 @@ namespace UnsignedYasuo
             AddSlider(Flee, "Wall Dash Extra Space", 20, 10, 200);
             AddCheckboxes(ref Ult, "Use R at Last Second", "Use R on All Enemies in Range", "Use R for Flow_false", "Use R at 10% HP_false");
             AddSlider(Ult, "Use R on x Enemies or more:", 3, 1, 5);
-            AddCheckboxes(ref Drawing, "Draw Q", "Draw W_false", "Draw E", "Draw E End Position on Target_false", "Draw E End Position on Target - Detailed_false", "Draw EQ_false", "Draw EQ on Target_false", "Draw R", "Draw Beyblade_false", "Draw Wall Dashes", "Draw Turret Range");
+            AddCheckboxes(ref Drawing, "Draw Q", "Draw W_false", "Draw E", "Draw E End Position on Target_false", "Draw E End Position on Target - Detailed_false", "Draw EQ_false", "Draw EQ on Target_false", "Draw R", "Draw Beyblade", "Draw Wall Dashes", "Draw Turret Range");
             AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
             WindWall.Initialize();
             #endregion
