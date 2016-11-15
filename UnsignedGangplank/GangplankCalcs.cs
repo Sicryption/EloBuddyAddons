@@ -95,16 +95,17 @@ namespace UnsignedGP
             return ((10 + (4 * GP.Level)) * 5) - ((target.HPRegenRate / 2) * 5);
         }
 
-        public static void CastQOnBarrel(Obj_AI_Base barrel)
+        public static bool CastQOnBarrel(Obj_AI_Base barrel)
         {
             if (barrel.Health == 1)
-                Program.Q.Cast(barrel);
+                return Program.Q.Cast(barrel);
             else if (Program.GetBarrelAtPosition(barrel.Position).TimeAt1HP - Game.Time <= CalculateQTimeToTarget(barrel) && Program.GetBarrelAtPosition(barrel.Position).decayRate != 0)
             {
                 //Chat.Print("Q Time was: " + CalculateQTimeToTarget(barrel));
                 //Chat.Print("Time til bomb explosion was: " + (Program.GetBarrelAtPosition(barrel.Position).TimeAt1HP - Game.Time));
-                Program.Q.Cast(barrel);
+                return Program.Q.Cast(barrel);
             }
+            return false;
         }
 
         public static float CalculateQTimeToTarget(Obj_AI_Base target)

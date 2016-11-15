@@ -17,6 +17,8 @@ namespace UnsignedGP
     {
         public static float TimeOfLastBarrelCheck = 0;
 
+        public static bool HasDoneActionThisTick = false;
+
         public enum AttackSpell
         {
             Q,
@@ -79,7 +81,7 @@ namespace UnsignedGP
                 Obj_AI_Minion enemy = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
 
                 if (enemy != null)
-                    Program.Q.Cast(enemy);
+                    HasDoneActionThisTick = Program.Q.Cast(enemy);
             }
             else if (QCHECK && QREADY && NearbyBarrel((int)Program.Q.Range))
             {
@@ -99,7 +101,7 @@ namespace UnsignedGP
                 }
 
                 if (target != null && enemyCount != 0)
-                    Program.Q.Cast(target);
+                    HasDoneActionThisTick =  Program.Q.Cast(target);
             }
             else if (GP.CanAttack && NearbyBarrel((int)GP.GetAutoAttackRange()))
             {
@@ -119,7 +121,10 @@ namespace UnsignedGP
                 }
 
                 if (target != null && enemyCount != 0)
+                {
                     Orbwalker.ForcedTarget = target;
+                    HasDoneActionThisTick = true;
+                }
             }
 
 
@@ -141,7 +146,7 @@ namespace UnsignedGP
                             if (obs != null)
                             {
                                 if (obs.Count >= 4)
-                                    PlaceBarrel(pos.CastPosition);
+                                    HasDoneActionThisTick = PlaceBarrel(pos.CastPosition);
                             }
                         }
                     }
@@ -194,14 +199,14 @@ namespace UnsignedGP
                     AIHeroClient enemy = (AIHeroClient)GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.Q);
 
                     if (enemy != null)
-                        Program.Q.Cast(enemy.Position);
+                        HasDoneActionThisTick = Program.Q.Cast(enemy.Position);
                 }
                 if (ICHECK && IREADY)
                 {
                     AIHeroClient enemy = (AIHeroClient)GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.Ignite);
 
                     if (enemy != null)
-                        Program.Ignite.Cast(enemy);
+                        HasDoneActionThisTick = Program.Ignite.Cast(enemy);
                 }
             }
 
@@ -210,7 +215,7 @@ namespace UnsignedGP
                 AIHeroClient enemy = (AIHeroClient)GetEnemyKS(GameObjectType.AIHeroClient, AttackSpell.R);
 
                 if (enemy != null)
-                    Program.R.Cast(enemy.Position);
+                    HasDoneActionThisTick = Program.R.Cast(enemy.Position);
             }
         }
         
@@ -226,7 +231,7 @@ namespace UnsignedGP
                 Obj_AI_Minion enemy = (Obj_AI_Minion)GetEnemyKS(GameObjectType.obj_AI_Minion, AttackSpell.Q);
 
                 if (enemy != null)
-                    Program.Q.Cast(enemy);
+                    HasDoneActionThisTick = Program.Q.Cast(enemy);
             }
             else if (QCHECK && QREADY && NearbyBarrel((int)Program.Q.Range))
             {
@@ -246,7 +251,7 @@ namespace UnsignedGP
                 }
 
                 if (target != null && enemyCount != 0)
-                    Program.Q.Cast(target);
+                    HasDoneActionThisTick = Program.Q.Cast(target);
             }
             else if (GP.CanAttack && NearbyBarrel((int)GP.GetAutoAttackRange()))
             {
@@ -266,7 +271,10 @@ namespace UnsignedGP
                 }
 
                 if (target != null && enemyCount != 0)
+                {
                     Orbwalker.ForcedTarget = target;
+                    HasDoneActionThisTick = true;
+                }
             }
 
             if (ECHECK && EREADY)
@@ -285,7 +293,7 @@ namespace UnsignedGP
                         if (obs != null)
                         {
                             if (obs.Count >= 4)
-                                PlaceBarrel(pos.CastPosition);
+                                HasDoneActionThisTick = PlaceBarrel(pos.CastPosition);
                         }
                     }
                 }
@@ -307,7 +315,7 @@ namespace UnsignedGP
                 AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.Q.Range, GameObjectType.AIHeroClient);
 
                 if (enemy != null)
-                    Program.Q.Cast(enemy);
+                    HasDoneActionThisTick = Program.Q.Cast(enemy);
             }
         }
         
@@ -326,7 +334,7 @@ namespace UnsignedGP
                 AIHeroClient enemy = (AIHeroClient)GetEnemy(Program.Q.Range, GameObjectType.AIHeroClient);
 
                 if (enemy != null)
-                    Program.Q.Cast(enemy);
+                    HasDoneActionThisTick = Program.Q.Cast(enemy);
             }
             
             if (ItemsCHECK)
@@ -334,52 +342,56 @@ namespace UnsignedGP
                 AIHeroClient enemy = (AIHeroClient)GetEnemy(2500, GameObjectType.AIHeroClient);
 
                 if (enemy != null)
-                    UseItems(true);
+                    HasDoneActionThisTick = UseItems(true);
             }
         }
 
         public static void TryToComboBarrels(bool ks = false)
         {
             //cont == continue. If at any point it uses a barrel, do not try to continue the script. Back up and reset
-            bool cont = true;
             List<Obj_AI_Base> NearbyBarrels = ObjectManager.Get<Obj_AI_Base>().Where(a => a.Name == "Barrel" && !a.IsDead && a.Distance(GP) <= Program.Q.Range).ToList();
 
             //first check if enemy is on any of the barrels. use no barrels
             foreach(Obj_AI_Base barrel in NearbyBarrels)
             {
-                List<AIHeroClient> nearbyEnemies = ObjectManager.Get<AIHeroClient>().Where(a => a.IsEnemy && !a.IsDead && (!ks || GPCalcs.E(a, false) >= a.Health) && a.Distance(barrel) <= 350 && a.Type == GameObjectType.AIHeroClient).ToList();
+                List<AIHeroClient> nearbyEnemies = ObjectManager.Get<AIHeroClient>()
+                    .Where(a => a.IsEnemy 
+                    && !a.IsDead 
+                    && (!ks || GPCalcs.E(a, false) >= a.Health) 
+                    && a.Distance(barrel) <= 350 
+                    && a.Type == GameObjectType.AIHeroClient).ToList();
 
                 if(nearbyEnemies.FirstOrDefault() != null)
                 {
-                    FindAndDoBestAttackMethod(barrel);
-                    cont = false;
+                    HasDoneActionThisTick = FindAndDoBestAttackMethod(barrel);
                 }
             }
             //then check if enemy is within 1 barrel of an existing barrel,
             //need to check if barrel has 2 hp and auto then q it.
-            if (Program.E.AmmoQuantity >= 1 && Program.E.IsReady() && GP.CanCast && cont)
+            
+            if ((Program.E.AmmoQuantity >= 1 || !Program.E.IsOnCooldown) && Program.E.IsReady() && GP.CanCast && !HasDoneActionThisTick)
             {
                 foreach (Obj_AI_Base barrel in NearbyBarrels)
                 {
+                    Chat.Print("trying to combo barrels");
                     List<AIHeroClient> nearbyEnemies = ObjectManager.Get<AIHeroClient>().Where(a => a.IsEnemy && !a.IsDead && (!ks || GPCalcs.E(a, false) >= a.Health) && a.Distance(barrel) <= 1000).ToList();
                     
                     if (nearbyEnemies.FirstOrDefault() != null)
                     {
                         PlaceBarrel(barrel.Position.Extend(nearbyEnemies.First(), 650).To3D());
-                        FindAndDoBestAttackMethod(barrel);
-                        cont = false;
+                        HasDoneActionThisTick = FindAndDoBestAttackMethod(barrel);
                     }
                 }
             }
             //then check if an enemy is within 2 barrel of an existing barrel and do 3 barrel combo
-            if (Program.E.AmmoQuantity >= 2 && Program.E.IsReady() && cont)
+            if (Program.E.AmmoQuantity >= 2 && Program.E.IsReady() && !HasDoneActionThisTick)
             {
 
             }
 
             //first barrel placement
             if(NearbyBarrels.Count() == 0 
-                && Program.E.IsReady() && GP.CanCast && cont 
+                && Program.E.IsReady() && GP.CanCast && !HasDoneActionThisTick 
                 && Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo)
                 && Program.E.AmmoQuantity >= 1)
             {
@@ -387,35 +399,35 @@ namespace UnsignedGP
                 {
                     Spell.Skillshot.BestPosition prediction = Program.E.GetBestCircularCastPosition(EntityManager.Heroes.Enemies);
                     if(prediction.CastPosition != null && prediction.CastPosition != Vector3.Zero && prediction.CastPosition.CountEnemyHeroesInRangeWithPrediction((int)Program.E.Range, 0) >= 1)
-                        PlaceBarrel(prediction.CastPosition);
+                        HasDoneActionThisTick = PlaceBarrel(prediction.CastPosition);
                 }
 
                 else if (Program.ComboMenu.Get<ComboBox>("BarrelSettings").SelectedText == "On Closest Enemy")
                 {
                     AIHeroClient closestEnemy = EntityManager.Heroes.Enemies.Where(a => !a.IsDead && a.IsHPBarRendered && a.IsInRange(GP, Program.E.Range)).OrderBy(a => a.Distance(GP)).FirstOrDefault();
                     if (closestEnemy != null)
-                        PlaceBarrel(closestEnemy.Position);
+                        HasDoneActionThisTick = PlaceBarrel(closestEnemy.Position);
                 }
 
                 else if (Program.ComboMenu.Get<ComboBox>("BarrelSettings").SelectedText == "On Lowest HP Enemy")
                 {
                     AIHeroClient closestEnemy = EntityManager.Heroes.Enemies.Where(a => !a.IsDead && a.IsHPBarRendered && a.IsInRange(GP, Program.E.Range)).OrderBy(a => a.Health).FirstOrDefault();
                     if (closestEnemy != null)
-                        PlaceBarrel(closestEnemy.Position);
+                        HasDoneActionThisTick = PlaceBarrel(closestEnemy.Position);
                 }
 
                 else if (Program.ComboMenu.Get<ComboBox>("BarrelSettings").SelectedText == "On Lowest % HP Enemy")
                 {
                     AIHeroClient closestEnemy = EntityManager.Heroes.Enemies.Where(a => !a.IsDead && a.IsHPBarRendered && a.IsInRange(GP, Program.E.Range)).OrderBy(a => a.HealthPercent).FirstOrDefault();
                     if (closestEnemy != null)
-                        PlaceBarrel(closestEnemy.Position);
+                        HasDoneActionThisTick = PlaceBarrel(closestEnemy.Position);
                 }
 
                 else if (Program.ComboMenu.Get<ComboBox>("BarrelSettings").SelectedText == "Between Enemy and Me")
                 {
                     Spell.Skillshot.BestPosition prediction = Program.E.GetBestCircularCastPosition(EntityManager.Heroes.Enemies);
                     if (prediction.CastPosition != null && prediction.CastPosition != Vector3.Zero && prediction.CastPosition.CountEnemyHeroesInRangeWithPrediction((int)Program.E.Range, 0) >= 1)
-                        PlaceBarrel(GP.Position.Extend(prediction.CastPosition, Program.E.Range / 2).To3D());
+                        HasDoneActionThisTick = PlaceBarrel(GP.Position.Extend(prediction.CastPosition, Program.E.Range / 2).To3D());
                 }
             }
         }
@@ -428,16 +440,20 @@ namespace UnsignedGP
                 if (ob.Distance(position) <= 340)
                     return false;
 
-            Program.E.Cast(position);
-            return true;
+            return Program.E.Cast(position);
         }   
 
-        public static void FindAndDoBestAttackMethod(Obj_AI_Base barrel)
+        public static bool FindAndDoBestAttackMethod(Obj_AI_Base barrel)
         {
             if (GP.IsInAutoAttackRange(barrel) && GP.CanAttack)
+            {
                 Orbwalker.ForcedTarget = barrel;
+                return true;
+            }
             else if (Program.Q.IsReady() && barrel.Distance(GP) <= Program.Q.Range)
-                GPCalcs.CastQOnBarrel(barrel);
+                return GPCalcs.CastQOnBarrel(barrel);
+
+            return false;
         }
         
         //Use bombs to proc phage passive if it exists or auto to get off move speed buff if gp has passive
@@ -453,11 +469,11 @@ namespace UnsignedGP
                     && !a.IsDead).FirstOrDefault();
 
                 if (barrel != null)
-                    GPCalcs.CastQOnBarrel(barrel);
+                    HasDoneActionThisTick = GPCalcs.CastQOnBarrel(barrel);
             }
         }
         
-        public static void UseItems(bool isInComboMode = false)
+        public static bool UseItems(bool isInComboMode = false)
         {
             bool useTiamat = Program.Items.Get<CheckBox>("ItemsT").CurrentValue;
             bool useRavenous = Program.Items.Get<CheckBox>("ItemsRH").CurrentValue;
@@ -477,7 +493,7 @@ namespace UnsignedGP
                         && !GP.IsInShopRange()
                         && !GP.HasBuff("RegenerationPotion"))
                     {
-                        item.Cast();
+                        return item.Cast();
                     }
                 }
 
@@ -488,7 +504,7 @@ namespace UnsignedGP
                     var enemy = GetEnemy(550, GameObjectType.AIHeroClient);
 
                     if (enemy != null)
-                        item.Cast(enemy);
+                        return item.Cast(enemy);
                 }
 
                 if ((item.Id == ItemId.Tiamat_Melee_Only && useTiamat)
@@ -499,14 +515,15 @@ namespace UnsignedGP
                     var enemy = GetEnemy(400, GameObjectType.AIHeroClient);
 
                     if (enemy != null)
-                        item.Cast();
+                        return item.Cast();
                 }
 
                 if ((item.Id == ItemId.Youmuus_Ghostblade && useYoumuus)
                     && isInComboMode
                     && GP.CountEnemiesInRange(GP.GetAutoAttackRange()) >= 1)
-                    item.Cast();    
+                    return item.Cast();    
             }
+            return false;
         }
 
         public static void AutoBarrel()
@@ -524,7 +541,7 @@ namespace UnsignedGP
                     && !NearbyBarrel(a)).OrderBy(a=>a.Distance(GP)).FirstOrDefault();
 
                 if (bush != null)
-                    PlaceBarrel(bush.Position);
+                    HasDoneActionThisTick = PlaceBarrel(bush.Position);
             }
         }
 
@@ -567,7 +584,7 @@ namespace UnsignedGP
                 || (GP.HasBuffOfType(BuffType.Taunt) && QSSTaunt))
                 //not being knocked back by dragon
                 && !GP.HasBuff("moveawaycollision"))
-                Program.W.Cast();
+                HasDoneActionThisTick = Program.W.Cast();
             #endregion
             #region W At %HP and %Mana
             if (Program.W.IsReady()
@@ -576,7 +593,7 @@ namespace UnsignedGP
                 && Program.SettingsMenu.Get<Slider>("SAWH").CurrentValue >= GP.HealthPercent
                 && Program.SettingsMenu.Get<Slider>("SAWM").CurrentValue != 100
                 && Program.SettingsMenu.Get<Slider>("SAWM").CurrentValue <= GP.ManaPercent)
-                Program.W.Cast();
+                HasDoneActionThisTick = Program.W.Cast();
             #endregion
         }
 

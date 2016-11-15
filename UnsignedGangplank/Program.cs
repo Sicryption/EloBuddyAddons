@@ -183,6 +183,8 @@ namespace UnsignedGP
 
         private static void Game_OnTick(EventArgs args)
         {
+            GPFunctions.HasDoneActionThisTick = false;
+
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                 GPFunctions.Combo();
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LastHit))
