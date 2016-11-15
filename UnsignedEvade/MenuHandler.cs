@@ -40,7 +40,7 @@ namespace UnsignedEvade
             CreateCheckbox(ref DebugMenu, "Debug Projectile Deletion");
             CreateCheckbox(ref DebugMenu, "Show only Enemy Projectiles");
             CreateCheckbox(ref DebugMenu, "Show Animation Names", false);
-            CreateCheckbox(ref DebugMenu, "Show Friendly Targeted Spells", false);
+            CreateCheckbox(ref DebugMenu, "Draw Active Spells", false);
             CreateCheckbox(ref DebugMenu, "Show Particles", false);
             CreateCheckbox(ref DebugMenu, "Show All Object Names", false);
             CreateCheckbox(ref DebugMenu, "Show Buff Gains", false);

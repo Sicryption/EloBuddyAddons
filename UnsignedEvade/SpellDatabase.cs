@@ -73,9 +73,47 @@ namespace UnsignedEvade
                 MissileMaxSpeed = 1200f,
                 Range = 550f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.Slow,
+            },
+            //Seraphs Embrace Shield
+            new SpellInfo()
+            {
+                SpellName = "ItemSeraphsEmbrace",
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
+            //Pink Vision Item to give enemies of invis traps on acensions
+            new SpellInfo()
+            {
+                SpellName = "OracleExtractSight",
+                Range = 400f,
+                SpellType = SpellInfo.SpellTypeInfo.SelfActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+            },
+            //Zhonyas 
+            new SpellInfo()
+            {
+                SpellName = "ZhonyasHourglass",
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+            },
+            //Zhonyas
+            new SpellInfo()
+            {
+                SpellName = "BilgewaterCutlass",
+                Range = 550f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.Slow,
+            },
             //BOTRK
+            new SpellInfo()
+            {
+                SpellName = "RanduinsOmen",
+                Range = 500f,
+                SpellType = SpellInfo.SpellTypeInfo.SelfActive,
+                CCtype = SpellInfo.CrowdControlType.Slow,
+            },
+            //Redemption
             new SpellInfo()
             {
                 SpellName = "ItemRedemption",
@@ -694,20 +732,46 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "BardQ",
+                ChampionName = "Bard",
+                Range = 950f,
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
+                Width = 60f,
+                OtherMissileNames = new string[] { "BardQMissile2" },
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.Q,
             },
-            //w
+            //w on champion
             new SpellInfo()
             {
+                SpellName = "BardWDirectHeal",
+                ChampionName = "Bard",
+                Range = 800f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.W,
+            },
+            //w on ground
+            new SpellInfo()
+            {
+                SpellName = "BardW",
+                ChampionName = "Bard",
+                Range = 800f,
+                Radius = 100f,
+                OtherMissileNames = new string[] { "BardWHealthPack", },
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
-            //e
+            //e Not sure how to handle this
             new SpellInfo()
             {
+                SpellName = "BardE",
+                ChampionName = "Bard",
+                //Range = 900f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -715,6 +779,13 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "BardR",
+                ChampionName = "Bard",
+                Range = 3400f,
+                MissileSpeed = 500f,
+                MissileMinSpeed = 500f,
+                MissileMaxSpeed = 500f,
+                Radius = 350f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Statis,
                 Slot = SpellInfo.SpellSlot.R,
@@ -1204,6 +1275,7 @@ namespace UnsignedEvade
             },
 
             #endregion
+            //add darius Q/W
             #region Darius
             //q
             new SpellInfo()
@@ -1222,6 +1294,14 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "DariusAxeGrabCone",
+                ChampionName = "Darius",
+                Range = 550f,
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
+                Radius = 225f,
+                ConeDegrees = 25f,
                 SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Pull,
                 Slot = SpellInfo.SpellSlot.E,
@@ -1229,6 +1309,9 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "DariusExecute",
+                ChampionName = "Darius",
+                Range = 475f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -1366,6 +1449,15 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "EkkoQ",
+                MissileName = "EkkoQMis",
+                ChampionName = "Ekko",
+                Range = 1075f,
+                MissileSpeed = 1650f,
+                MissileMinSpeed = 1650f,
+                MissileMaxSpeed = 1650f,
+                Width = 60f,
+                OtherMissileNames = new string[] { "EkkoQReturn", "EkkoQReturnDead" },
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -1373,13 +1465,32 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "EkkoW",
+                ChampionName = "Ekko",
+                MissileName = "EkkoWMis",
+                Range = 1600f,
+                MissileSpeed = 1500f,
+                Radius = 400f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.W,
             },
-            //e
+            //e first dash
             new SpellInfo()
             {
+                SpellName = "EkkoE",
+                ChampionName = "Ekko",
+                DashType = SpellInfo.Dashtype.Linear,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.E,
+            },
+            //e dash 2
+            new SpellInfo()
+            {
+                SpellName = "EkkoEAttack",
+                ChampionName = "Ekko",
+                DashType = SpellInfo.Dashtype.Blink,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -1387,6 +1498,14 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "EkkoR",
+                ChampionName = "Ekko",
+                Range = int.MaxValue,
+                MissileSpeed = 500f,
+                MissileMinSpeed = 500f,
+                MissileMaxSpeed = 500f,
+                Radius = 375f,
+                DashType = SpellInfo.Dashtype.Blink,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -1770,9 +1889,27 @@ namespace UnsignedEvade
             },
             #endregion
             #region Garen
-            //q
+            //q charge
             new SpellInfo()
             {
+                SpellName = "GarenQ",
+                ChampionName = "Garen",
+                Range = 300f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 3.09577E-35f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 210f,
+                ConeDegrees = 45f,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.Q,
+            },
+            //q attack
+            new SpellInfo()
+            {
+                SpellName = "GarenQAttack",
+                ChampionName = "Garen",
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.Silence,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -1780,6 +1917,8 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "GarenW",
+                ChampionName = "Garen",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -1787,6 +1926,10 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "GarenE",
+                ChampionName = "Garen",
+                Range = 660f,
+                Radius = 660f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -2624,29 +2767,26 @@ namespace UnsignedEvade
             },
             #endregion
             #region Karthus
-            //q
-            new SpellInfo()
+            //q handled by particle databaseq
+            /*new SpellInfo()
             {
                 SpellName = "KarthusLayWasteA3",
                 ChampionName = "Karthus",
                 MissileSpeed = 10000f,
                 Range = 875f,
                 Radius = 160f,
-                Delay = 0.75f,
+                Delay = 0.25f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
                 OtherMissileNames = new string[] { "KarthusLayWasteA1", "KarthusLayWasteA2",},
-            },
+            },*/
             //w
             new SpellInfo()
             {
                 SpellName = "KarthusWallOfPain",
                 ChampionName = "Karthus",
                 Range = 1000f,
-                MissileSpeed = 1600f,
-                MissileMinSpeed = 1600f,
-                MissileMaxSpeed = 1600f,
                 Width = 5f,
                 Radius = 850f,
                 ConeDegrees = 45f,
@@ -3556,13 +3696,35 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                SpellName = "MissFortuneRicochetShot",
+                MissileName = "MissFortuneRicochetShot",
+                ChampionName = "MissFortune",
+                Range = 550f,
+                MissileSpeed = 1400f,
+                MissileMinSpeed = 1400f,
+                MissileMaxSpeed = 1400f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.Q,
+            },
+            //q richochet bounce - most damage
+            new SpellInfo()
+            {
+                MissileName = "MissFortuneRShotExtra",
+                ChampionName = "MissFortune",
+                MissileSpeed = 1400f,
+                MissileMinSpeed = 1400f,
+                MissileMaxSpeed = 1400f,
+                Range = 575f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //w
             new SpellInfo()
             {
+                SpellName = "MissFortuneViciousStrikes",
+                ChampionName = "MissFortune",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -3570,6 +3732,14 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "MissFortuneScattershot",
+                ChampionName = "MissFortune",
+                Range = 1000f,
+                MissileSpeed = 500f,
+                MissileMinSpeed = 500f,
+                MissileMaxSpeed = 500f,
+                Radius = 350f,
+                Delay = 2.25f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
@@ -3577,6 +3747,18 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "MissFortuneBulletTime",
+                //MissileName = "MissFortuneBullets",
+                ChampionName = "MissFortune",
+                BuffName = "missfortunebulletsound",
+                Range = 1450f,
+                MissileSpeed = 2000f,
+                MissileMinSpeed = 2000f,
+                MissileMaxSpeed = 2000f,
+                //Delay = 3.25f,
+                Width = 40f,
+                Radius = 210f,
+                ConeDegrees = 17f,
                 SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -4168,6 +4350,8 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "PowerBall",
+                ChampionName = "Rammus",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.KnockBack,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -4175,6 +4359,8 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "DefensiveBallCurl",
+                ChampionName = "Rammus",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -4182,6 +4368,9 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "PuncturingTaunt",
+                ChampionName = "Rammus",
+                Range = 325f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.Taunt,
                 Slot = SpellInfo.SpellSlot.E,
@@ -4189,6 +4378,9 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "Tremors2",
+                ChampionName = "Rammus",
+                Radius = 375f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -4283,14 +4475,14 @@ namespace UnsignedEvade
                 SpellName = "RengarQ",
                 ChampionName = "Rengar",
                 Range = 325f,
+                ConeAndLinearRange = 450f,
                 MissileSpeed = 3000f,
                 MissileMinSpeed = 3000f,
                 MissileMaxSpeed = 3000f,
                 Width = 55f,
                 Radius = 325f,
                 ConeDegrees = 90f,
-                OtherMissileNames = new string[] { "RengarQ2"},
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeAndLinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -4299,15 +4491,15 @@ namespace UnsignedEvade
             {
                 SpellName = "RengarQEmp",
                 ChampionName = "Rengar",
-                Range = 300,
+                Range = 300f,
+                ConeAndLinearRange = 450f,
                 MissileSpeed = 3000f,
                 MissileMinSpeed = 3000f,
                 MissileMaxSpeed = 3000f,
                 Width = 55f,
                 Radius = 300f,
                 ConeDegrees = 90f,
-                OtherMissileNames = new string[] { "RengarQ2Emp"},
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeAndLinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -4372,12 +4564,6 @@ namespace UnsignedEvade
                 SpellName = "RengarR",
                 ChampionName = "Rengar",
                 Range = 2000f,
-                MissileSpeed = 0f,
-                MissileMinSpeed = 2.959704E-34f,
-                MissileMaxSpeed = 0f,
-                Width = 0f,
-                Radius = 75f,
-                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -4412,11 +4598,21 @@ namespace UnsignedEvade
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
-            #endregion
+            #endregion  
             #region Rumble
             //q
             new SpellInfo()
             {
+                ChampionName = "Rumble",
+                SpellName = "RumbleFlameThrower",
+                BuffName = "RumbleFlameThrower",
+                Range = 600f,
+                MissileSpeed = 5000f,
+                MissileMinSpeed = 5000f,
+                MissileMaxSpeed = 5000f,
+                Width = 500f,
+                Radius = 500f,
+                ConeDegrees = 32f,
                 SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -4444,13 +4640,19 @@ namespace UnsignedEvade
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
             },
-            //r
-            new SpellInfo()
+            //r Handled by Particle Manager
+            /*new SpellInfo()
             {
+                SpellName = "RumbleCarpetBomb",
+                //MissileName = "RumbleCarpetBombMissile",
+                ChampionName = "Rumble",
+                Range = 1700f,
+                Width = 200f,
+                Delay = 5.25f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
-            },
+            },*/
             #endregion
             //add Ryze E bounce "RyzeEMissile" slot 47
             #region Ryze
@@ -4513,10 +4715,15 @@ namespace UnsignedEvade
                 Slot = SpellInfo.SpellSlot.R,
             },
             #endregion
+            //add shaco jack in the box to trap database
             #region Shaco
             //q
             new SpellInfo()
             {
+                SpellName = "Deceive",
+                ChampionName = "Shaco",
+                Range = 400f,
+                DashType = SpellInfo.Dashtype.Blink,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -4531,6 +4738,13 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "TwoShivPoison",
+                MissileName = "TwoShivPoison",
+                ChampionName = "Shaco",
+                Range = 625f,
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
@@ -4538,6 +4752,17 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "HallucinateFull",
+                ChampionName = "Shaco",
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.R,
+            },
+            //r movement
+            new SpellInfo()
+            {
+                SpellName = "HallucinateGuide",
+                ChampionName = "Shaco",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -4838,27 +5063,76 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.SelfActive,
+                SpellName = "SonaQ",
+                MissileName = "SonaQMissile",
+                ChampionName = "Sona",
+                Range = 825f,
+                MissileSpeed = 1300f,
+                MissileMinSpeed = 1300f,
+                MissileMaxSpeed = 1300f,
+                OtherMissileNames = new string[] { "SonaQAttackUpgrade" },
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //w
             new SpellInfo()
             {
+                ChampionName = "Sona",
+                SpellName = "SonaW",
+                Range = 1000f,
+                Radius = 1000f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.W,
+            },
+            //w chord
+            new SpellInfo()
+            {
+                ChampionName = "Sona",
+                MissileName = "SonaWMissile",
+                MissileSpeed = 1300f,
+                MissileMinSpeed = 1300f,
+                MissileMaxSpeed = 1300f,
+                Range = 1000f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
+                SpellName = "SonaE",
+                ChampionName = "Sona",
+                Range = 1000f,
+                Radius = 1000f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.E,
+            },
+            //e chord
+            new SpellInfo()
+            {
+                MissileName = "SonaEAttackUpgrade",
+                ChampionName = "Sona",
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
+                SpellName = "SonaR",
+                MissileName = "SonaR",
+                ChampionName = "Sona",
+                Range = 1000f,
+                MissileSpeed = 2400f,
+                MissileMinSpeed = 2400f,
+                MissileMaxSpeed = 2400f,
+                Width = 140f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.R,
@@ -5246,6 +5520,8 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "TryndamereQ",
+                ChampionName = "Tryndamere",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -5253,6 +5529,9 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "TryndamereW",
+                ChampionName = "Tryndamere",
+                Range = 850f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.W,
@@ -5260,6 +5539,14 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "TryndamereE",
+                ChampionName = "Tryndamere",
+                Range = 660f,
+                MissileSpeed = 700f,
+                MissileMinSpeed = 700f,
+                MissileMaxSpeed = 700f,
+                Width = 160f,
+                DashType = SpellInfo.Dashtype.Linear,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -5267,6 +5554,8 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "UndyingRage",
+                ChampionName = "Tryndamere",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -5276,6 +5565,14 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "WildCards",
+                MissileName = "SealFateMissile",
+                ChampionName = "TwistedFate",
+                Range = 1450f,
+                MissileSpeed = 1000f,
+                MissileMinSpeed = 1000f,
+                MissileMaxSpeed = 1000f,
+                Width = 40f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -5283,6 +5580,52 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "PickACard",
+                ChampionName = "TwistedFate",
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.W,
+            },
+            //blue card
+            new SpellInfo()
+            {
+                SpellName = "BlueCardPreAttack",
+                MissileName = "BlueCardAttack",
+                ChampionName = "TwistedFate",
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.W,
+            },
+            //red card
+            new SpellInfo()
+            {
+                SpellName = "PickACard",
+                ChampionName = "TwistedFate",
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.Slow,
+                Slot = SpellInfo.SpellSlot.W,
+            },
+            //red card aoe
+            new SpellInfo()
+            {
+                SpellName = "PickACard",
+                ChampionName = "TwistedFate",
+                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                CCtype = SpellInfo.CrowdControlType.Slow,
+                Slot = SpellInfo.SpellSlot.W,
+            },
+            //yellow card
+            new SpellInfo()
+            {
+                SpellName = "GoldCardPreAttack",
+                MissileName = "GoldCardAttack",
+                ChampionName = "TwistedFate",
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 1500f,
+                MissileMaxSpeed = 1500f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.W,
@@ -5290,13 +5633,30 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                MissileName = "TwistedFateBasicAttack4",
+                ChampionName = "TwistedFate",
+                MissileSpeed = 1500f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
-            //r
+            //r vision
             new SpellInfo()
             {
+                SpellName = "Destiny",
+                ChampionName = "TwistedFate",
+                Range = 5500f,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.R,
+            },
+            //r teleport
+            new SpellInfo()
+            {
+                SpellName = "Gate",
+                ChampionName = "TwistedFate",
+                Range = 5500f,
+                DashType = SpellInfo.Dashtype.Blink,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -5388,7 +5748,6 @@ namespace UnsignedEvade
                 Slot = SpellInfo.SpellSlot.R,
             },
             #endregion
-            //add urgot lock on q
             #region Urgot
             //q
             new SpellInfo()
@@ -5815,6 +6174,9 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "HungeringStrike",
+                ChampionName = "Warwick",
+                Range = 400f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -5822,6 +6184,9 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "HuntersCall",
+                ChampionName = "Warwick",
+                Range = 1200f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -5829,6 +6194,9 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "BloodScent",
+                ChampionName = "Warwick",
+                Range = 1600f,
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -5836,6 +6204,19 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "InfiniteDuress",
+                ChampionName = "Warwick",
+                Range = 700f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.Suppression,
+                Slot = SpellInfo.SpellSlot.R,
+            },
+            //r channel
+            new SpellInfo()
+            {
+                SpellName = "InfiniteDuressChannel",
+                ChampionName = "Warwick",
+                Range = 700f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.Suppression,
                 Slot = SpellInfo.SpellSlot.R,
@@ -6093,10 +6474,19 @@ namespace UnsignedEvade
                 Slot = SpellInfo.SpellSlot.R,
             },
             #endregion
+            //zeds spells will originate from shadows
             #region Zed
             //q
             new SpellInfo()
             {
+                SpellName = "ZedQ",
+                MissileName = "ZedQMissile",
+                ChampionName = "Zed",
+                Range = 925f,
+                MissileSpeed = 1700f,
+                MissileMinSpeed = 1700f,
+                MissileMaxSpeed = 1700f,
+                Width = 50f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -6104,13 +6494,35 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "ZedW",
+                MissileName = "ZedWMissile",
+                ChampionName = "Zed",
+                Range = 400f,
+                MissileSpeed = 1750f,
+                MissileMinSpeed = 1750f,
+                MissileMaxSpeed = 1750f,
+                Width = 60f,
+                DashType = SpellInfo.Dashtype.Linear,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.W,
+            },
+            //w second cast to blink
+            new SpellInfo()
+            {
+                SpellName = "ZedW2",
+                ChampionName = "Zed",
+                DashType = SpellInfo.Dashtype.Blink,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
+                SpellName = "ZedE",
+                ChampionName = "Zed",
+                Radius = 290f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
@@ -6118,7 +6530,21 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "ZedR",
+                ChampionName = "Zed",
+                Range = 625f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                CCtype = SpellInfo.CrowdControlType.None,
+                Slot = SpellInfo.SpellSlot.R,
+            },
+            //r second cast to blink
+            new SpellInfo()
+            {
+                SpellName = "ZedR2",
+                ChampionName = "Zed",
+                Range = 400f,
+                DashType = SpellInfo.Dashtype.Blink,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -6331,7 +6757,12 @@ namespace UnsignedEvade
 
         public static void Initialize()
         {
-            foreach (SpellInfo spell in SpellInfoList)
+            List<string> ChampionNames = new List<string>();
+            foreach (AIHeroClient hero in EntityManager.Heroes.AllHeroes)
+                if (!ChampionNames.Contains(hero.ChampionName))
+                    ChampionNames.Add(hero.ChampionName);
+
+            foreach (SpellInfo spell in SpellInfoList.Where(a=>ChampionNames.Contains(a.ChampionName)))
                 SpellList.Add(spell);
         }
     }

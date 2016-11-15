@@ -11,12 +11,25 @@ namespace UnsignedEvade
     {
         public static bool IsOffCooldown(this SpellInfo info)
         {
-            return info.GetChampionSpell() != null && !info.IsOnCooldown() && info.SpellName == info.GetChampionSpell().Name;
-        }
+            /*if (info.ChampionName == "Rengar")
+            {
+                if (info.SpellName != info.GetChampionSpell().Name)
+                    return false;
+            }
+            */
+            //empowered abilities -  Rengar
+            if (info.ChampionName == "Rengar" && info.GetChampionSpell() != null && info.SpellName != info.GetChampionSpell().Name)
+                return false;
+            
+            if (info.GetChampionSpell() != null &&
+                info.startingAmmoCount != -1)
+                return true;
 
+            return info.GetChampionSpell() != null && (!info.IsOnCooldown() || (info.BuffName != "" && info.caster.HasBuff(info.BuffName)));// && info.SpellName == info.GetChampionSpell().Name;
+        }
         public static bool IsOnCooldown(this SpellInfo info)
         {
-            return (Game.Time - info.GetChampionSpell().CooldownExpires) < 0;
+            return info.GetChampionSpell() != null && (Game.Time - info.GetChampionSpell().CooldownExpires) < 0;
         }
     }
 }

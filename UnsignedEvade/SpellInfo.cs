@@ -17,13 +17,15 @@ namespace UnsignedEvade
             SecondRadius,
             Width = 10,
             Range,
-            CollisionCount = int.MaxValue,
+            ConeAndLinearRange,
+            CollisionCount = 0,
             ConeDegrees,
-            TimeOfCast;
+            TimeOfCast,
+            startingAmmoCount = -1f;
         private float travelTime = 0;
         public string ChampionName,
-            MissileName,
-            SpellName,
+            MissileName = "",
+            SpellName = "",
             BuffName = "";
         public bool canVaryInLength = false;
         public string[] OtherMissileNames = new string[0];
@@ -34,44 +36,12 @@ namespace UnsignedEvade
         public Dashtype DashType = Dashtype.None;
 
         public Vector3 startPosition = Vector3.Zero,
-            endPosition = Vector3.Zero;
+            endPosition = Vector3.Zero,
+            startingDirection;
         public GameObject target = null;
         public Obj_AI_Base caster = null;
         public MissileClient missile = null;
-        public List<Vector3> GetPath()
-        {
-            List<Vector3> temp = new List<Vector3>();
-
-            //animation
-            if (CreationType == SpellCreationLocation.OnProcessSpell)
-            {
-
-            }
-            //spell cast
-            else if (CreationType == SpellCreationLocation.OnSpellCast)
-            {
-
-            }
-            //missile/projectile
-            else if (CreationType == SpellCreationLocation.OnObjectCreate)
-            {
-                //if missile is targetting me
-                //if (missile.Target.Name == Player.Instance.Name)
-                {
-                    float slope = (endPosition.Y - startPosition.Y) / (endPosition.X - startPosition.X);
-                    float yInt = -(slope * startPosition.X) + startPosition.Y;
-                    float startX = (startPosition.X > endPosition.X) ? endPosition.X : startPosition.X;
-                    float endX = (startPosition.X > endPosition.X) ? startPosition.X : endPosition.X;
-
-                    //using point-slope form create a linear line and get all vectors in between. Each vector will be 1 x 
-                    for (int i = (int)startX; i < endX; i++)
-                        temp.Add(new Vector3(i, (slope * i) + yInt, 0));
-                }
-            }
-
-            return temp;
-        }
-
+        
         public float TravelTime
         {
             get
@@ -106,6 +76,7 @@ namespace UnsignedEvade
         public enum SpellTypeInfo
         {
             CircularSkillshot,
+            ConeAndLinearSkillshot,
             LinearSkillshot,
             ArcSkillshot,
             SelfActive,
@@ -170,6 +141,7 @@ namespace UnsignedEvade
             if(slot != EloBuddy.SpellSlot.Unknown)
                 return caster.Spellbook.GetSpell(slot);
 
+            Console.WriteLine("Champion Spell was null: " + SpellName);
             return null;
         }
     }

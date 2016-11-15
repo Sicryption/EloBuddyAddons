@@ -16,14 +16,20 @@ namespace UnsignedEvade
                 ParticleName = "Corki_Base_W_tar.troy",
                 Length = 300,
                 Width = 300,
-                XOffset = -25,
-                YOffset = 100,
                 SpellType = ParticleInfo.SpellTypeInfo.Wall,
                 otherNames = new List<string>()
                 {
                     //big w
                     "Corki_Base_W_AoE_ground.troy",
                 },
+            },
+            //Rumble R
+            new ParticleInfo()
+            {
+                ParticleName = "rumble_base_r_burn.troy",
+                Length = 300,
+                Width = 300,
+                SpellType = ParticleInfo.SpellTypeInfo.Wall,
             },
             //Ziggs E 
             new ParticleInfo()
@@ -37,6 +43,13 @@ namespace UnsignedEvade
             {
                 ParticleName = "Lux_Base_E_mis.troy",
                 Radius = 350f,
+                SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
+            },
+            //Karthus Q
+            new ParticleInfo()
+            {
+                ParticleName = "Karthus_Base_Q_Point_red.troy",
+                Radius = 160f,
                 SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
             },
             //Karma Mantra-Q
@@ -53,7 +66,7 @@ namespace UnsignedEvade
                 Radius = 350f,
                 SpellType = ParticleInfo.SpellTypeInfo.CircularSkillshot,
             },
-            //Zilean Q on Enemy
+            //Yasuo Wind Wall
             new ParticleInfo()
             {
                 ParticleName = "Yasuo_Base_W_windwall1.troy",

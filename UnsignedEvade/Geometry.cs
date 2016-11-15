@@ -77,10 +77,10 @@ namespace UnsignedEvade
         {
             Vector3 SW = Vector3.Zero, SE = Vector3.Zero, NW = Vector3.Zero, NE = Vector3.Zero;
             
-            SW = new Vector3(position.X - (length / 2) + xoffset, position.Y - (width / 2) + yoffset, 0f);
-            SE = new Vector3(position.X + (length / 2) + xoffset, position.Y - (width / 2) + yoffset, 0f);
-            NW = new Vector3(position.X - (length / 2) + xoffset, position.Y + (width / 2) + yoffset, 0f);
-            NE = new Vector3(position.X + (length / 2) + xoffset, position.Y + (width / 2) + yoffset, 0f);
+            SW = new Vector3(position.X - (length / 2) + xoffset, position.Y - (width / 2) + yoffset, position.Z);
+            SE = new Vector3(position.X + (length / 2) + xoffset, position.Y - (width / 2) + yoffset, position.Z);
+            NW = new Vector3(position.X - (length / 2) + xoffset, position.Y + (width / 2) + yoffset, position.Z);
+            NE = new Vector3(position.X + (length / 2) + xoffset, position.Y + (width / 2) + yoffset, position.Z);
             
             Drawing.DrawLine(SW.WorldToScreen(), SE.WorldToScreen(), 3, drawColor);
             Drawing.DrawLine(SW.WorldToScreen(), NW.WorldToScreen(), 3, drawColor);
