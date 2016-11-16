@@ -31,7 +31,7 @@ namespace UnsignedRengar
             
             Rengar = Player.Instance;
             ModeHandler.Rengar = Player.Instance;
-
+            
             MenuHandler.Initialize();
 
             Q = new Spell.Skillshot(SpellSlot.Q, 326, EloBuddy.SDK.Enumerations.SkillShotType.Cone, 250, 3000, 150, DamageType.Physical)
@@ -148,7 +148,6 @@ namespace UnsignedRengar
             //left
             Drawing.DrawLine(NWPoint.WorldToScreen(), SWPoint.WorldToScreen(), 3, drawColor);
         }
-
 
         private static void Game_OnTick(EventArgs args)
         {
