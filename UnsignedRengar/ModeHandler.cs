@@ -402,8 +402,10 @@ namespace UnsignedRengar
             if (!hasDoneActionThisTick &&
                 RavenousHydra.MeetsCriteria()
                 && Rengar.IsAutoCanceling(enemies)
-                && enemies.Where(a => a.IsInRange(Rengar, 400)).FirstOrDefault() != null
-                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Rengar, a, ItemId.Ravenous_Hydra)).FirstOrDefault() != null))
+                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Rengar, a, ItemId.Ravenous_Hydra)).FirstOrDefault() != null)
+                && (
+                enemies.Where(a => a.Type == GameObjectType.AIHeroClient && a.IsInRange(Rengar, 400)).Count() >= MenuHandler.Items.GetSliderValue("Champions to use Tiamat/Ravenous Hydra on")
+                || enemies.Where(a => a.Type != GameObjectType.AIHeroClient && a.IsInRange(Rengar, 400)).Count() >= MenuHandler.Items.GetSliderValue("Minions to use Tiamat/Ravenous Hydra on")))
                 hasDoneActionThisTick = RavenousHydra.Cast();
             #endregion
 
@@ -421,7 +423,10 @@ namespace UnsignedRengar
                 Tiamat.MeetsCriteria()
                 && Rengar.IsAutoCanceling(enemies)
                 && enemies.Where(a => a.IsInRange(Rengar, 400)).FirstOrDefault() != null
-                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Rengar, a, ItemId.Tiamat)).FirstOrDefault() != null))
+                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Rengar, a, ItemId.Tiamat)).FirstOrDefault() != null)
+                && (
+                enemies.Where(a => a.Type == GameObjectType.AIHeroClient && a.IsInRange(Rengar, 400)).Count() >= MenuHandler.Items.GetSliderValue("Champions to use Tiamat/Ravenous Hydra on")
+                || enemies.Where(a => a.Type != GameObjectType.AIHeroClient && a.IsInRange(Rengar, 400)).Count() >= MenuHandler.Items.GetSliderValue("Minions to use Tiamat/Ravenous Hydra on")))
                 hasDoneActionThisTick = Tiamat.Cast();
             #endregion
 

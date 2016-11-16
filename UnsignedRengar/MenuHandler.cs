@@ -72,6 +72,8 @@ namespace UnsignedRengar
             AddCheckboxes(ref Flee, "Use Empowered W", "Use E", "Use Empowered E", "Use Empowered W to stop CC", "Jump from Brush");
 
             AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
+            AddSlider(Items, "Minions to use Tiamat/Ravenous Hydra On", 2, 1, 10);
+            AddSlider(Items, "Champions to use Tiamat/Ravenous Hydra on", 2, 1, 10);
 
             AddCheckboxes(ref Drawing, "Draw Q_false", "Draw Q radius", "Draw W", "Draw E", "Draw R Detection Range", "Draw Arrow to R Target_false", "Draw Killable Text", "Draw Enemy Health after Combo");
             AddSlider(Drawing, "Autos in Combo", 2, 0, 5);
