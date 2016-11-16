@@ -58,6 +58,9 @@ namespace UnsignedRengar
 
         private static void Drawing_OnEndScene(EventArgs args)
         {
+            if (Rengar.IsDead)
+                return;
+
             if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Enemy Health after Combo"))
                 foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies.Where(a=>a.MeetsCriteria()))
                 {
@@ -76,6 +79,9 @@ namespace UnsignedRengar
 
         private static void Drawing_OnDraw(EventArgs args)
         {
+            if (Rengar.IsDead)
+                return;
+
             System.Drawing.Color drawColor = System.Drawing.Color.Blue;
 
             if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Q"))
