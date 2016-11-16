@@ -121,6 +121,7 @@ namespace UnsignedEvade
                 else
                     newSpellInstance.endPosition = args.End;
 
+                newSpellInstance.MissileName = "";
                 newSpellInstance.startingDirection = sender.Direction;
                 newSpellInstance.target = args.Target;
                 newSpellInstance.caster = sender;
@@ -184,6 +185,10 @@ namespace UnsignedEvade
                 SpellInfo info = SpellDatabase.GetSpellInfo(projectile.SData.Name);
                 if (info != null)
                 {
+                    //dont draw a spell if its missile was created
+                    if (activeSpells.ContainsSpellName(info.SpellName, true))
+                        activeSpells.Remove(activeSpells.GetSpellFromSpellName(info.SpellName, true));
+
                     SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
                     
                     newSpellInstance.startPosition = projectile.StartPosition;

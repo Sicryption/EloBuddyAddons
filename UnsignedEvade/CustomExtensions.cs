@@ -21,9 +21,9 @@ namespace UnsignedEvade
             if (info.ChampionName == "Rengar" && info.GetChampionSpell() != null)
             {
                 if (info.SpellName.Contains("Emp") && info.caster.Mana != 4)
-                    return true;
+                    return false;
                 else if (!info.SpellName.Contains("Emp") && Game.Time - (info.TimeOfCast + info.Delay + info.TravelTime) >= 0)
-                    return true;
+                    return false;
             }
             
             if (info.GetChampionSpell() != null &&
@@ -35,6 +35,20 @@ namespace UnsignedEvade
         public static bool IsOnCooldown(this SpellInfo info)
         {
             return info.GetChampionSpell() != null && (Game.Time - info.GetChampionSpell().CooldownExpires) < 0;
+        }
+        public static bool ContainsSpellName(this List<SpellInfo> info, string name, bool blankMissileName = false)
+        {
+            foreach (SpellInfo inf in info)
+                if (inf.SpellName == name && (!blankMissileName || inf.MissileName == ""))
+                    return true;
+            return false;
+        }
+        public static SpellInfo GetSpellFromSpellName(this List<SpellInfo> info, string name, bool blankMissileName = false)
+        {
+            foreach (SpellInfo inf in info)
+                if (inf.SpellName == name && (!blankMissileName || inf.MissileName == ""))
+                    return inf;
+            return null;
         }
     }
 }
