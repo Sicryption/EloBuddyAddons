@@ -357,26 +357,43 @@ namespace UnsignedEvade
                     //Projectile
                     case SpellInfo.SpellCreationLocation.OnObjectCreate:
                         //linear skillshot
-                        if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
-                        {
-                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.SpellCaster != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
-                                KeepList.Add(info);
-                        }
-                        if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted)
-                        {
-                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
-                                KeepList.Add(info);
-                        }
-                        if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
-                        {
-                            if (info.missile != null && info.missile.StartPosition != Vector3.Zero && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null && info.missile.SData != null && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
-                                KeepList.Add(info);
-                        }
+                        HandleMissiles(info, KeepList);
                         break;
                 }
             }
 
             activeSpells = KeepList;
+        }
+
+        private static void HandleMissiles(SpellInfo info, List<SpellInfo> KeepList)
+        {
+            if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
+            {
+                if (info.missile != null && info.missile.StartPosition != Vector3.Zero
+                    && info.missile.EndPosition != Vector3.Zero && info.missile.SpellCaster != null
+                    && info.missile.SData != null
+                    && info.missile.SData.Name != null
+                    && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
+                    KeepList.Add(info);
+            }
+            if (info.SpellType == SpellInfo.SpellTypeInfo.Targeted)
+            {
+                if (info.missile != null && info.missile.StartPosition != Vector3.Zero
+                    && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null
+                    && info.missile.SData != null
+                    && info.missile.SData.Name != null
+                    && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
+                    KeepList.Add(info);
+            }
+            if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
+            {
+                if (info.missile != null && info.missile.StartPosition != Vector3.Zero
+                    && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null
+                    && info.missile.SData != null
+                    && info.missile.SData.Name != null
+                    && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
+                    KeepList.Add(info);
+            }
         }
 
         private static void DrawSpells()
