@@ -33,14 +33,9 @@ namespace UnsignedRengar
         {
             return MenuHandler.GetSliderValue(self, text);
         }
-        public static int HitNumber(this Spell.Skillshot.BestPosition self, Spell.Skillshot spell)
+        public static string GetComboBoxText(this Menu self, string text)
         {
-            if(spell.Type == EloBuddy.SDK.Enumerations.SkillShotType.Cone)
-            {
-                Geometry.Polygon.Sector cone = new Geometry.Polygon.Sector(Program.Rengar.Position, Program.Rengar.Position - self.CastPosition, spell.ConeAngleDegrees, spell.Range);
-                return EntityManager.Heroes.Enemies.Where(a => a.MeetsCriteria() && cone.IsInside(a)).Count();
-            }
-            return 0;
+            return MenuHandler.GetComboBoxText(self, text);
         }
         public static List<Obj_AI_Base> ToObj_AI_BaseList(this List<AIHeroClient> list)
         {
@@ -56,11 +51,15 @@ namespace UnsignedRengar
                 returnList.Add(unit as Obj_AI_Base);
             return returnList;
         }
+        public static float MissingHealth(this AIHeroClient self)
+        {
+            return self.MaxHealth - self.Health;
+        }
         public static Vector3 GetBestConeAndLinearCastPosition(this Spell.Skillshot cone, Spell.Skillshot linearSpell, List<Obj_AI_Base> enemies, Vector3 sourcePosition, out int bestHitNumber)
         {
             int radius = (int)cone.Range;
 
-            enemies = enemies.Where(a => a.MeetsCriteria() && a.IsInRange(sourcePosition, radius)).ToList();
+            enemies = enemies.Where(a => a.MeetsCriteria() && a.Position(linearSpell.CastDelay).IsInRange(sourcePosition, radius)).ToList();
 
             bestHitNumber = 0;
             Vector3 castPosition = Vector3.Zero;
@@ -84,19 +83,24 @@ namespace UnsignedRengar
             }
 
             //order list by most hit by Q1 and Q2
-            conePositions = conePositions.OrderByDescending(a => a.Item1.EnemiesHitInSectorAndRectangle(new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width), enemies)).ToList();
+            conePositions = conePositions.OrderByDescending(a => a.Item1.EnemiesHitInSectorAndRectangle(new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width), enemies, linearSpell.CastDelay)).ToList();
             //only leave the ones with the highest amount
-            conePositions = conePositions.Where(a => a.Item1.EnemiesHitInSectorAndRectangle(new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width), enemies) == conePositions[0].Item1.EnemiesHitInSectorAndRectangle(new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width), enemies)).ToList();
+            conePositions = conePositions.Where(a => a.Item1.EnemiesHitInSectorAndRectangle(new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width), enemies, linearSpell.CastDelay) == conePositions[0].Item1.EnemiesHitInSectorAndRectangle(new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width), enemies, linearSpell.CastDelay)).ToList();
             //from the ones with the most Sector/Line enemies hit, find the one with the most in the rectangle
-            conePositions = conePositions.OrderByDescending(a => new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width).EnemiesHitInRectangle(enemies)).ToList();
+            conePositions = conePositions.OrderByDescending(a => new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width).EnemiesHitInRectangle(enemies, linearSpell.CastDelay)).ToList();
             //only take the ones with the most enemies
-            conePositions = conePositions.Where(a => new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width).EnemiesHitInRectangle(enemies) == new Geometry.Polygon.Rectangle(sourcePosition, conePositions[0].Item2, linearSpell.Width).EnemiesHitInRectangle(enemies)).ToList();
+            conePositions = conePositions.Where(a => new Geometry.Polygon.Rectangle(sourcePosition, a.Item2, linearSpell.Width).EnemiesHitInRectangle(enemies, linearSpell.CastDelay) == new Geometry.Polygon.Rectangle(sourcePosition, conePositions[0].Item2, linearSpell.Width).EnemiesHitInRectangle(enemies, linearSpell.CastDelay)).ToList();
             //from the ones with the most sector/line enemies hit AND the most line enemies hit, find the ones with the most sector area
-            conePositions = conePositions.OrderByDescending(a => a.Item1.EnemiesHitInSector(enemies)).ToList();
+            conePositions = conePositions.OrderByDescending(a => a.Item1.EnemiesHitInSector(enemies, cone.CastDelay)).ToList();
 
             Tuple<Geometry.Polygon.Sector, Vector3> bestCone = conePositions.First();
-            bestHitNumber = bestCone.Item1.EnemiesHitInSectorAndRectangle(new Geometry.Polygon.Rectangle(sourcePosition, bestCone.Item2, linearSpell.Width), enemies);
+
+            Geometry.Polygon.Rectangle spellRectangle = new Geometry.Polygon.Rectangle(sourcePosition, bestCone.Item2, linearSpell.Width);
+            bestHitNumber = bestCone.Item1.EnemiesHitInSectorAndRectangle(spellRectangle, enemies, linearSpell.CastDelay);
             
+            if(bestHitNumber == 1)
+                return sourcePosition.Extend(bestCone.Item1.GetEnemiesHitInSectorAndRectangle(spellRectangle, enemies, linearSpell.CastDelay).FirstOrDefault().Position, radius - 1).To3D((int)sourcePosition.Z);
+
             return sourcePosition.Extend(bestCone.Item2, radius - 1).To3D((int)sourcePosition.Z);
         }
         public static float GreyShieldPercent(this AIHeroClient self)
@@ -128,19 +132,19 @@ namespace UnsignedRengar
                 return true;
             return false;
         }
-        public static int EnemiesHitInSector(this Geometry.Polygon.Sector sector, List<Obj_AI_Base> enemies)
+        public static int EnemiesHitInSector(this Geometry.Polygon.Sector sector, List<Obj_AI_Base> enemies, int delay)
         {
-            return enemies.Where(a => a.MeetsCriteria() && sector.IsInside(a)).Count();
+            return enemies.Where(a => a.MeetsCriteria() && sector.IsInside(a.Position(delay))).Count();
         }
-        public static int EnemiesHitInRectangle(this Geometry.Polygon.Rectangle rect, List<Obj_AI_Base> enemies)
+        public static int EnemiesHitInRectangle(this Geometry.Polygon.Rectangle rect, List<Obj_AI_Base> enemies, int delay)
         {
-            return enemies.Where(a => a.MeetsCriteria() && rect.IsInside(a)).Count();
+            return enemies.Where(a => a.MeetsCriteria() && rect.IsInside(a.Position(delay))).Count();
         }
         public static Vector3 GetBestLinearPredictionPos(this Spell.Skillshot self, List<Obj_AI_Base> enemies, Vector3 sourcePosition, out int enemiesHit)
         {
             enemiesHit = 0;
 
-            enemies = enemies.Where(a => a.MeetsCriteria() && a.IsInRange(sourcePosition, self.Range)).ToList();
+            enemies = enemies.Where(a => a.MeetsCriteria() && a.Position(self.CastDelay).IsInRange(sourcePosition, self.Range)).ToList();
             Vector3 castPosition = Vector3.Zero;
 
             //if there is nothing that meets the criteria
@@ -164,7 +168,7 @@ namespace UnsignedRengar
             if (self.AllowedCollisionCount == 1)
             {
                 bestPos = rectPositions.Where(a =>
-                   enemies.Where(enemy => a.Item1.IsInside(enemy)).OrderBy(enemy => enemy.Distance(sourcePosition)).FirstOrDefault() != null
+                   enemies.Where(enemy => a.Item1.IsInside(enemy)).OrderBy(enemy => enemy.Position(self.CastDelay).Distance(sourcePosition)).FirstOrDefault() != null
                 ).FirstOrDefault();
                 if (bestPos != null)
                     enemiesHit = 1;
@@ -172,10 +176,10 @@ namespace UnsignedRengar
             else
             {
                 bestPos = rectPositions.OrderByDescending(a =>
-                   enemies.Where(enemy => a.Item1.IsInside(enemy)).Count()
+                   enemies.Where(enemy => a.Item1.IsInside(enemy.Position(self.CastDelay))).Count()
                 ).FirstOrDefault();
                 if (bestPos != null)
-                   enemiesHit = enemies.Where(enemy => bestPos.Item1.IsInside(enemy)).Count();
+                   enemiesHit = enemies.Where(enemy => bestPos.Item1.IsInside(enemy.Position(self.CastDelay))).Count();
             }
 
             if (bestPos != null)
@@ -183,9 +187,13 @@ namespace UnsignedRengar
             else
                 return Vector3.Zero;
         }
-        public static int EnemiesHitInSectorAndRectangle(this Geometry.Polygon.Sector sector, Geometry.Polygon.Rectangle rect, List<Obj_AI_Base> enemies)
+        public static int EnemiesHitInSectorAndRectangle(this Geometry.Polygon.Sector sector, Geometry.Polygon.Rectangle rect, List<Obj_AI_Base> enemies, int delay)
         {
-            return enemies.Where(a => a.MeetsCriteria() && rect.IsInside(a)).Count();
+            return enemies.Where(a => a.MeetsCriteria() && rect.IsInside(a.Position(delay))).Count();
+        }
+        public static List<Obj_AI_Base> GetEnemiesHitInSectorAndRectangle(this Geometry.Polygon.Sector sector, Geometry.Polygon.Rectangle rect, List<Obj_AI_Base> enemies, int delay)
+        {
+            return enemies.Where(a => a.MeetsCriteria() && rect.IsInside(a.Position(delay))).ToList();
         }
         public static bool IsAutoCanceling(this AIHeroClient self, List<Obj_AI_Base> enemies)
         {
@@ -212,6 +220,34 @@ namespace UnsignedRengar
             float comboDamage = qdmg + wdmg + edmg + empQDmg + autoDmg + tiamat + thydra + rhydra;
 
             return comboDamage;
+        }
+        public static Vector3 Position(this Obj_AI_Base unit, int secondsTimes1000)
+        {
+            if (MenuHandler.mainMenu.GetComboBoxText("Prediction Type:") == "EloBuddy")
+                return Prediction.Position.PredictUnitPosition(unit, secondsTimes1000).To3D((int)unit.Position.Z);
+            else if (MenuHandler.mainMenu.GetComboBoxText("Prediction Type:") == "Current Position")
+                return unit.Position;
+            else
+            {
+                Console.WriteLine("This prediction is not support. Contact Chaos to fix this.");
+                return unit.Position;
+            }
+        }
+        public static bool ContainsAny(this string s, bool CaseSensitive, params string[] text)
+        {
+            List<string> temp = text.ToList();
+            if (!CaseSensitive)
+            {
+                List<string> NonCaseSensitiveList = new List<string>();
+                foreach (string str in temp)
+                    NonCaseSensitiveList.Add(str.ToLower());
+                temp = NonCaseSensitiveList;
+            }
+
+            foreach (string str in temp)
+                if (s.ToLower().Contains(str.ToLower()))
+                    return true;
+            return false;
         }
     }
 }

@@ -35,10 +35,10 @@ namespace UnsignedRengar
 
             if (menu.GetCheckboxValue("Use W") && Rengar.Ferocity() < 4)
             {
-                if (menu.GetCheckboxValue("Use W for Ferocity") && Rengar.Ferocity() == 3 && EntityManager.Enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)).Count() >= 1)
-                    CastW();
-
                 if (menu.GetCheckboxValue("Use W for damage") && enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)).Count() >= 1)
+                    CastW();
+                
+                if (menu.GetCheckboxValue("Use W for fourth ferocity stack") && Rengar.Ferocity() == 3 && enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)).Count() >= 1)
                     CastW();
 
                 if (Rengar.GreyShieldPercent() >= 1 && menu.GetSliderValue("Use W at % black health") <= Rengar.GreyShieldPercent())
@@ -97,6 +97,9 @@ namespace UnsignedRengar
                 if (menu.GetCheckboxValue("Use W for damage") && enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)).Count() >= 1)
                     CastW();
 
+                if (menu.GetCheckboxValue("Use W for fourth ferocity stack") && Rengar.Ferocity() == 3 && enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)).Count() >= 1)
+                    CastW();
+
                 if (Rengar.GreyShieldPercent() >= 1 && menu.GetSliderValue("Use W at % black health") <= Rengar.GreyShieldPercent())
                     CastW();
             }
@@ -120,7 +123,7 @@ namespace UnsignedRengar
                 UseItems(enemies, false);
 
             if (menu.GetCheckboxValue("Use Smite"))
-                UseSmite(enemies, true);
+                UseSmite(enemies, true, menu.GetCheckboxValue("Use Smite for HP"));
         }
         
         public static void Killsteal()
@@ -222,6 +225,9 @@ namespace UnsignedRengar
                 if (menu.GetCheckboxValue("Use W for damage") && enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)).Count() >= 1)
                     CastW();
 
+                if (menu.GetCheckboxValue("Use W for fourth ferocity stack") && Rengar.Ferocity() == 3 && enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)).Count() >= 1)
+                    CastW();
+
                 if (Rengar.GreyShieldPercent() >= 1 && menu.GetSliderValue("Use W at % black health") <= Rengar.GreyShieldPercent())
                     CastW();
             }
@@ -275,6 +281,9 @@ namespace UnsignedRengar
                 if (menu.GetCheckboxValue("Use W for damage") && enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)).Count() >= 1)
                     CastW();
 
+                if (menu.GetCheckboxValue("Use W for fourth ferocity stack") && Rengar.Ferocity() == 3 && enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)).Count() >= 1)
+                    CastW();
+
                 if (Rengar.GreyShieldPercent() >= 1 && menu.GetSliderValue("Use W at % black health") <= Rengar.GreyShieldPercent())
                     CastW();
             }
@@ -318,11 +327,15 @@ namespace UnsignedRengar
                 CastQ(EmpQPos);
 
             if (menu.GetCheckboxValue("Use W") && Rengar.Ferocity() < 4)
-                if (enemies.Where(a => a.IsInRange(Rengar, Program.W.Range) && a.Health <= Calculations.EmpW(a)).Count() >= 1)
+                if (enemies.Where(a => a.IsInRange(Rengar, Program.W.Range) 
+                && menu.GetSliderValue("Minions to use W") != 0
+                && a.Health <= Calculations.EmpW(a)).Count() >= menu.GetSliderValue("Minions to use W"))
                     CastW();
 
             if (menu.GetCheckboxValue("Use Empowered W") && Rengar.Ferocity() == 4 && !menu.GetCheckboxValue("Save Ferocity"))
-                if (enemies.Where(a => a.IsInRange(Rengar, Program.W.Range) && a.Health <= Calculations.EmpW(a)).Count() >= 1)
+                if (enemies.Where(a => a.IsInRange(Rengar, Program.W.Range)
+                && menu.GetSliderValue("Minions to use Empowered W") != 0
+                && a.Health <= Calculations.EmpW(a)).Count() >= menu.GetSliderValue("Minions to use Empowered W"))
                     CastW();
 
             if (menu.GetCheckboxValue("Use E") && Rengar.Ferocity() < 4 && EHitNumber >= 1)
@@ -451,25 +464,62 @@ namespace UnsignedRengar
             #endregion
         }
 
-        public static void UseSmite(List<Obj_AI_Base> enemies, bool ks)
+        public static void UseSmite(List<Obj_AI_Base> enemies, bool ks, bool forHP = false)
         {
+            enemies = enemies.Where(a => a.MeetsCriteria() && a.IsTargetable && a.IsInRange(Rengar, 500) 
+            && !a.BaseSkinName.ContainsAny(false, "mini", "sru_crab")).ToList();
+            
+            enemies = enemies.Where(a => 
+                //if it is for hp then the entity must not be dragon/baron/herald/vilemaw
+                (forHP && !a.BaseSkinName.ContainsAny(false, "Baron", "Dragon", "Herald", "Spider") && Rengar.MissingHealth() >= Calculations.SmiteHeal())
+                //OR if it is for ks
+                || (ks && 
+                //ks on champion
+                (a.Type == GameObjectType.AIHeroClient
+                //or ks on minion
+                || a.Health <= Calculations.Smite(a, "regular")
+                ))).ToList();
+            
             Spell.Targeted blueSmite = new Spell.Targeted(Rengar.GetSpellSlotFromName("S5_SummonerSmitePlayerGanker"), 500, DamageType.True);
             Spell.Targeted redSmite = new Spell.Targeted(Rengar.GetSpellSlotFromName("S5_SummonerSmiteDuel"), 500, DamageType.True);
-
+            Spell.Targeted Smite = new Spell.Targeted(Rengar.GetSpellSlotFromName("SummonerSmite"), 500, DamageType.True);
+            
             if (blueSmite.Slot != SpellSlot.Unknown && blueSmite.IsReady())
             {
-                var target = enemies.Where(a => a.MeetsCriteria() && a.IsTargetable && a.IsInRange(Rengar, blueSmite.Range) && (!ks || (a.Type == GameObjectType.AIHeroClient && a.Health <= 54 + 6 * Rengar.Level) || (a.Type != GameObjectType.AIHeroClient && a.Health <= Calculations.Smite()))).FirstOrDefault();
-
-                if(target != null)
-                    blueSmite.Cast(target);
+                var target = enemies.Where(a =>
+                //champions
+                ((ks && a.Type == GameObjectType.AIHeroClient && a.Health <= Calculations.Smite(a, "blue")) ||
+                //minions
+                a.Type != GameObjectType.AIHeroClient)).FirstOrDefault();
+                
+                if (target != null)
+                    hasDoneActionThisTick = blueSmite.Cast(target);
             }
 
             if (redSmite.Slot != SpellSlot.Unknown && redSmite.IsReady())
             {
-                var target = enemies.Where(a => a.MeetsCriteria() && a.IsTargetable && a.IsInRange(Rengar, redSmite.Range) && a.IsInRange(Rengar, Rengar.GetAutoAttackRange()) && (!ks || (a.Type == GameObjectType.AIHeroClient && a.Health <= 54 + 6 * Rengar.Level) || (a.Type != GameObjectType.AIHeroClient && a.Health <= Calculations.Smite()))).FirstOrDefault();
+                var target = enemies.Where(a => a.IsInRange(Rengar, Rengar.GetAutoAttackRange()) 
+                //champions
+                && ((ks && a.Type == GameObjectType.AIHeroClient && a.Health <= Calculations.Smite(a, "red")) || 
+                //minions
+                a.Type != GameObjectType.AIHeroClient)).FirstOrDefault();
 
                 if (target != null)
-                    redSmite.Cast(target);
+                {
+                    hasDoneActionThisTick = redSmite.Cast(target);
+                    
+                    //if it did smite them, attack them
+                    if(hasDoneActionThisTick)
+                        Orbwalker.ForcedTarget = target;
+                }
+            }
+
+            if (Smite.Slot != SpellSlot.Unknown && Smite.IsReady())
+            {
+                var target = enemies.Where(a => a.Type != GameObjectType.AIHeroClient).FirstOrDefault();
+
+                if (target != null)
+                    hasDoneActionThisTick = Smite.Cast(target);
             }
         }
 

@@ -5,6 +5,7 @@ using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UnsignedRengar
 {
@@ -52,9 +53,26 @@ namespace UnsignedRengar
         {
             return ((10 + (4 * Rengar.Level)) * 5) - ((target.HPRegenRate / 2) * 5);
         }
-        public static float Smite()
+        public static float Smite(Obj_AI_Base target, string type)
         {
-            return new int[] { 0, 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 }[Rengar.Level];
+            if (target.Type == GameObjectType.AIHeroClient)
+            {
+                if (type == "red")
+                    return 54 + 6 * Rengar.Level;
+                else if (type == "blue")
+                    return 20 + 8 * Rengar.Level;
+                else
+                {
+                    Console.WriteLine("Smite type: " + type + " does not exist!");
+                    return 0;
+                }
+            }
+            else
+                return new int[] { 0, 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 }[Rengar.Level];
+        }
+        public static float SmiteHeal()
+        {
+            return 100 + (Rengar.MaxHealth / 10);
         }
     }
 }

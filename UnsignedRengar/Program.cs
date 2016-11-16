@@ -28,19 +28,19 @@ namespace UnsignedRengar
         {
             if (Player.Instance.ChampionName != "Rengar")
                 return;
-
+            
             Rengar = Player.Instance;
             ModeHandler.Rengar = Player.Instance;
 
             MenuHandler.Initialize();
 
-            Q = new Spell.Skillshot(SpellSlot.Q, 326, EloBuddy.SDK.Enumerations.SkillShotType.Cone, 250, 3000, 55, DamageType.Physical)
+            Q = new Spell.Skillshot(SpellSlot.Q, 326, EloBuddy.SDK.Enumerations.SkillShotType.Cone, 250, 3000, 150, DamageType.Physical)
             {
                 ConeAngleDegrees = 180,
                 AllowedCollisionCount = int.MaxValue,
                 
             };
-            Q2 = new Spell.Skillshot(SpellSlot.Q, 450, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 500, 3000, 55, DamageType.Physical)
+            Q2 = new Spell.Skillshot(SpellSlot.Q, 450, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 500, 3000, 150, DamageType.Physical)
             {
                 AllowedCollisionCount = int.MaxValue,
             };
@@ -79,7 +79,12 @@ namespace UnsignedRengar
             System.Drawing.Color drawColor = System.Drawing.Color.Blue;
 
             if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Q"))
-                //ty eb for .Direction being broken. new Geometry.Polygon.Sector(Rengar.Position, Rengar.Direction, Q.ConeAngleDegrees, Q.Range).Draw(drawColor);
+            {
+                new Geometry.Polygon.Sector(Rengar.Position, Rengar.Position.Extend(Rengar.Position + Rengar.Direction, Q.Range).To3D((int)Rengar.Position.Z), (float)(Q.ConeAngleDegrees * Math.PI / 180), Q.Range).Draw(drawColor);
+                DrawLinearSkillshot(Rengar.Position, Rengar.Position.Extend(Rengar.Position + Rengar.Direction, Q2.Range).To3D((int)Rengar.Position.Z), Q.Width, Q.Speed, Q.Range, Q.AllowedCollisionCount);
+            }
+
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Q Radius"))
                 Q.DrawRange(drawColor, 3);
 
             if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw W"))
@@ -103,6 +108,47 @@ namespace UnsignedRengar
              }
 
         }
+
+        public static void DrawLinearSkillshot(Vector3 startPosition, Vector3 endPosition, float width, float missileSpeed, float range, float collisionCount)
+        {
+            System.Drawing.Color drawColor = System.Drawing.Color.Blue;
+
+            if (collisionCount != 0 && collisionCount != int.MaxValue)
+            {
+                List<Obj_AI_Base> enemiesThatWillBeHit = new List<Obj_AI_Base>();
+                //get if unit(s) will be hit by spell if so get the info.CollisionCount's units position and set it as the end position
+                foreach (Obj_AI_Base enemy in EntityManager.Enemies.Where(a => !a.IsDead && a.Distance(startPosition) <= range))
+                    if (Prediction.Position.Collision.LinearMissileCollision(enemy, startPosition.To2D(), endPosition.To2D(), missileSpeed, (int)width, 0))
+                        enemiesThatWillBeHit.Add(enemy);
+
+                enemiesThatWillBeHit.OrderByDescending(a => a.Distance(startPosition));
+                if (enemiesThatWillBeHit.Count() >= collisionCount)
+                    endPosition = enemiesThatWillBeHit[(int)collisionCount - 1].Position;
+            }
+
+            Vector3 northernMostPoint = (startPosition.Y >= endPosition.Y) ? startPosition : endPosition;
+            Vector3 southernMostPoint = (startPosition.Y >= endPosition.Y) ? endPosition : startPosition;
+
+            Vector3 betweenVector = new Vector3(northernMostPoint.X - southernMostPoint.X, northernMostPoint.Y - southernMostPoint.Y, 0f);
+            Vector2 betweenVector2 = new Vector2(betweenVector.Y, -betweenVector.X);
+            double Length = Math.Sqrt(betweenVector2.X * betweenVector2.X + betweenVector2.Y * betweenVector2.Y); //Thats length of perpendicular
+            Vector2 NewVector = new Vector2((float)(betweenVector2.X / Length), (float)(betweenVector2.Y / Length)); //Now N is normalized perpendicular
+
+            Vector3 NEPoint = new Vector3(southernMostPoint.X + NewVector.X * (width / 2), southernMostPoint.Y + NewVector.Y * (width / 2), startPosition.Z);
+            Vector3 NWPoint = new Vector3(southernMostPoint.X - NewVector.X * (width / 2), southernMostPoint.Y - NewVector.Y * (width / 2), startPosition.Z);
+            Vector3 SEPoint = new Vector3(northernMostPoint.X + NewVector.X * (width / 2), northernMostPoint.Y + NewVector.Y * (width / 2), startPosition.Z);
+            Vector3 SWPoint = new Vector3(northernMostPoint.X - NewVector.X * (width / 2), northernMostPoint.Y - NewVector.Y * (width / 2), startPosition.Z);
+
+            //top
+            Drawing.DrawLine(NEPoint.WorldToScreen(), NWPoint.WorldToScreen(), 3, drawColor);
+            //bottom
+            Drawing.DrawLine(SEPoint.WorldToScreen(), SWPoint.WorldToScreen(), 3, drawColor);
+            //right
+            Drawing.DrawLine(NEPoint.WorldToScreen(), SEPoint.WorldToScreen(), 3, drawColor);
+            //left
+            Drawing.DrawLine(NWPoint.WorldToScreen(), SWPoint.WorldToScreen(), 3, drawColor);
+        }
+
 
         private static void Game_OnTick(EventArgs args)
         {

@@ -34,42 +34,46 @@ namespace UnsignedRengar
 
             #region Set Menu Values
             mainMenu.Add("Creator", new Label("This script is apart of the Unsigned Series made by Chaos"));
+            AddComboBox(mainMenu, "Prediction Type:", 0, "EloBuddy", "Current Position");
 
-            AddCheckboxes(ref Combo, "Use Q", "Use Empowered Q", "Use W", 
-                "Use Empowered W", "Use Empowered W to stop CC", "Use W for damage_false", "Use W for Ferocity", "Use Empowered W for damage_false", "Use E",
-                "Use Empowered E", "Use Items", "Use Ignite", "Use Smite");
+            AddCheckboxes(ref Combo, "Use Q", "Use Empowered Q", "Use W", "Use Empowered W", "Use E", "Use Empowered E",
+                "Use W for fourth ferocity stack", "Use W for damage_false", "Use Empowered W for damage_false", "Use Empowered W to stop CC",
+                "Use Items", "Use Ignite", "Use Smite");
             AddSlider(Combo, "Use W at % black health", 15, 1, 100);
             AddSlider(Combo, "Use Empowered W at % black health", 15, 1, 100);
 
-            AddCheckboxes(ref Harass, "Use Q", "Use Empowered Q", "Use W",
-                "Use Empowered W", "Use Empowered W to stop CC", "Use W for damage_false", "Use Empowered W for damage_false", "Use E",
-                "Use Empowered E", "Use Items", "Use Smite");
-            AddSlider(Harass, "Use W at % black health", 15, 1, 100);
-            AddSlider(Harass, "Use Empowered W at % black health", 15, 1, 100);
+            AddCheckboxes(ref Harass, "Use Q", "Use Empowered Q", "Use W", "Use Empowered W", "Use E", "Use Empowered E",
+                "Use W for fourth ferocity stack", "Use W for damage_false", "Use Empowered W for damage_false", "Use Empowered W to stop CC",
+                "Use Items", "Use Smite");
+            AddSlider(Harass, "Use W at % black health", 8, 1, 100);
+            AddSlider(Harass, "Use Empowered W at % black health", 8, 1, 100);
 
-            AddCheckboxes(ref JungleClear, "Use Q", "Use Empowered Q", "Use W",
-                "Use Empowered W", "Use W for damage_false", "Use Empowered W for damage_false", "Use E",
-                "Use Empowered E", "Use Items", "Use Smite");
-            AddSlider(JungleClear, "Use W at % black health", 15, 1, 100);
-            AddSlider(JungleClear, "Use Empowered W at % black health", 15, 1, 100);
+            AddCheckboxes(ref JungleClear, "Use Q", "Use Empowered Q", "Use W", "Use Empowered W_false", "Use E", "Use Empowered E_false",
+                "Use W for damage_false", "Use Empowered W for damage_false", "Use W for fourth ferocity stack",  
+                "Use Items", "Use Smite", "Use Smite for HP");
+            AddSlider(JungleClear, "Use W at % black health", 8, 1, 100);
+            AddSlider(JungleClear, "Use Empowered W at % black health", 8, 1, 100);
 
-            AddCheckboxes(ref LaneClear, "Use Q", "Use Empowered Q", "Use W",
-                "Use Empowered W", "Use W for damage_false", "Use Empowered W for damage_false", "Use E",
-                "Use Empowered E_false", "Save Ferocity", "Use Items_false");
-            AddSlider(LaneClear, "Use W at % black health", 15, 1, 100);
-            AddSlider(LaneClear, "Use Empowered W at % black health", 15, 1, 100);
+            AddCheckboxes(ref LaneClear, "Use Q", "Use Empowered Q", "Use W", "Use Empowered W", "Use E", "Use Empowered E_false",
+                "Use W for damage_false", "Use Empowered W for damage_false", "Use W for fourth ferocity stack",  "Save Ferocity", 
+                "Use Items_false");
+            AddSlider(LaneClear, "Use W at % black health", 8, 1, 100);
+            AddSlider(LaneClear, "Use Empowered W at % black health", 8, 1, 100);
 
-            AddCheckboxes(ref LastHit, "Use Q", "Use Empowered Q", "Use W_false",
-                "Use Empowered W_false","Use E", "Use Empowered E_false", "Save Ferocity", "Use Items");
+            AddCheckboxes(ref LastHit, "Use Q", "Use Empowered Q", "Use W_false", "Use Empowered W_false", "Use E", "Use Empowered E_false", 
+                "Save Ferocity", 
+                "Use Items");
+            AddSlider(LastHit, "Minions to use W", 2, 0, 5);
+            AddSlider(LastHit, "Minions to use Empowered W", 2, 0, 5);
 
             AddCheckboxes(ref Killsteal, "Killsteal", "Use Q", "Use Empowered Q", "Use W", "Use Empowered W",
                 "Use E", "Use Empowered E", "Use Items", "Use Ignite", "Use Smite");
 
-            AddCheckboxes(ref Flee, "Use E", "Use Empowered E", "Use Empowered W", "Use Empowered W to stop CC", "Jump from Brush");
+            AddCheckboxes(ref Flee, "Use Empowered W", "Use E", "Use Empowered E", "Use Empowered W to stop CC", "Jump from Brush");
 
             AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
 
-            AddCheckboxes(ref Drawing, "Draw Q", "Draw W", "Draw E", "Draw R Detection Range", "Draw Arrow to R Target_false", "Draw Killable Text", "Draw Enemy Health after Combo");
+            AddCheckboxes(ref Drawing, "Draw Q_false", "Draw Q radius", "Draw W", "Draw E", "Draw R Detection Range", "Draw Arrow to R Target_false", "Draw Killable Text", "Draw Enemy Health after Combo");
             AddSlider(Drawing, "Autos in Combo", 2, 0, 5);
             #endregion
         }
