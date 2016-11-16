@@ -18,8 +18,8 @@ namespace UnsignedEvade
             }
             */
             //empowered abilities -  Rengar
-            if (info.ChampionName == "Rengar" && info.GetChampionSpell() != null && info.SpellName != info.GetChampionSpell().Name)
-                return false;
+            if (info.ChampionName == "Rengar" && info.GetChampionSpell() != null && info.SpellName.Contains("Emp"))
+                return true;
             
             if (info.GetChampionSpell() != null &&
                 info.startingAmmoCount != -1)
