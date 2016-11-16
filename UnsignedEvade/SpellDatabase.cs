@@ -849,12 +849,7 @@ namespace UnsignedEvade
                 SpellName = "StaticField",
                 ChampionName = "Blitzcrank",
                 Range = 600f,
-                MissileSpeed = 347.8f,
-                MissileMinSpeed = 347.8f,
-                MissileMaxSpeed = 347.8f,
-                Width = 0f,
                 Radius = 600f,
-                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.Silence,
                 Slot = SpellInfo.SpellSlot.R,
@@ -1584,13 +1579,18 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                SpellName = "HateSpike",
+                ChampionName = "Evelynn",
+                Range = 500f,
+                SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //w
             new SpellInfo()
             {
+                SpellName = "ShadowWalk",
+                ChampionName = "Evelynn",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -1598,6 +1598,9 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "Ravage",
+                ChampionName = "Evelynn",
+                Range = 225f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
@@ -1605,6 +1608,10 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "MaliceandSpite",
+                ChampionName = "Evelynn",
+                Range = 650f,
+                Radius = 250f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.R,
@@ -2860,6 +2867,9 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "NullLance",
+                ChampionName = "Kassadin",
+                Range = 650f,
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -2867,6 +2877,8 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "NetherBlade",
+                ChampionName = "Kassadin",
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -2874,6 +2886,10 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
+                SpellName = "ForcePulse",
+                ChampionName = "Kassadin",
+                Range = 700f,
+                ConeDegrees = 80f,
                 SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
@@ -2881,6 +2897,11 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                SpellName = "RiftWalk",
+                ChampionName = "Kassadin",
+                Range = 500f,
+                Radius = 150f,
+                DashType = SpellInfo.Dashtype.Blink,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -3642,7 +3663,7 @@ namespace UnsignedEvade
                 MissileMinSpeed = 700f,
                 MissileMaxSpeed = 700f,
                 Width = 160f,
-                Radius = 300f,
+                Radius = 300f,  
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.KnockUp,
                 Slot = SpellInfo.SpellSlot.R,
