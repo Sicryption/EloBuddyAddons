@@ -411,7 +411,7 @@ namespace UnsignedEvade
                 ChampionName = "Alistar",
                 Range = 350f,
                 Radius = 575f,
-                SpellType = SpellInfo.SpellTypeInfo.SelfActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -953,6 +953,7 @@ namespace UnsignedEvade
                 Slot = SpellInfo.SpellSlot.R,
             },
             #endregion
+            //fix caitlyn's Q's end, not all cait traps being deleted when dead (might have fixed traps)
             #region Caitlyn
             //aa
             new SpellInfo()
@@ -1020,11 +1021,11 @@ namespace UnsignedEvade
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.W,
             },
-            //e
+            //e handled as trap
             new SpellInfo()
             {
-                SpellName = "CaitlynEntrapment",
-                MissileName = "CaitlynEntrapmentMissile",
+                //SpellName = "CaitlynEntrapment",
+                //MissileName = "CaitlynEntrapmentMissile",
                 ChampionName = "Caitlyn",
                 Range = 800f,
                 MissileSpeed = 1600f,
@@ -1919,6 +1920,7 @@ namespace UnsignedEvade
                 Slot = SpellInfo.SpellSlot.R,
             },
             #endregion
+            //fix garen E by adding buff name
             #region Garen
             //q charge
             new SpellInfo()
@@ -1957,7 +1959,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellName = "GarenE",
+                //SpellName = "GarenE",
                 ChampionName = "Garen",
                 Range = 660f,
                 Radius = 660f,
@@ -2596,6 +2598,14 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
+                SpellName = "JhinQ",
+                MissileName = "JhinQ",
+                ChampionName = "Jhin",
+                Range = 550f,
+                MissileSpeed = 1800f,
+                MissileMinSpeed = 1800f,
+                MissileMaxSpeed = 1800f,
+                OtherMissileNames = new string[] { "JhinQMisBounce", },
                 SpellType = SpellInfo.SpellTypeInfo.Targeted,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
@@ -2603,13 +2613,29 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
+                SpellName = "JhinW",
+                ChampionName = "Jhin",
+                Range = 2500f,
+                MissileSpeed = 5000f,
+                MissileMinSpeed = 5000f,
+                MissileMaxSpeed = 5000f,
+                Width = 40f,
+                Delay = 1f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.W,
             },
-            //e
+            //e handled as a trap
             new SpellInfo()
             {
+                SpellName = "JhinE",
+                MissileName = "JhinETrap",
+                ChampionName = "Jhin",
+                MissileSpeed = 1600f,
+                MissileMinSpeed = 1600f,
+                MissileMaxSpeed = 1600f,
+                Range = 750f,
+                Width = 120f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
@@ -2617,6 +2643,15 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
+                //original cast spell name is "JhinR"
+                SpellName = "JhinRShot",
+                MissileName = "JhinRShotMis",
+                ChampionName = "Jhin",
+                Range = 3500f,
+                MissileSpeed = 1200f,
+                MissileMinSpeed = 1200f,
+                MissileMaxSpeed = 1200f,
+                Width = 80f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.R,
@@ -3346,7 +3381,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellName = "BlindMonkQOne",
+                //SpellName = "BlindMonkQOne",
                 MissileName = "BlindMonkQOne",
                 BuffName = "BlindMonkQOne",
                 ChampionName = "LeeSin",
@@ -3374,7 +3409,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellName = "BlindMonkWOne",
+                //SpellName = "BlindMonkWOne",
                 ChampionName = "LeeSin",
                 Range = 700f,
                 MissileSpeed = 1500f,
@@ -3399,7 +3434,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellName = "BlindMonkEOne",
+                //SpellName = "BlindMonkEOne",
                 ChampionName = "LeeSin",
                 Radius = 425f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
@@ -5391,6 +5426,7 @@ namespace UnsignedEvade
                 ChampionName = "Soraka",
                 Range = 875f,
                 Radius = 250f,
+                Delay = 1.75f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Silence,
                 Slot = SpellInfo.SpellSlot.E,
@@ -5574,7 +5610,6 @@ namespace UnsignedEvade
             //aa
             new SpellInfo()
             {
-                SpellName = "ToxicShotAttack",
                 MissileName = "ToxicShotAttack",
                 ChampionName = "Teemo",
                 Range = 600f,
@@ -5632,8 +5667,8 @@ namespace UnsignedEvade
             //r2
             new SpellInfo()
             {
-                SpellName = "TeemoRCast",
-                MissileName = "BantamTrapBounceSpell",
+                //SpellName = "TeemoRCast",
+                //aaaaaaaMissileName = "BantamTrapBounceSpell",
                 ChampionName = "Teemo",
                 Range = 400f,
                 MissileSpeed = 1000f,
@@ -6203,6 +6238,7 @@ namespace UnsignedEvade
                 MissileMaxSpeed = 1300f,
                 Range = 1100f,
                 Width = 50f,
+                canVaryInLength = true,
                 CollisionCount = 1,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
@@ -6219,6 +6255,7 @@ namespace UnsignedEvade
                 MissileMaxSpeed = 2100f,
                 Range = 1100f,
                 Width = 45f,
+                canVaryInLength = true,
                 CollisionCount = 1,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
@@ -6234,7 +6271,7 @@ namespace UnsignedEvade
                 MissileMinSpeed = 1700f,
                 MissileMaxSpeed = 1700f,
                 Range = 1200f,
-                Width = 87.5f,
+                Width = 225f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
@@ -6250,7 +6287,7 @@ namespace UnsignedEvade
                 MissileMaxSpeed = 1500f,
                 Range = 1100f,
                 Width = 120f,
-                Radius = 225f,
+                Radius = 200f,
                 TravelTime = -1f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.KnockBack,
@@ -6261,11 +6298,12 @@ namespace UnsignedEvade
             {
                 SpellName = "VelkozR",
                 ChampionName = "Velkoz",
+                BuffName = "VelkozR",
                 Range = 1550f,
                 MissileSpeed = 1500f,
                 MissileMinSpeed = 1500f,
                 MissileMaxSpeed = 1500f,
-                Width = 10f,
+                Width = 100f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
@@ -6444,6 +6482,7 @@ namespace UnsignedEvade
                 Slot = SpellInfo.SpellSlot.R,
             },
             #endregion
+            //get ult buff name
             #region Wukong
             //q
             new SpellInfo()

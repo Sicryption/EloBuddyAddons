@@ -50,5 +50,12 @@ namespace UnsignedEvade
                     return inf;
             return null;
         }
+        public static SpellInfo GetSpellFromMissileName(this List<SpellInfo> info, string name, bool blankSpellName = false)
+        {
+            foreach (SpellInfo inf in info)
+                if (inf.MissileName == name && (!blankSpellName || inf.SpellName == ""))
+                    return inf;
+            return null;
+        }
     }
 }
