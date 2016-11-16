@@ -373,7 +373,6 @@ namespace UnsignedGP
             {
                 foreach (Obj_AI_Base barrel in NearbyBarrels)
                 {
-                    Chat.Print("trying to combo barrels");
                     List<AIHeroClient> nearbyEnemies = ObjectManager.Get<AIHeroClient>().Where(a => a.IsEnemy && !a.IsDead && (!ks || GPCalcs.E(a, false) >= a.Health) && a.Distance(barrel) <= 1000).ToList();
                     
                     if (nearbyEnemies.FirstOrDefault() != null)
