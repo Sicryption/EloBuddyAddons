@@ -27,12 +27,13 @@ namespace UnsignedEvade
             MissileName = "",
             SpellName = "",
             BuffName = "";
-        public bool canVaryInLength = false;
+        public bool CanVaryInLength = false;
         public string[] OtherMissileNames = new string[0];
         public SpellSlot Slot = SpellSlot.None;
         public SpellTypeInfo SpellType = SpellTypeInfo.None;
         public CrowdControlType CCtype = CrowdControlType.None;
         public SpellCreationLocation CreationType = SpellCreationLocation.None;
+        public Buff BuffType = Buff.None;
         public Dashtype DashType = Dashtype.None;
 
         public Vector3 startPosition = Vector3.Zero,
@@ -68,8 +69,10 @@ namespace UnsignedEvade
 
         public enum Dashtype
         {
-            Linear,
-            Blink,
+            Linear,//lucian e, gragas e
+            Blink,//ez e, flash
+            TargetedLinear,//akali r, lee sin w
+            Targeted,//lee sin q2, vi r
             None
         }
 
@@ -79,9 +82,12 @@ namespace UnsignedEvade
             ConeAndLinearSkillshot,
             LinearSkillshot,
             ArcSkillshot,
+            TargetedActive, //ivern E
             SelfActive,
+            SelfActiveNoDamage,//alistar E
             PassiveActive,
             Targeted,
+            TargetedChannel,//Fiddle W
             Wall,
             MovingWall,
             CircularWall,
@@ -105,13 +111,14 @@ namespace UnsignedEvade
             Root,//Cait E, Rengar E, Lux Q
             Silence,//Soraka E, Fidds E
             Slow,//Janna W
+            HeavySlow,//Nasus W
             Statis,//Aatrox Passive
             Stun,//Alistar Q, Xerath E, Riven W
             Suspension,//Yasuo R
             Suppression,//Malzahar R, Warwick R
             None
         }
-
+        
         public enum SpellSlot
         {
             Q,
@@ -121,6 +128,21 @@ namespace UnsignedEvade
             Auto,
             None
         } 
+
+        public enum Buff
+        {
+            AttackDamageIncrease,
+            AttackSpeedIncrease,
+            AutoAttackRangeIncrease,
+            CCRemoval,
+            DamageReduction,
+            Heal,
+            HeavySpeedUp,
+            Pet,
+            Shield,
+            SpeedUp,
+            None
+        }
 
         public EloBuddy.SpellSlot GetEBSpellSlot()
         {

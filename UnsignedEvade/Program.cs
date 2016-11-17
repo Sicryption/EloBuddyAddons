@@ -114,9 +114,9 @@ namespace UnsignedEvade
                 SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
 
                 newSpellInstance.startPosition = args.Start;
-                if ((!info.canVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
+                if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
                     newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
-                else if ((!info.canVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.ConeAndLinearSkillshot)
+                else if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.ConeAndLinearSkillshot)
                     newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.ConeAndLinearRange);
                 else
                     newSpellInstance.endPosition = args.End;
@@ -192,7 +192,7 @@ namespace UnsignedEvade
                     SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
                     
                     newSpellInstance.startPosition = projectile.StartPosition;
-                    if ((!info.canVaryInLength || projectile.StartPosition.Distance(projectile.EndPosition) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
+                    if ((!info.CanVaryInLength || projectile.StartPosition.Distance(projectile.EndPosition) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
                         newSpellInstance.endPosition = Geometry.CalculateEndPosition(projectile.StartPosition, projectile.EndPosition, info.Range);
                     else
                         newSpellInstance.endPosition = projectile.EndPosition;
