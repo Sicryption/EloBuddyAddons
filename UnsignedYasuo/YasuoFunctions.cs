@@ -530,11 +530,11 @@ namespace UnsignedYasuo
                 }
             }
 
-            if (unitToDashTo != null && numberOfEnemiesHitWithEQ >= 1)
+            if (unitToDashTo != null && numberOfEnemiesHitWithEQ >= 1 && !didActionThisTick)
             {
                 CastE(unitToDashTo);
                 if (YasuoCalcs.GetQReadyTimeInt() == 0)
-                    CastEQsQ(EQEnemies);
+                    Core.DelayAction(delegate { CastEQsQ(EQEnemies); }, 100);
                 else
                     Core.DelayAction(delegate { CastEQsQ(EQEnemies); }, YasuoCalcs.GetQReadyTimeInt());
                 didActionThisTick = true;
@@ -543,7 +543,7 @@ namespace UnsignedYasuo
 
         public static void CastEQsQ(List<Obj_AI_Base> dashEnemies)
         {
-            if (didActionThisTick || !Yasuo.IsDashing() || dashEnemies.Where(a=>a.Position(250).Distance(Yasuo) <= Program.EQ.Range).Count() == 0)
+            if (!Yasuo.IsDashing() || didActionThisTick || dashEnemies.Where(a=>a.Position(250).Distance(Yasuo) <= Program.EQ.Range).Count() == 0)
                 return;
 
             didActionThisTick = Program.Q.Cast(Yasuo.Position + new Vector3(50, 0, 0));
