@@ -30,13 +30,13 @@ namespace UnsignedGangplank
                 if (menu.GetCheckboxValue("Use Q to kill barrels") && Gangplank.NearbyBarrelCount(Program.Q.Range) >= 1)
                     CastQOnBestBarrel(enemies, false, menu.GetSliderValue("Minions to use Q on Barrel"));
 
-                if (menu.GetComboBoxText("Use Q on Enemy Logic") != "Never")
+                if (menu.GetComboBoxText("Q On Enemy Logic:") != "Never")
                 {
-                    if (menu.GetComboBoxText("Use Q on Enemy Logic") == "No Barrels Around" && Gangplank.NearbyBarrelCount(Program.Q.Range) == 0)
+                    if (menu.GetComboBoxText("Q On Enemy Logic:") == "No Barrels Around" && Gangplank.NearbyBarrelCount(Program.Q.Range) == 0)
                         CastQ(enemies, false);
-                    else if (menu.GetComboBoxText("Use Q on Enemy Logic") == "Last Hit")
+                    else if (menu.GetComboBoxText("Q On Enemy Logic:") == "Last Hit")
                         CastQ(enemies, true);
-                    else if (menu.GetComboBoxText("Use Q on Enemy Logic") == "No Barrels Around and Last Hit" && Gangplank.NearbyBarrelCount(Program.Q.Range) == 0)
+                    else if (menu.GetComboBoxText("Q On Enemy Logic:") == "No Barrels Around and Last Hit" && Gangplank.NearbyBarrelCount(Program.Q.Range) == 0)
                         CastQ(enemies, true);
                 }
             }
