@@ -1120,7 +1120,7 @@ namespace UnsignedEvade
             //j4 knockup logic, J4 w buff name
             #region JarvanIV
             //q
-            CreateLinearSpell("JarvanIVDragonStrike", "JarvanIV", 0, 770f, 70f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp,
+            CreateLinearSpell("JarvanIVDragonStrike", "JarvanIV", 0, 770f, 70f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp),
             //w
             CreateSelfActive("JarvanIVGoldenAegis", "JarvanIV", "null", 625f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow, SpellInfo.Buff.Shield),
             //e
@@ -5239,14 +5239,15 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                //SpellName = "YasuoQ",
+                SpellName = "YasuoQW",
                 ChampionName = "Yasuo",
                 Range = 520f,
                 MissileSpeed = 0f,
                 MissileMinSpeed = 0f,
                 MissileMaxSpeed = 0f,
                 Width = 55f,
-                //OtherMissileNames = new string[] { "YasuoQ2", "YasuoQW", "YasuoQ2W", },
+                Delay = 5f,
+                //OtherMissileNames = new string[] { "YasuoQ2", "YasuoQamps ", "YasuoQ2W", },
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
