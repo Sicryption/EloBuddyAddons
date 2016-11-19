@@ -7,7 +7,7 @@ using EloBuddy;
 using EloBuddy.SDK;
 using SharpDX;
 
-namespace UnsignedGP
+namespace UnsignedGangplank
 {
     class Barrel
     {
@@ -35,7 +35,7 @@ namespace UnsignedGP
                 else if (barrel.Health == 2)
                 {
                     //no enemies hit it. 
-                    if (timeSinceLastDecay != timeCreated)
+                    if (timeSinceLastDecay == timeCreated)
                         return timeCreated + (decayRate * 2);
                     else
                         //enmies hit it 

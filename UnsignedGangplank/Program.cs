@@ -1,4 +1,4 @@
-﻿using System;
+﻿    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,17 +11,19 @@ using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using SharpDX;
 
-namespace UnsignedGP
+namespace UnsignedGangplank
 {
     internal class Program
     {
-        public static Menu ComboMenu, DrawingsMenu, SettingsMenu, LaneClear, LastHit, Items, Killsteal, Harass, menu;
-        public static Spell.Targeted Q; // travels at 3380 units per second
+        public static Spell.Targeted Q, Ignite;
+        public static Spell.Skillshot E, R;
         public static Spell.Active W;
-        public static Spell.Skillshot E;
-        public static Spell.Skillshot R;
-        public static Spell.Targeted Ignite;
-        public static AIHeroClient _Player { get { return ObjectManager.Player; } }
+        public static float barrelRadius = 345f,
+            barrelDiameter = 690f;
+        public static AIHeroClient Gangplank { get { return ObjectManager.Player; } }
+        public static int currentPentaKills = 0;
+        public static List<Barrel> barrels = new List<Barrel>();
+
         private static void Main(string[] args)
         {
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;
@@ -32,105 +34,116 @@ namespace UnsignedGP
             if (Player.Instance.ChampionName != "Gangplank")
                 return;
 
-            //Hacks.AntiAFK = true;
-            Bootstrap.Init(null);
-
+            #region SpellSetup
             Q = new Spell.Targeted(SpellSlot.Q, 625, DamageType.Physical)
             {
-                CastDelay = 250
+                CastDelay = 250,
             };
             W = new Spell.Active(SpellSlot.W);
-            E = new Spell.Skillshot(SpellSlot.E, 1000, SkillShotType.Circular, 250, null, 700, DamageType.Physical);
-            R = new Spell.Skillshot(SpellSlot.R, 999999, SkillShotType.Circular);
+            E = new Spell.Skillshot(SpellSlot.E, 1000, SkillShotType.Circular, 250, null, 690);
+            R = new Spell.Skillshot(SpellSlot.R, 20000, SkillShotType.Circular, 250, null, 1050, DamageType.Physical);
+            Ignite = new Spell.Targeted(Gangplank.GetSpellSlotFromName("SummonerDot"), 600, DamageType.True)
+            {
+                CastDelay = 0,
+            };
+            #endregion
 
-            menu = MainMenu.AddMenu("Unsigned GP", "UnsignedGangplank");
+            #region Initializers
+            MenuHandler.Initialize();
+            #endregion
 
-            ComboMenu = menu.AddSubMenu("Combo", "combomenu");
-            ComboMenu.AddGroupLabel("Combo Settings");
-            ComboMenu.Add("QU", new CheckBox("Use Q"));//complete
-            ComboMenu.Add("EU", new CheckBox("Use E"));//complete
-            ComboMenu.Add("RU", new CheckBox("Use R"));
-            ComboMenu.Add("IU", new CheckBox("Use Items"));//complete
-            ComboMenu.Add("IgU", new CheckBox("Use Ignite"));//complete
-            ComboMenu.Add("BarrelSettings", new ComboBox("First Barrel Usage: ", 0, "None", "EloBuddy Prediction", "On Closest Enemy", "On Lowest HP Enemy", "On Lowest % HP Enemy", "Between Enemy and Me"));
-
-            LaneClear = menu.AddSubMenu("Lane Clear", "laneclear");
-            LaneClear.AddGroupLabel("Lane Clear Settings");
-            LaneClear.Add("LCQ", new CheckBox("Use Q"));//complete
-            LaneClear.Add("LCE", new CheckBox("Use E"));//complete
-
-            Harass = menu.AddSubMenu("Harass", "harass");
-            Harass.AddGroupLabel("Harass Settings");
-            Harass.Add("HQ", new CheckBox("Use Q"));//complete
-            Harass.Add("HE", new CheckBox("Use E"));//complete
-
-            LastHit = menu.AddSubMenu("Last Hit", "lasthitmenu");
-            LastHit.AddGroupLabel("Last Hit Settings");
-            LastHit.Add("LHQ", new CheckBox("Use Q"));//complete
-            LastHit.Add("LHE", new CheckBox("Use E"));//complete
-
-            Killsteal = menu.AddSubMenu("Killsteal", "killstealmenu");
-            Killsteal.AddGroupLabel("Killsteal Settings");
-            Killsteal.Add("KSER", new CheckBox("Activate Killsteal"));//complete
-            Killsteal.Add("KSQ", new CheckBox("Use Q"));//complete
-            Killsteal.Add("KSE", new CheckBox("Use E"));//complete
-            Killsteal.Add("KSR", new CheckBox("Use R"));
-            Killsteal.Add("KSI", new CheckBox("Use Ignite"));//complete
-
-            Items = menu.AddSubMenu("Items", "itemsmenu");
-            Items.AddGroupLabel("Item Settings");
-            Items.Add("ItemsT", new CheckBox("Use Tiamat"));//complete
-            Items.Add("ItemsRH", new CheckBox("Use Ravenous Hydra"));//complete
-            Items.Add("ItemsTH", new CheckBox("Use Titanic Hydra"));//complete
-            Items.Add("ItemsBC", new CheckBox("Use Bilgewater Cutlass"));//complete
-            Items.Add("ItemsBORK", new CheckBox("Use Blade of the Ruined King"));//complete
-            Items.Add("ItemsY", new CheckBox("Use Youmuus"));//complete
-            Items.Add("ItemsQSS", new CheckBox("Use Quick Silversash"));//complete
-            Items.Add("ItemsMS", new CheckBox("Use Mercurial Scimitar"));//complete
-            Items.Add("ItemsPotions", new CheckBox("Use Potions"));
-            Items.AddGroupLabel("Auto - W/QSS/Merc Scimitar Settings");
-            Items.Add("AW", new CheckBox("Auto-W"));//complete
-            Items.Add("QSSBlind", new CheckBox("Blind"));//complete
-            Items.Add("QSSCharm", new CheckBox("Charm"));//complete
-            Items.Add("QSSFear", new CheckBox("Fear"));//complete
-            Items.Add("QSSKB", new CheckBox("Knockback"));//complete
-            Items.Add("QSSSilence", new CheckBox("Silence"));//complete
-            Items.Add("QSSSlow", new CheckBox("Slow"));//complete
-            Items.Add("QSSSnare", new CheckBox("Snare"));//complete
-            Items.Add("QSSStun", new CheckBox("Stun"));//complete
-            Items.Add("QSSTaunt", new CheckBox("Taunt"));//complete
-            Items.AddGroupLabel("Potion Settings");
-            Items.Add("PotSlider", new Slider("Use Potion at Health Percent", 65, 1, 100));//add extra pots
-
-            DrawingsMenu = menu.AddSubMenu("Drawings", "drawingsmenu");
-            DrawingsMenu.AddGroupLabel("Drawings Settings");
-            DrawingsMenu.Add("DQ", new CheckBox("Draw Q Range"));//complete
-            DrawingsMenu.Add("DE", new CheckBox("Draw E Range"));//complete
-            DrawingsMenu.Add("DEER", new CheckBox("Draw E Explosion Range"));//complete
-            DrawingsMenu.Add("DMHPQ", new CheckBox("Draw if nearby minion die by Q"));//complete
-            DrawingsMenu.Add("DMHPQB", new CheckBox("Draw if nearby minion die by Q on Barrel"));//complete
-
-            SettingsMenu = menu.AddSubMenu("Settings", "settingsmenu");
-            SettingsMenu.AddGroupLabel("Settings");
-            SettingsMenu.Add("SAB", new CheckBox("Auto-Place Barrels with 3 stacks"));//complete
-            SettingsMenu.Add("SAWH", new Slider("Auto-W at % Health", 80, 1, 99));//complete
-            SettingsMenu.Add("SAWM", new Slider("Auto-W only at % Mana", 60, 1, 100));//complete
-
-            SpellDataInst Sum1 = _Player.Spellbook.GetSpell(SpellSlot.Summoner1);
-            SpellDataInst Sum2 = _Player.Spellbook.GetSpell(SpellSlot.Summoner2);
-            if (Sum1.Name == "SummonerDot")
-                Ignite = new Spell.Targeted(SpellSlot.Summoner1, 600);
-            else if (Sum2.Name == "SummonerDot")
-                Ignite = new Spell.Targeted(SpellSlot.Summoner2, 600);
-
-            Game.OnTick += Game_OnTick;
+            #region Events
             Drawing.OnDraw += Drawing_OnDraw;
-            Obj_AI_Base.OnCreate += Obj_AI_Base_OnCreate;
-            Obj_AI_Base.OnDelete += Obj_AI_Base_OnDelete;
+            Drawing.OnEndScene += Drawing_OnEndScene;
+            Game.OnTick += Game_OnTick;
+            GameObject.OnCreate += Obj_AI_Base_OnCreate;
+            GameObject.OnDelete += Obj_AI_Base_OnDelete;
             Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
+            #endregion
+
+            #region Variable Setup
+            currentPentaKills = Gangplank.PentaKills;
+
+            foreach (Obj_AI_Base ob in ObjectManager.Get<Obj_AI_Base>().Where(a => a.Name == "Barrel"))
+                barrels.Add(new Barrel(ob, Game.Time - 500));
+            #endregion
         }
 
-        public static List<Barrel> barrels = new List<Barrel>();
+        private static void Drawing_OnEndScene(EventArgs args)
+        {
+            if (Gangplank.IsDead)
+                return;
+
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Enemy Health after Combo"))
+                foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies.Where(a => a.MeetsCriteria()))
+                {
+                    int hpBarWidth = 96;
+                    float enemyHPPercentAfterCombo = Math.Max((100 * ((enemy.Health - Gangplank.ComboDamage(enemy)) / enemy.MaxHealth)), 0);
+                    //Vector2 FriendlyHPBarOffset = new Vector2(26, 3);
+                    Vector2 EnemyHPBarOffset = new Vector2(-10, -3f);
+                    Vector2 CurrentHP = enemy.HPBarPosition + EnemyHPBarOffset + new Vector2(100 * enemy.HealthPercent / hpBarWidth, 0);
+                    Vector2 EndHP = enemy.HPBarPosition + EnemyHPBarOffset + new Vector2(enemyHPPercentAfterCombo, 0);
+                    if (enemyHPPercentAfterCombo == 0)
+                        Drawing.DrawLine(CurrentHP, EndHP, 9, System.Drawing.Color.Green);
+                    else
+                        Drawing.DrawLine(CurrentHP, EndHP, 9, System.Drawing.Color.Yellow);
+                }
+
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Health after W") && W.IsLearned)
+            {
+                int hpBarWidth = 96;
+                float friendlyHPPercentAfterW = Math.Min(100 * (Gangplank.Health + Calculations.WHeal()) / Gangplank.MaxHealth, 100);
+                Vector2 FriendlyHPBarOffset = new Vector2(26, 7f);
+                Vector2 CurrentHP = Gangplank.HPBarPosition + FriendlyHPBarOffset + new Vector2(100 * Gangplank.HealthPercent / hpBarWidth, 0);
+                Vector2 EndHP = Gangplank.HPBarPosition + FriendlyHPBarOffset + new Vector2(100 * friendlyHPPercentAfterW / hpBarWidth, 0);
+                if (friendlyHPPercentAfterW == 100)
+                    Drawing.DrawLine(CurrentHP, EndHP, 9, System.Drawing.Color.Green);
+                else
+                    Drawing.DrawLine(CurrentHP, EndHP, 9, System.Drawing.Color.Yellow);
+            }
+        }
+
+        private static void Game_OnTick(EventArgs args) 
+        {
+            if (Gangplank.IsDead)
+                return;
+           
+            GangplankFunctions.didActionThisTick = false;
+
+            List<Barrel> removeBarrels = new List<Barrel>();
+            foreach (Barrel b in barrels)
+                if (!b.barrel.MeetsCriteria())
+                    removeBarrels.Add(b);
+            foreach (Barrel b in removeBarrels)
+                barrels.Remove(b);
+
+            GangplankFunctions.AutoHarrass();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
+                GangplankFunctions.Flee();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
+                GangplankFunctions.Combo();
+            if (MenuHandler.GetCheckboxValue(MenuHandler.Killsteal, "Activate Killsteal"))
+                GangplankFunctions.KS();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LastHit))
+                GangplankFunctions.LastHit();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))
+                GangplankFunctions.Harrass();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear))
+                GangplankFunctions.JungleClear();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear))
+                GangplankFunctions.LaneClear();
+            if (MenuHandler.Settings.GetCheckboxValue("Auto-Place Barrels with 3 stacks"))
+                GangplankFunctions.AutoBarrel();
+            if (MenuHandler.Items.GetCheckboxValue("Auto W"))
+                GangplankFunctions.AutoW();
+
+            if (Gangplank.PentaKills > currentPentaKills)
+            {
+                Chat.Print("Nice Penta! Make sure to screenshot it and post it on the UnsignedGangplank thread to show off!");
+                
+                currentPentaKills = Gangplank.PentaKills;
+            }
+        }
 
         private static void Obj_AI_Base_OnDelete(GameObject sender, EventArgs args)
         {
@@ -151,58 +164,59 @@ namespace UnsignedGP
 
         private static void Obj_AI_Base_OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
         {
-            if (sender.Name == "Barrel")
-            {
-                if (args.Buff.Name == "gangplankebarreldecaysound")
-                {
-                    Barrel barrel = GetBarrelAtPosition(sender.Position);
-
-                    barrel.timeSinceLastDecay = Game.Time;
-                }
-            }
+            if (sender.Name == "Barrel" && sender.Team == Gangplank.Team && args.Buff.Name == "gangplankebarreldecaysound")
+                    GetBarrelAtPosition(sender.Position).timeSinceLastDecay = Game.Time;
         }
 
+        //Draw E chains should not be drawing multiple lines between each barrel. It should also merge them into one polygon
         private static void Drawing_OnDraw(EventArgs args)
         {
-            if (_Player.IsDead)
+            if (Gangplank.IsDead)
                 return;
+            Menu menu = MenuHandler.Drawing;
 
-            if (DrawingsMenu["DQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
-                Drawing.DrawCircle(_Player.Position, Q.Range, System.Drawing.Color.BlueViolet);
-            if (DrawingsMenu["DE"].Cast<CheckBox>().CurrentValue && E.IsLearned)
-                Drawing.DrawCircle(_Player.Position, E.Range, System.Drawing.Color.BlueViolet);
-            if (DrawingsMenu["DEER"].Cast<CheckBox>().CurrentValue && E.IsLearned)
-                Drawing.DrawCircle(_Player.Position, E.Range + 350, System.Drawing.Color.BlueViolet);
-            if (DrawingsMenu["DMHPQ"].Cast<CheckBox>().CurrentValue && Q.IsLearned)
-                foreach (Obj_AI_Base min in ObjectManager.Get<Obj_AI_Base>().Where(a => a.Type == GameObjectType.obj_AI_Minion && a.Distance(_Player) <= 1500 && a.Name != "MoveTester" && a.Name != "Barrel" && a.Name != "WardCorpse" && a.IsEnemy && !a.IsDead && GPCalcs.Q(a) >= a.Health))
-                    Drawing.DrawCircle(min.Position, 150, System.Drawing.Color.Green);
-            if (DrawingsMenu["DMHPQB"].Cast<CheckBox>().CurrentValue && Q.IsLearned && E.IsLearned)
-                foreach (Obj_AI_Base min in ObjectManager.Get<Obj_AI_Base>().Where(a => a.Type == GameObjectType.obj_AI_Minion && a.Distance(_Player) <= 1500 && a.Name != "MoveTester" && a.Name != "Barrel" && a.Name != "WardCorpse" && a.IsEnemy && !a.IsDead && GPCalcs.E(a, true) >= a.Health))
-                    Drawing.DrawCircle(min.Position, 150, System.Drawing.Color.DarkRed);
-        }
+            System.Drawing.Color drawColor = System.Drawing.Color.Blue;
 
-        private static void Game_OnTick(EventArgs args)
-        {
-            GPFunctions.HasDoneActionThisTick = false;
+            if (menu.GetCheckboxValue("Draw Q") && Q.IsLearned)
+                Q.DrawRange(drawColor);
+            if (menu.GetCheckboxValue("Draw E") && E.IsLearned)
+                E.DrawRange(drawColor);
+            if (menu.GetCheckboxValue("Draw E Circle on Mouse") && E.IsLearned)
+                Game.CursorPos.DrawCircle((int)barrelRadius, Color.Blue);
+            if (menu.GetCheckboxValue("Draw Enemies Killable with E") && E.IsLearned)
+                foreach (Obj_AI_Base ob in EntityManager.Enemies.Where(ob => ob.VisibleOnScreen))
+                    if (ob.MeetsCriteria() && ob.Health <= Calculations.E(ob, false))
+                        ob.DrawCircle(65, Color.Yellow);
+            if (menu.GetCheckboxValue("Draw Enemies Killable with E + Q") && E.IsLearned && Q.IsLearned)
+                foreach (Obj_AI_Base ob in EntityManager.Enemies.Where(ob=>ob.VisibleOnScreen))
+                    if (ob.MeetsCriteria() && ob.Health <= Calculations.E(ob, true))
+                        ob.DrawCircle(50, Color.Green);
 
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
-                GPFunctions.Combo();
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LastHit))
-                GPFunctions.LastHit();
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))
-                GPFunctions.Harrass();
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear) ||
-                Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear))
-                GPFunctions.LaneClear();
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
-                GPFunctions.Flee();
-            if (Killsteal["KSER"].Cast<CheckBox>().CurrentValue)
-                GPFunctions.KillSteal();
-            if (Items["PotSlider"].Cast<Slider>().CurrentValue != 100)
-                GPFunctions.UseItems();
-            if (SettingsMenu["SAB"].Cast<CheckBox>().CurrentValue)
-                GPFunctions.AutoBarrel();
-            GPFunctions.AutoW();
+            if (menu.GetCheckboxValue("Draw Silver Serpent Notifier") && Gangplank.GetBuffCount("gangplankbilgewatertoken") >= 500)
+                Drawing.DrawText(Gangplank.Position.WorldToScreen(), drawColor, "You have enough silver serpents", 15);
+
+            if (menu.GetCheckboxValue("Draw Shiny Barrels"))
+                foreach (Barrel b in barrels.Where(ob => ob.barrel.VisibleOnScreen))
+                    b.barrel.DrawCircle((int)barrelRadius, Color.Gold, 50);
+
+
+            if (menu.GetCheckboxValue("Draw E Chains") && E.IsLearned)
+            {
+                List<Tuple<Geometry.Polygon.Circle, int>> polygons = new List<Tuple<Geometry.Polygon.Circle, int>>();
+                foreach(Barrel b in barrels)
+                    polygons.Add(Tuple.Create(new Geometry.Polygon.Circle(b.barrel.Position, barrelRadius), (int)b.barrel.Position.Z));
+
+                foreach (Tuple<Geometry.Polygon.Circle, int> b in polygons)
+                {
+                    b.Item1.CenterOfPolygon().To3D(b.Item2).DrawCircle((int)barrelRadius, Color.Red, 1);
+                    foreach (Tuple<Geometry.Polygon.Circle, int> linkedBarrel in polygons.Where(a=>a.Item1.CenterOfPolygon().Distance(b.Item1.CenterOfPolygon()) <= barrelDiameter))
+                        Drawing.DrawLine(linkedBarrel.Item1.CenterOfPolygon().To3D(linkedBarrel.Item2).WorldToScreen(), b.Item1.CenterOfPolygon().To3D(b.Item2).WorldToScreen(), 5, drawColor);
+                }
+            }
+            
+            if (menu.GetCheckboxValue("Draw Killable Text"))
+                foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies.Where(a => a.VisibleOnScreen && a.MeetsCriteria() && a.Health < Gangplank.ComboDamage(a)))
+                    Drawing.DrawText(enemy.Position.WorldToScreen(), System.Drawing.Color.GreenYellow, "Killable", 15);
         }
     }
 }
