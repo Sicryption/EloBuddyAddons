@@ -110,7 +110,7 @@ namespace UnsignedGangplank
         public static Barrel getBestBarrel(List<Obj_AI_Base> enemies, bool usingQ, int hitCount)
         {
             List<Barrel> barrelsToAttack = Program.barrels;
-
+            
             if (usingQ)
                 barrelsToAttack = barrelsToAttack.Where(a => a.barrel.IsInRange(GP, Program.Q.Range) && a.TimeAt1HP - Game.Time <= CalculateQTimeToTarget(a.barrel)).ToList();
             else

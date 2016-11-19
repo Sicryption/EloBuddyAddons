@@ -59,6 +59,7 @@ namespace UnsignedGangplank
             GameObject.OnCreate += Obj_AI_Base_OnCreate;
             GameObject.OnDelete += Obj_AI_Base_OnDelete;
             Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
+            Obj_AI_Base.OnProcessSpellCast += AIHeroClient_OnProcessSpellCast;
             #endregion
 
             #region Variable Setup
@@ -67,6 +68,13 @@ namespace UnsignedGangplank
             foreach (Obj_AI_Base ob in ObjectManager.Get<Obj_AI_Base>().Where(a => a.Name == "Barrel"))
                 barrels.Add(new Barrel(ob, Game.Time - 500));
             #endregion
+        }
+
+        private static void AIHeroClient_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if(sender.IsMe && args.Slot == SpellSlot.E && MenuHandler.Settings.GetCheckboxValue("Barrel Position Auto-Correct"))
+                if(args.End.IsInRangeOfBarrels(barrels))
+                    GangplankFunctions.CastE(sender.Position.Extend(args.End, barrelRadius + 150f).To3D((int)args.End.Z));
         }
 
         private static void Drawing_OnEndScene(EventArgs args)

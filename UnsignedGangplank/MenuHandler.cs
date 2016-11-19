@@ -53,10 +53,11 @@ namespace UnsignedGangplank
             AddSlider(Harass, "Enemies to Auto-Attack Barrel", 1, 1, 5);
 
             AddCheckboxes(ref AutoHarass, "Use Q_false", "Use E_false", "Auto-Attack Barrels if Q on cooldown_false", "Use Q on enemies", "Use Q on enemies only if no barrels around", "Use Q to kill barrels", "Create First Barrel_false", "Chain Barrels");
-            AddCheckboxes(ref LaneClear, "Use Q", "Use E", "Auto-Attack Barrels if Q on cooldown", "Use Q on enemies", "Use Q on enemies only if no barrels around", "Use Q to kill barrels", "Create First Barrel", "Chain Barrels", "Use Items");
+            AddCheckboxes(ref LaneClear, "Use Q", "Use E", "Auto-Attack Barrels if Q on cooldown", "Use Q to kill barrels", "Create First Barrel", "Chain Barrels", "Use Items");
             AddSlider(LaneClear, "Minions to use Barrel", 3, 1, 5);
             AddSlider(LaneClear, "Minions to use Q on Barrel", 1, 1, 5);
             AddSlider(LaneClear, "Minions to Auto-Attack Barrel", 1, 1, 5);
+            AddComboBox(LaneClear, "Q On Enemy Logic:", 2, "Last Hit", "No Barrels Around", "No Barrels Around and Last Hit", "Never");
 
             AddCheckboxes(ref JungleClear, "Use Q", "Use E", "Auto-Attack Barrels if Q on cooldown", "Use Q on enemies", "Use Q on enemies only if no barrels around", "Use Q to kill barrels", "Create First Barrel", "Chain Barrels", "Use Items");
             AddSlider(JungleClear, "Minions to use Barrel", 1, 1, 5);
@@ -81,7 +82,7 @@ namespace UnsignedGangplank
             AddSlider(Items, "HP to use W", 30, 1, 99);
             AddSlider(Items, "Mana to use W", 80, 1, 99);
 
-            AddCheckboxes(ref Settings, "Auto-Place Barrels with 3 stacks");
+            AddCheckboxes(ref Settings, "Auto-Place Barrels with 3 stacks", "Barrel Position Auto-Correct_false");
             AddComboBox(Settings, "Barrel Mode:", 2, "Best Prediction", "Best FPS", "Middle Ground");
             AddComboBox(Settings, "Barrel Range Mode:", 0, "Max Range", "Middle Ground", "Any Position");
             #endregion

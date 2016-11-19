@@ -30,12 +30,14 @@ namespace UnsignedGangplank
                 if (menu.GetCheckboxValue("Use Q to kill barrels") && Gangplank.NearbyBarrelCount(Program.Q.Range) >= 1)
                     CastQOnBestBarrel(enemies, false, menu.GetSliderValue("Minions to use Q on Barrel"));
 
-                if (menu.GetCheckboxValue("Use Q on enemies"))
+                if (menu.GetComboBoxText("Use Q on Enemy Logic") != "Never")
                 {
-                    if (menu.GetCheckboxValue("Use Q on enemies only if no barrels around") && Gangplank.NearbyBarrelCount(Program.Q.Range) == 0)
+                    if (menu.GetComboBoxText("Use Q on Enemy Logic") == "No Barrels Around" && Gangplank.NearbyBarrelCount(Program.Q.Range) == 0)
                         CastQ(enemies, false);
-                    else if (!menu.GetCheckboxValue("Use Q on enemies only if no barrels around") || Gangplank.NearbyBarrelCount(Program.Q.Range) != 0)
-                        CastQ(enemies, false);
+                    else if (menu.GetComboBoxText("Use Q on Enemy Logic") == "Last Hit")
+                        CastQ(enemies, true);
+                    else if (menu.GetComboBoxText("Use Q on Enemy Logic") == "No Barrels Around and Last Hit" && Gangplank.NearbyBarrelCount(Program.Q.Range) == 0)
+                        CastQ(enemies, true);
                 }
             }
 
@@ -53,8 +55,7 @@ namespace UnsignedGangplank
 
             if (menu.GetCheckboxValue("Auto-Attack Barrels if Q on cooldown") && (!Program.Q.IsReady() || !Program.Q.IsLearned)
                 && Orbwalker.CanAutoAttack
-                && Gangplank.Nearby1HPBarrel(enemies, Gangplank.GetAutoAttackRange(),
-                    menu.GetSliderValue("Minions to Auto-Attack Barrel"), false, false) != null)
+                && Calculations.getBestBarrel(enemies, false, 1) != null)
             {
                 Orbwalker.ForcedTarget = Calculations.getBestBarrel(enemies, false, 1).barrel;
                 didActionThisTick = true;
