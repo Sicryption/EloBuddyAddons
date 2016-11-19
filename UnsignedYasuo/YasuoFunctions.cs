@@ -488,18 +488,21 @@ namespace UnsignedYasuo
         {
             if (Program.E.IsReady() && !YasuoCalcs.IsDashing() && !didActionThisTick)
             {
+                if (EQTargets == null)
+                    EQTargets = EntityManager.Enemies;
+
                 Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(Yasuo.Position, Game.CursorPos, (float)(30 * Math.PI / 180), Program.E.Range);
 
                 List<Obj_AI_Base> dashableEnemies = EntityManager.Enemies.Where(a => !a.IsDead && a.MeetsCriteria() && YasuoCalcs.ERequirements(a, goUnderEnemyTower) && a.IsInRange(Yasuo.Position, Program.E.Range) && sector.IsInside(a)).OrderBy(a => YasuoCalcs.GetDashingEnd(a).Distance(Game.CursorPos)).ToList();
-                List<Obj_AI_Base> dashableEnemiesWithTargets = dashableEnemies.Where(a => YasuoCalcs.GetDashingEnd(a).CountEnemyHeroesInRangeWithPrediction((int)Program.EQ.Range, 250) >= 1)
-                    .OrderBy(a => YasuoCalcs.GetDashingEnd(a).CountEnemyHeroesInRangeWithPrediction((int)Program.EQ.Range, 250)).ToList();
+                List<Obj_AI_Base> dashableEnemiesWithTargets = dashableEnemies.Where(a => EQTargets.Any(b => b.Position(250).IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQ.Range))).ToList();
+                    //.OrderBy(a => EQTargets.Where(b => b.Position(250).IsInRange(YasuoCalcs.GetDashingEnd(a), Program.EQ.Range)).Count()).ToList();
 
-                if (YasuoCalcs.WillQBeReady() && stackQ && !Yasuo.HasBuff("yasuoq3w") && dashableEnemies.Count != 0)
-                    CastEQ(dashableEnemies, false, goUnderEnemyTower);
+                if (YasuoCalcs.WillQBeReady() && stackQ && !Yasuo.HasBuff("yasuoq3w") && dashableEnemiesWithTargets.Count != 0)
+                    CastEQ(dashableEnemiesWithTargets, false, goUnderEnemyTower);
                 else if (YasuoCalcs.WillQBeReady() && EQ && dashableEnemiesWithTargets.Count != 0)
-                    CastEQ(dashableEnemies, false, goUnderEnemyTower, EQTargets);
-                else if(dashableEnemies.FirstOrDefault() != null)
-                    CastE(dashableEnemies.First());
+                    CastEQ(dashableEnemiesWithTargets, false, goUnderEnemyTower, EQTargets);
+                else if (dashableEnemies.FirstOrDefault() != null)
+                    CastE(dashableEnemies.OrderBy(a => a.Distance(Game.CursorPos)).First());
             }
         }
 
@@ -509,7 +512,7 @@ namespace UnsignedYasuo
                 !dashEnemies.Any(a => a.IsInRange(Yasuo, Program.E.Range)) ||
                 Yasuo.GetNearbyEnemies(Program.E.Range).Count() == 0 || YasuoCalcs.IsDashing())
                 return;
-
+            
             if (EQEnemies == null)
                 EQEnemies = dashEnemies;
 
