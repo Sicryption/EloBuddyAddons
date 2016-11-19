@@ -137,8 +137,11 @@ namespace UnsignedYasuo
                 bestPos = rectPositions.OrderByDescending(a =>
                    enemies.Where(enemy => a.Item1.IsInside(enemy.Position(self.CastDelay))).Count()
                 ).FirstOrDefault();
+
                 if (bestPos != null)
+                {
                     enemiesHit = enemies.Where(enemy => bestPos.Item1.IsInside(enemy.Position(self.CastDelay))).Count();
+                }
             }
 
             if (bestPos != null)

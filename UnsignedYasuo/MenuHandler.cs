@@ -40,7 +40,7 @@ namespace UnsignedYasuo
 
             AddCheckboxes(ref Combo, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use R", "Use Items", "Beyblade");
             AddComboBox(Combo, "Dash Mode: ", 0, "Gapclose", "To Mouse", "Disable");
-            AddCheckboxes(ref Harass, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use R_false", "Use Items");
+            AddCheckboxes(ref Harass, "Use Q", "Use Q3", "Use Q to Last Hit Minions_false", "Use Q3 to Last Hit Minions_false", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use R_false", "Use Items");
             AddCheckboxes(ref AutoHarass, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use Items");
             AddCheckboxes(ref LaneClear, "Use Q", "Use Q3", "Use E_false", "Use E only for Last Hit", "Use EQ_false",  "Use E Under Tower_false", "Use Items");
             AddCheckboxes(ref JungleClear, "Use Q", "Use Q3", "Use E", "Use E only for Last Hit_false", "Use EQ_false", "Use Items");
@@ -59,7 +59,6 @@ namespace UnsignedYasuo
             WindWall.Initialize();
             #endregion
         }
-
         public static void AddCheckboxes(ref Menu menu, params string[] checkBoxValues)
         {
             foreach (string s in checkBoxValues)

@@ -127,6 +127,10 @@ namespace UnsignedYasuo
                 || (menu.GetCheckboxValue("Use Q3") && Yasuo.HasBuff("YasuoQ3W")))
                 CastQ(enemies, false);
 
+            if ((menu.GetCheckboxValue("Use Q") && !Yasuo.HasBuff("YasuoQ3W") && menu.GetCheckboxValue("Use Q to Last Hit Minions"))
+                || (menu.GetCheckboxValue("Use Q3") && Yasuo.HasBuff("YasuoQ3W") && menu.GetCheckboxValue("Use Q3 to Last Hit Minions")))
+                CastQ(EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList(), true);
+
             if (menu.GetCheckboxValue("Use E"))
                 CastE(enemies, false, EUnderTower);
             
