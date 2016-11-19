@@ -54,11 +54,15 @@ namespace UnsignedGangplank
                 CastItems(enemies, false);
 
             if (menu.GetCheckboxValue("Auto-Attack Barrels if Q on cooldown") && (!Program.Q.IsReady() || !Program.Q.IsLearned)
-                && Orbwalker.CanAutoAttack
-                && Calculations.getBestBarrel(enemies, false, 1) != null)
+                && Orbwalker.CanAutoAttack)
             {
-                Orbwalker.ForcedTarget = Calculations.getBestBarrel(enemies, false, 1).barrel;
-                didActionThisTick = true;
+                Barrel b = Calculations.getBestBarrel(enemies, false, menu.GetSliderValue("Minions to Auto-Attack Barrel"), false);
+
+                if (b != null && b.EHitNumber(enemies) >= menu.GetSliderValue("Minions to Auto-Attack Barrel"))
+                {
+                    Orbwalker.ForcedTarget = b.barrel;
+                    didActionThisTick = true;
+                }
             }
         }
 
@@ -95,12 +99,15 @@ namespace UnsignedGangplank
                 CastItems(enemies, true);
 
             if (menu.GetCheckboxValue("Auto-Attack Barrels if Q on cooldown") && (!Program.Q.IsReady() || !Program.Q.IsLearned)
-                && Orbwalker.CanAutoAttack
-                && Gangplank.Nearby1HPBarrel(enemies, Gangplank.GetAutoAttackRange(),
-                    menu.GetSliderValue("Minions to Auto-Attack Barrel"), true, false) != null)
+                && Orbwalker.CanAutoAttack)
             {
-                Orbwalker.ForcedTarget = Calculations.getBestBarrel(enemies, false, 1).barrel;
-                didActionThisTick = true;
+                Barrel b = Calculations.getBestBarrel(enemies, false, menu.GetSliderValue("Minions to Auto-Attack Barrel"), true);
+
+                if (b != null && b.EHitNumber(enemies.Where(a=>a.Health <= Calculations.E(a, false)).ToList()) >= menu.GetSliderValue("Minions to Auto-Attack Barrel"))
+                {
+                    Orbwalker.ForcedTarget = b.barrel;
+                    didActionThisTick = true;
+                }
             }
         }
 
@@ -137,12 +144,15 @@ namespace UnsignedGangplank
                 CastItems(enemies, false);
 
             if (menu.GetCheckboxValue("Auto-Attack Barrels if Q on cooldown") && (!Program.Q.IsReady() || !Program.Q.IsLearned)
-                && Orbwalker.CanAutoAttack
-                && Gangplank.Nearby1HPBarrel(enemies, Gangplank.GetAutoAttackRange(),
-                    menu.GetSliderValue("Minions to Auto-Attack Barrel"), false, false) != null)
+                && Orbwalker.CanAutoAttack)
             {
-                Orbwalker.ForcedTarget = Calculations.getBestBarrel(enemies, false, 1).barrel;
-                didActionThisTick = true;
+                Barrel b = Calculations.getBestBarrel(enemies, false, menu.GetSliderValue("Minions to Auto-Attack Barrel"), false);
+
+                if (b != null && b.EHitNumber(enemies) >= menu.GetSliderValue("Minions to Auto-Attack Barrel"))
+                {
+                    Orbwalker.ForcedTarget = b.barrel;
+                    didActionThisTick = true;
+                }
             }
         }
 
@@ -185,12 +195,15 @@ namespace UnsignedGangplank
                 CastItems(enemies, true);
 
             if (menu.GetCheckboxValue("Auto-Attack Barrels if Q on cooldown") && (!Program.Q.IsReady() || !Program.Q.IsLearned)
-                && Orbwalker.CanAutoAttack
-                && Gangplank.Nearby1HPBarrel(enemies, Gangplank.GetAutoAttackRange(),
-                    1, true, false) != null)
+                && Orbwalker.CanAutoAttack)
             {
-                Orbwalker.ForcedTarget = Calculations.getBestBarrel(enemies, false, 1).barrel;
-                didActionThisTick = true;
+                Barrel b = Calculations.getBestBarrel(enemies, false, 1, true);
+
+                if (b != null && b.EHitNumber(enemies.Where(a => a.Health <= Calculations.E(a, false)).ToList()) >= 1)
+                {
+                    Orbwalker.ForcedTarget = b.barrel;
+                    didActionThisTick = true;
+                }
             }
         }
 
@@ -230,12 +243,15 @@ namespace UnsignedGangplank
                 CastItems(enemies, false);
 
             if (menu.GetCheckboxValue("Auto-Attack Barrels if Q on cooldown") && (!Program.Q.IsReady() || !Program.Q.IsLearned)
-                && Orbwalker.CanAutoAttack
-                && Gangplank.Nearby1HPBarrel(enemies, Gangplank.GetAutoAttackRange(),
-                    menu.GetSliderValue("Enemies to Auto-Attack Barrel"), false, false) != null)
+                && Orbwalker.CanAutoAttack)
             {
-                Orbwalker.ForcedTarget = Calculations.getBestBarrel(enemies, false, 1).barrel;
-                didActionThisTick = true;
+                Barrel b = Calculations.getBestBarrel(enemies, false, menu.GetSliderValue("Enemies to Auto-Attack Barrel"), false);
+
+                if (b != null && b.EHitNumber(enemies) >= menu.GetSliderValue("Enemies to Auto-Attack Barrel"))
+                {
+                    Orbwalker.ForcedTarget = b.barrel;
+                    didActionThisTick = true;
+                }
             }
         }
 
@@ -284,12 +300,15 @@ namespace UnsignedGangplank
                 CastItems(enemies, false);
 
             if (menu.GetCheckboxValue("Auto-Attack Barrels if Q on cooldown") && (!Program.Q.IsReady() || !Program.Q.IsLearned)
-                && Orbwalker.CanAutoAttack
-                && Gangplank.Nearby1HPBarrel(enemies, Gangplank.GetAutoAttackRange(),
-                    menu.GetSliderValue("Enemies to Auto-Attack Barrel"), false, false) != null)
+                && Orbwalker.CanAutoAttack)
             {
-                Orbwalker.ForcedTarget = Calculations.getBestBarrel(enemies, false, 1).barrel;
-                didActionThisTick = true;
+                Barrel b = Calculations.getBestBarrel(enemies, false, menu.GetSliderValue("Enemies to Auto-Attack Barrel"), false);
+
+                if (b != null && b.EHitNumber(enemies) >= menu.GetSliderValue("Enemies to Auto-Attack Barrel"))
+                {
+                    Orbwalker.ForcedTarget = b.barrel;
+                    didActionThisTick = true;
+                }
             }
         }
 
@@ -345,12 +364,15 @@ namespace UnsignedGangplank
             }
 
             if (menu.GetCheckboxValue("Auto-Attack Barrels if Q on cooldown") && (!Program.Q.IsReady() || !Program.Q.IsLearned)
-                && Orbwalker.CanAutoAttack
-                && Gangplank.Nearby1HPBarrel(enemies, Gangplank.GetAutoAttackRange(),
-                    1, false, false) != null)
+                && Orbwalker.CanAutoAttack)
             {
-                Orbwalker.ForcedTarget = Calculations.getBestBarrel(enemies, false, 1).barrel;
-                didActionThisTick = true;
+                Barrel b = Calculations.getBestBarrel(enemies, false, 1, false);
+
+                if (b != null && b.EHitNumber(enemies) >= 1)
+                {
+                    Orbwalker.ForcedTarget = b.barrel;
+                    didActionThisTick = true;
+                }
             }
         }
 
@@ -615,7 +637,7 @@ namespace UnsignedGangplank
             if ((!Program.Q.IsReady() || !Program.Q.IsLearned) || didActionThisTick || !Program.barrels.Any(a => a.barrel.IsInRange(Gangplank, Program.Q.Range)) || enemies.Count == 0)
                 return;
 
-            Barrel b = Calculations.getBestBarrel(enemies, true, 1);
+            Barrel b = Calculations.getBestBarrel(enemies, true, 1, ks);
             
             if (enemies.Count >= 1 && b != null && Calculations.EnemiesHitByBarrel(b, enemies, true) >= enemiesHit)
                 didActionThisTick = Program.Q.Cast(b.barrel);

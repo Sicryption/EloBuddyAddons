@@ -72,9 +72,12 @@ namespace UnsignedGangplank
 
         private static void AIHeroClient_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-            if(sender.IsMe && args.Slot == SpellSlot.E && MenuHandler.Settings.GetCheckboxValue("Barrel Position Auto-Correct"))
-                if(args.End.IsInRangeOfBarrels(barrels))
-                    GangplankFunctions.CastE(sender.Position.Extend(args.End, barrelRadius + 150f).To3D((int)args.End.Z));
+            if (sender.IsMe && args.Slot == SpellSlot.E && MenuHandler.Settings.GetCheckboxValue("Barrel Position Auto-Correct"))
+                if (args.End.IsInRangeOfBarrels(barrels))
+                {
+                    GangplankFunctions.CastE(sender.Position);
+                    args.Process = false;
+                }
         }
 
         private static void Drawing_OnEndScene(EventArgs args)

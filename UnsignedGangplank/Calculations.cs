@@ -107,10 +107,18 @@ namespace UnsignedGangplank
             return 0;
         }
         // add accurate Auto-Attack delay time
-        public static Barrel getBestBarrel(List<Obj_AI_Base> enemies, bool usingQ, int hitCount)
+        public static Barrel getBestBarrel(List<Obj_AI_Base> enemies, bool usingQ, int hitCount, bool ks)
         {
             List<Barrel> barrelsToAttack = Program.barrels;
             
+            if(ks)
+            {
+                if (usingQ)
+                    enemies = enemies.Where(a => a.Health <= E(a, true)).ToList();
+                else
+                    enemies = enemies.Where(a => a.Health <= E(a, false)).ToList();
+            }
+
             if (usingQ)
                 barrelsToAttack = barrelsToAttack.Where(a => a.barrel.IsInRange(GP, Program.Q.Range) && a.TimeAt1HP - Game.Time <= CalculateQTimeToTarget(a.barrel)).ToList();
             else
