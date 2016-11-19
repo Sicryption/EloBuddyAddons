@@ -17,28 +17,27 @@ namespace UnsignedYasuo
     class YasuoCalcs
     {
         public static AIHeroClient Yasuo = Program.Yasuo;
-        public static float YasuoLastEStartTime = 0;
 
         public static bool IsDashing()
         {
-            if ((Program.E.State == SpellState.Surpressed && !Yasuo.HasBuffOfType(BuffType.Suppression)) || Game.Time - YasuoLastEStartTime <= Program.E.CastDelay / 1000)
+            if(Program.Animation == "Spell3")//if ((Program.E.State == SpellState.Surpressed && !Yasuo.HasBuffOfType(BuffType.Suppression)))// || Game.Time - YasuoLastEStartTime <= Program.E.CastDelay / 1000)
                 return true;
             return false;
         }
 
-        public static double Q(Obj_AI_Base target)
+        public static float Q(Obj_AI_Base target)
         {
             if(Yasuo.FlatCritChanceMod >= 1 && !Yasuo.HasItem(ItemId.Infinity_Edge))
                 return Yasuo.CalculateDamageOnUnit(target, DamageType.Physical,
-                    (float)(new double[] { 0, 20, 40, 60, 80, 100 }[Program.Q.Level] + (Yasuo.TotalAttackDamage * 1.5f)));
+                    (new float[] { 0, 20, 40, 60, 80, 100 }[Program.Q.Level] + (Yasuo.TotalAttackDamage * 1.5f)));
             else if (Yasuo.FlatCritChanceMod >= 1 && Yasuo.HasItem(ItemId.Infinity_Edge))
                 return Yasuo.CalculateDamageOnUnit(target, DamageType.Physical, 
-                    (float)(new double[] { 0, 20, 40, 60, 80, 100 }[Program.Q.Level] + (Yasuo.TotalAttackDamage * 1.87f)));
+                    (new float[] { 0, 20, 40, 60, 80, 100 }[Program.Q.Level] + (Yasuo.TotalAttackDamage * 1.87f)));
             else
                 return Yasuo.CalculateDamageOnUnit(target, DamageType.Physical,
-                    (float)(new double[] { 0, 20, 40, 60, 80, 100 }[Program.Q.Level] + Yasuo.TotalAttackDamage));
+                    (new float[] { 0, 20, 40, 60, 80, 100 }[Program.Q.Level] + Yasuo.TotalAttackDamage));
         }
-        public static double E(Obj_AI_Base target)
+        public static float E(Obj_AI_Base target)
         {
             float dmgModifier = 1f;
             if (Yasuo.HasBuff("yasuodashscalar"))
@@ -104,7 +103,7 @@ namespace UnsignedYasuo
             if (target == null || target.Position == Vector3.Zero)
                 return Vector3.Zero;
 
-            Vector3 endPosition = Yasuo.Position.Extend(target, Program.E.Range).To3D() + new Vector3(0, 0, Yasuo.Position.Z);
+            Vector3 endPosition = Yasuo.Position.Extend(target, Program.E.Range).To3D((int)Yasuo.Position.Z);
             return endPosition;
         }
     }

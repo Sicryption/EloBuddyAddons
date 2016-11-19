@@ -21,6 +21,7 @@ namespace UnsignedYasuo
         public static Spell.Active R;
         public static AIHeroClient Yasuo { get { return ObjectManager.Player; } }
         public static int currentPentaKills = 0;
+        public static string Animation = "";
         private static void Main(string[] args)
         {
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;
@@ -35,12 +36,12 @@ namespace UnsignedYasuo
             Q = new Spell.Skillshot(SpellSlot.Q, 475, SkillShotType.Linear, 250, int.MaxValue, 55, DamageType.Physical)
             {
                 AllowedCollisionCount = int.MaxValue,
-                SourcePosition = Yasuo.Position
+                //SourcePosition = Yasuo.Position + new Vector3(0, 0, 150f),
             };
+
             Q3 = new Spell.Skillshot(SpellSlot.Q, 1100, SkillShotType.Linear, 300, 1200, 90, DamageType.Physical)
             {
                 AllowedCollisionCount = int.MaxValue,
-                SourcePosition = Yasuo.Position
             };
             W = new Spell.Skillshot(SpellSlot.W, 400, SkillShotType.Cone, 250);
             EQ = new Spell.Skillshot(SpellSlot.Q, 375, SkillShotType.Circular, 0, int.MaxValue, 375, DamageType.Physical)
@@ -68,8 +69,9 @@ namespace UnsignedYasuo
 
             #region Events
             Drawing.OnDraw += Drawing_OnDraw;
-            Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
             Game.OnTick += Game_OnTick;
+            Drawing.OnEndScene += Drawing_OnEndScene;
+            Obj_AI_Base.OnPlayAnimation += Obj_AI_Base_OnPlayAnimation;
             #endregion
 
             #region Variable Setup
@@ -79,11 +81,17 @@ namespace UnsignedYasuo
             Orbwalker.DisableMovement = true;
         }
 
+        private static void Obj_AI_Base_OnPlayAnimation(Obj_AI_Base sender, GameObjectPlayAnimationEventArgs args)
+        {
+            if (sender.IsMe)
+                Animation = args.Animation;
+        }
+
         private static void Game_OnTick(EventArgs args)
         {
             if (Yasuo.IsDead)
                 return;
-
+           
             YasuoFunctions.didActionThisTick = false;
             
             YasuoFunctions.AutoHarrass();
@@ -114,47 +122,53 @@ namespace UnsignedYasuo
                 currentPentaKills = Yasuo.PentaKills;
             }
         }
-
-        private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
-        {
-            if (sender.Name == Yasuo.Name && args.SData.Name == "YasuoDashWrapper")
-                YasuoCalcs.YasuoLastEStartTime = args.Time;
-        }
-
+        
         //complete
         private static void Drawing_OnDraw(EventArgs args)
         {
             if (Yasuo.IsDead)
                 return;
 
+            Menu menu = MenuHandler.Drawing;
             System.Drawing.Color drawColor = System.Drawing.Color.Blue;
+            
+            //Drawing.DrawText(Yasuo.Position.WorldToScreen(), drawColor, Animation, 15);
+            
+            //Vector3 yasuoQStartPos = Yasuo.Position + new Vector3(0, 0, 150f),
+            //    yasuoQEndPos = yasuoQStartPos.To2D().Extend(Game.CursorPos, Q.Range).To3D((int)yasuoQStartPos.Z - 75);
 
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Q") && !Yasuo.HasBuff("YasuoQ3W") && Q.IsLearned)
+            //yasuoQStartPos.DrawArrow(yasuoQEndPos, drawColor);
+            //Drawing.DrawLine(yasuoQStartPos.WorldToScreen(), yasuoQEndPos.WorldToScreen(), 5, drawColor);
+
+            if (menu.GetCheckboxValue("Draw Q") && !Yasuo.HasBuff("YasuoQ3W") && Q.IsLearned)
+            {
+                //Drawing.DrawCircle(yasuoQStartPos, Q.Range, drawColor);
                 Q.DrawRange(drawColor);
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Q") && Yasuo.HasBuff("YasuoQ3W") && Q.IsLearned)
+            }
+            if (menu.GetCheckboxValue("Draw Q") && Yasuo.HasBuff("YasuoQ3W") && Q.IsLearned)
                 Q3.DrawRange(drawColor);
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw W") && W.IsLearned)
+            if (menu.GetCheckboxValue("Draw W") && W.IsLearned)
                 W.DrawRange(drawColor);
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw E") && E.IsLearned)
+            if (menu.GetCheckboxValue("Draw E") && E.IsLearned)
                 E.DrawRange(drawColor);
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw EQ") && E.IsLearned && Q.IsLearned)
+            if (menu.GetCheckboxValue("Draw EQ") && E.IsLearned && Q.IsLearned)
                 EQ.DrawRange(drawColor);
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw R") && R.IsLearned)
-                R.DrawRange(drawColor);
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Beyblade") && R.IsLearned && Flash != null && E.IsLearned && Q.IsLearned)
+            if (menu.GetCheckboxValue("Draw R") && R.IsLearned)
+                R.DrawRange(drawColor); 
+            if (menu.GetCheckboxValue("Draw Beyblade") && R.IsLearned && Flash != null && E.IsLearned && Q.IsLearned)
                 Drawing.DrawCircle(Yasuo.Position, E.Range + Flash.Range + (EQ.Range / 2), System.Drawing.Color.Red);
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Turret Range"))
-                foreach (Obj_AI_Turret turret in EntityManager.Turrets.Enemies.Where(a => !a.IsDead))
+            if (menu.GetCheckboxValue("Draw Turret Range"))
+                foreach (Obj_AI_Turret turret in EntityManager.Turrets.Enemies.Where(a => !a.IsDead && a.VisibleOnScreen))
                     turret.DrawCircle((int)turret.GetAutoAttackRange() + 35, drawColor);
 
             Obj_AI_Base hoverObject = EntityManager.Enemies.Where(a => !a.IsDead && a.IsTargetable && a.IsInRange(Yasuo, E.Range) && a.Distance(Game.CursorPos) <= 75).OrderBy(a => a.Distance(Game.CursorPos)).FirstOrDefault();
             if (hoverObject != null)
             {
-                if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw EQ on Target"))
+                if (menu.GetCheckboxValue("Draw EQ on Target"))
                     Drawing.DrawCircle(YasuoCalcs.GetDashingEnd(hoverObject), EQ.Range, drawColor);
-                if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw E End Position on Target"))
+                if (menu.GetCheckboxValue("Draw E End Position on Target"))
                     Drawing.DrawLine(Yasuo.Position.WorldToScreen(), YasuoCalcs.GetDashingEnd(hoverObject).WorldToScreen(), 3, drawColor);
-                if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw E End Position on Target - Detailed"))
+                if (menu.GetCheckboxValue("Draw E End Position on Target - Detailed"))
                 {
                     Vector3 startPos = Yasuo.Position,
                         dashEndPos = YasuoCalcs.GetDashingEnd(hoverObject),
@@ -230,14 +244,35 @@ namespace UnsignedYasuo
                 }
             }
 
-            if (MenuHandler.GetCheckboxValue(MenuHandler.Drawing, "Draw Wall Dashes") && E.IsLearned)
+            if (menu.GetCheckboxValue("Draw Wall Dashes") && E.IsLearned)
                 foreach (WallDash wd in YasuoWallDashDatabase.wallDashDatabase.Where(a=>a.startPosition.Distance(Yasuo) <= 1300))
-                    if (EntityManager.MinionsAndMonsters.Combined.Where(a => a.MeetsCriteria() && a.Name == wd.unitName && a.ServerPosition.Distance(wd.dashUnitPosition) <= 2).FirstOrDefault() != null)
+                    if (EntityManager.MinionsAndMonsters.Combined.Where(a => a.MeetsCriteria() && a.VisibleOnScreen && a.Name == wd.unitName && a.ServerPosition.Distance(wd.dashUnitPosition) <= 2).FirstOrDefault() != null)
                     {
                         wd.startPosition.DrawArrow(wd.endPosition, System.Drawing.Color.Red, 1);
                         Geometry.Polygon.Circle dashCircle = new Geometry.Polygon.Circle(wd.endPosition, 120);
                         dashCircle.Draw(System.Drawing.Color.Red, 1);
                     }
+        }
+
+        private static void Drawing_OnEndScene(EventArgs args)
+        {
+            if (Yasuo.IsDead)
+                return;
+
+            if (MenuHandler.Drawing.GetCheckboxValue("Draw Combo Damage"))
+                foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies.Where(a => a.MeetsCriteria() && a.VisibleOnScreen))
+                {
+                    int hpBarWidth = 96;
+                    float enemyHPPercentAfterCombo = Math.Max((100 * ((enemy.Health - enemy.ComboDamage()) / enemy.MaxHealth)), 0);
+                    //Vector2 FriendlyHPBarOffset = new Vector2(26, 3);
+                    Vector2 EnemyHPBarOffset = new Vector2(2, 9.5f);
+                    Vector2 CurrentHP = enemy.HPBarPosition + EnemyHPBarOffset + new Vector2(100 * enemy.HealthPercent / hpBarWidth, 0);
+                    Vector2 EndHP = enemy.HPBarPosition + EnemyHPBarOffset + new Vector2(enemyHPPercentAfterCombo, 0);
+                    if (enemyHPPercentAfterCombo == 0)
+                        Drawing.DrawLine(CurrentHP, EndHP, 9, System.Drawing.Color.Green);
+                    else
+                        Drawing.DrawLine(CurrentHP, EndHP, 9, System.Drawing.Color.Yellow);
+                }
         }
 
         private static void DrawLineIfWallBetween(Vector3 startPos, Obj_AI_Base target)

@@ -35,6 +35,9 @@ namespace UnsignedYasuo
             #endregion
 
             #region Set Menu Values
+            mainMenu.Add("Creator", new Label("This script is apart of the Unsigned Series made by Chaos"));
+            AddComboBox(mainMenu, "Prediction Type:", 0, "EloBuddy", "Current Position");
+
             AddCheckboxes(ref Combo, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use R", "Use Items", "Beyblade");
             AddComboBox(Combo, "Dash Mode: ", 0, "Gapclose", "To Mouse", "Disable");
             AddCheckboxes(ref Harass, "Use Q", "Use Q3", "Use E_false", "Use EQ_false", "Use E Under Tower_false", "Use R_false", "Use Items");
@@ -47,7 +50,9 @@ namespace UnsignedYasuo
             AddSlider(Flee, "Wall Dash Extra Space", 20, 10, 200);
             AddCheckboxes(ref Ult, "Use R at Last Second", "Use R on All Enemies in Range", "Use R for Flow_false", "Use R at 10% HP_false");
             AddSlider(Ult, "Use R on x Enemies or more:", 3, 1, 5);
-            AddCheckboxes(ref Drawing, "Draw Q", "Draw W_false", "Draw E", "Draw E End Position on Target_false", "Draw E End Position on Target - Detailed_false", "Draw EQ_false", "Draw EQ on Target_false", "Draw R", "Draw Beyblade", "Draw Wall Dashes", "Draw Turret Range");
+            AddCheckboxes(ref Drawing, "Draw Q", "Draw W_false", "Draw E", "Draw E End Position on Target_false", "Draw E End Position on Target - Detailed_false", "Draw EQ_false", "Draw EQ on Target_false", "Draw R", "Draw Beyblade", "Draw Wall Dashes", "Draw Turret Range", "Draw Combo Damage");
+            AddSlider(Drawing, "Autos used in Combo", 2, 0, 5);
+            AddSlider(Drawing, "Q's used in Combo", 2, 0, 5);
             AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
             WindWall.Initialize();
             #endregion
