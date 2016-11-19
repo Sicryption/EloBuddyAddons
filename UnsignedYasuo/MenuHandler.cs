@@ -48,8 +48,10 @@ namespace UnsignedYasuo
             AddCheckboxes(ref Killsteal, "Activate Killsteal", "Use Q", "Use Q3", "Use E", "Use EQ", "Use E Under Tower", "Use Items", "Use Ignite");
             AddCheckboxes(ref Flee, "Use E", "Use E Under Tower", "Stack Q", "Wall Dash");
             AddSlider(Flee, "Wall Dash Extra Space", 20, 10, 200);
-            AddCheckboxes(ref Ult, "Use R at Last Second", "Use R on All Enemies in Range", "Use R for Flow_false", "Use R at 10% HP_false");
+            AddCheckboxes(ref Ult, "Use R at Last Second", "Use R on All Enemies in Range", "Use R for Flow_false", "Use R at 10% HP_false", "Use R on Target Selector Target");
             AddSlider(Ult, "Use R on x Enemies or more:", 3, 1, 5);
+            AddSlider(Ult, "Use R on Target Selector Target and x or more Enemies:", 2, 1, 4);
+
             AddCheckboxes(ref Drawing, "Draw Q", "Draw W_false", "Draw E", "Draw E End Position on Target_false", "Draw E End Position on Target - Detailed_false", "Draw EQ_false", "Draw EQ on Target_false", "Draw R", "Draw Beyblade", "Draw Wall Dashes", "Draw Turret Range", "Draw Combo Damage");
             AddSlider(Drawing, "Autos used in Combo", 2, 0, 5);
             AddSlider(Drawing, "Q's used in Combo", 2, 0, 5);

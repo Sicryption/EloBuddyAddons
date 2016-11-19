@@ -581,12 +581,14 @@ namespace UnsignedYasuo
             if (!Program.R.IsReady() || didActionThisTick)
                 return;
 
+            List<Obj_AI_Base> enemiesKnockedUp = EntityManager.Heroes.Enemies.Where(a => a.MeetsCriteria() && a.IsInRange(Yasuo, Program.R.Range) && a.IsKnockedUp()).ToList().ToObj_AI_BaseList();
+
             if (MenuHandler.Ult.GetCheckboxValue("Use R for Flow") &&
                 Yasuo.Mana != 100)
                 CastR();
 
             if (MenuHandler.Ult.GetCheckboxValue("Use R on All Enemies in Range") &&
-                EntityManager.Heroes.Enemies.Where(a=>a.MeetsCriteria() && a.IsInRange(Yasuo, Program.R.Range) && a.IsKnockedUp()).Count() == Yasuo.CountEnemyHeroesInRangeWithPrediction(2000, 0))
+                enemiesKnockedUp.Count() == Yasuo.CountEnemyHeroesInRangeWithPrediction((int)Program.R.Range, 0))
                 CastR();
 
             if (MenuHandler.Ult.GetCheckboxValue("Use R at 10% HP") &&
@@ -594,7 +596,15 @@ namespace UnsignedYasuo
                 Yasuo.Mana != 100)
                 CastR(true);
 
-            if (EntityManager.Heroes.Enemies.Where(a=>a.MeetsCriteria() && a.IsInRange(Yasuo, Program.R.Range) && a.IsKnockedUp()).Count() >= MenuHandler.Ult.GetSliderValue("Use R on x Enemies or more:"))
+            if (MenuHandler.Ult.GetCheckboxValue("Use R on Target Selector Target") &&
+                enemiesKnockedUp.Any(a => a == TargetSelector.SelectedTarget))
+                CastR(true);
+
+            if (enemiesKnockedUp.Count() - 1 >= MenuHandler.Ult.GetSliderValue("Use R on Target Selector Target and x or more Enemies:") &&
+                enemiesKnockedUp.Any(a=>a == TargetSelector.SelectedTarget))
+                CastR(true);
+
+            if (enemiesKnockedUp.Count() >= MenuHandler.Ult.GetSliderValue("Use R on x Enemies or more:"))
                 CastR(true);
         }
 
@@ -612,7 +622,7 @@ namespace UnsignedYasuo
             else if (force || !MenuHandler.GetCheckboxValue(MenuHandler.Ult, "Use R at Last Second"))
                     didActionThisTick = Program.R.Cast();;
         }
-
+    
         private static void TryBeyBlade()
         {
             if (didActionThisTick)
