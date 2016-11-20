@@ -537,7 +537,7 @@ namespace UnsignedGangplank
         //working and tested
         public static Vector3 GetBestBarrelChainPosition(List<Obj_AI_Base> enemies, int enemiesToUseEOn)
         {
-            List<Barrel> barrelsInQRange = Program.barrels.Where(a => a.barrel.IsInRange(Gangplank, Program.Q.Range)).ToList();
+            List<Barrel> barrelsInQRange = Program.barrels.Where(a => a.barrel.IsInRange(Gangplank, Program.Q.Range) && a.TimeAt1HP - Game.Time <= Calculations.CalculateQTimeToTarget(a.barrel)).ToList();
 
             int enemiesHit = 0;
             List<Obj_AI_Base> enemiesHitList = new List<Obj_AI_Base>();
