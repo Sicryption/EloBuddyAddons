@@ -70,6 +70,7 @@ namespace UnsignedEvade
             Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
             Obj_AI_Base.OnBuffLose += Obj_AI_Base_OnBuffLose;
         }
+
         private static void Obj_AI_Base_OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
         {
             if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Buff Losses"))
@@ -173,7 +174,7 @@ namespace UnsignedEvade
         {
             if (sender == null)
                 return;
-            
+
             //projectile
             if (sender.Name == "missile")
             {
@@ -181,7 +182,7 @@ namespace UnsignedEvade
 
                 if (projectile == null || projectile.SpellCaster == null || projectile.SData == null || projectile.SpellCaster.Type != GameObjectType.AIHeroClient)
                     return;
-
+                
                 SpellInfo info = SpellDatabase.GetSpellInfo(projectile.SData.Name);
                 if (info != null)
                 {
