@@ -387,7 +387,7 @@ namespace UnsignedGangplank
             if (menu.GetCheckboxValue("Use W to remove slows") && Gangplank.CanCancleCC(true))
                 CastW();
 
-            if (menu.GetSliderValue("HP to use W") >= Gangplank.HealthPercent && menu.GetSliderValue("Mana to use W") >= Gangplank.ManaPercent)
+            if (menu.GetSliderValue("HP to use W") >= Gangplank.HealthPercent && menu.GetSliderValue("Mana to use W") <= Gangplank.ManaPercent && !Gangplank.IsRecalling())
                 CastW();
         }
 
@@ -535,7 +535,7 @@ namespace UnsignedGangplank
         }
 
         //working and tested
-        public static Vector3 GetBestBarrelChainPosition(List<Obj_AI_Base> enemies, int enemiesToUseEOn)
+        public static Vector3 GetBestBarrelChainPosition(List<Obj_AI_Base> enemies, int enemiesToUseEOn)    
         {
             List<Barrel> barrelsInQRange = Program.barrels.Where(a => a.barrel.IsInRange(Gangplank, Program.Q.Range) && a.TimeAt1HP - Game.Time <= Calculations.CalculateQTimeToTarget(a.barrel)).ToList();
 
@@ -646,7 +646,7 @@ namespace UnsignedGangplank
         //working
         public static void CastW()
         {
-            if (!Program.W.IsReady())
+            if (!Program.W.IsReady() || didActionThisTick)
                 return;
 
             didActionThisTick = Program.W.Cast();
