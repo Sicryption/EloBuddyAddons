@@ -38,7 +38,8 @@ namespace UnsignedRengar
             {
                 ConeAngleDegrees = 180,
                 AllowedCollisionCount = int.MaxValue,
-                
+                MinimumHitChance = EloBuddy.SDK.Enumerations.HitChance.High,
+
             };
             Q2 = new Spell.Skillshot(SpellSlot.Q, 450, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 500, 3000, 150, DamageType.Physical)
             {
@@ -48,6 +49,7 @@ namespace UnsignedRengar
             E = new Spell.Skillshot(SpellSlot.E, 1000, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 250, 1500, 70, DamageType.Physical)
             {
                 AllowedCollisionCount = 1,
+                MinimumHitChance = EloBuddy.SDK.Enumerations.HitChance.High,
             };
             R = new Spell.Active(SpellSlot.R, 2000);
 

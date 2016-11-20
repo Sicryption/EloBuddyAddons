@@ -20,6 +20,10 @@ namespace UnsignedRengar
             Menu menu = MenuHandler.Combo;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
+            if (TargetSelector.SelectedTarget != null && TargetSelector.SelectedTarget.MeetsCriteria() && TargetSelector.SelectedTarget.IsInRange(Rengar, 1200))
+                enemies = new List<Obj_AI_Base>() { TargetSelector.SelectedTarget };
+
+
             int QHitNumber = 0;
             Vector3 QPos = Program.Q.GetBestConeAndLinearCastPosition(Program.Q2, enemies, Rengar.Position, out QHitNumber);
             int EHitNumber = 0;
