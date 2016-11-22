@@ -155,10 +155,8 @@ namespace UnsignedAnnie
             if (WCHECK && WREADY)
             {
                 Vector3 pos;
-                Chat.Print("ELLO2");
                 if (GetBestWLocationUnits(GameObjectType.obj_AI_Minion, out pos) >= 3)
                 {
-                    Chat.Print("ELLO");
                     if (pos != Vector3.Zero)
                         Program.W.Cast(pos);
                 }
