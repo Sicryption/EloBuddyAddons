@@ -17,7 +17,6 @@ namespace UnsignedEvade
             SecondRadius,
             Width = 10,
             Range,
-            ConeAndLinearRange,
             CollisionCount = 0,
             ConeDegrees,
             TimeOfCast,
@@ -79,7 +78,6 @@ namespace UnsignedEvade
         public enum SpellTypeInfo
         {
             CircularSkillshot,
-            ConeAndLinearSkillshot,
             LinearSkillshot,
             ArcSkillshot,
             TargetedActive, //ivern E
@@ -134,13 +132,19 @@ namespace UnsignedEvade
             AttackDamageIncrease,
             AttackSpeedIncrease,
             AutoAttackRangeIncrease,
+            AutoAttackImmune,
             CCRemoval,
+            CCImmunity,
             DamageReduction,
             Heal,
             HeavySpeedUp,
+            LifestealSpellVamp,
+            Invulnerability,
             Pet,
             Shield,
             SpeedUp,
+            SpellShield,
+            GuardianAngel,
             None
         }
 

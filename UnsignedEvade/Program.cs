@@ -23,8 +23,6 @@ Active Circular Spells - Maokai R, Sona Q, Aatrox R
 Splash Effect - Ashe R/Jinx R/Kayle Empowered AA/Zilean Bomb
 */
 
-//Once .Direction is fixed, fix GetConePosition to work with Corki E
-
 namespace UnsignedEvade
 {
     internal class Program
@@ -41,22 +39,6 @@ namespace UnsignedEvade
             DodgeManager.Initialize();
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;
             Loading.OnLoadingComplete += MenuHandler.Loading_OnLoadingComplete;
-            Game.OnDisconnect += SaveNewSpells;
-            Game.OnEnd += SaveNewSpells;
-        }
-        
-        private static void SaveNewSpells(EventArgs args)
-        {
-            if (!Directory.Exists(ConfigFolderPath + @"\Logs"))
-                Directory.CreateDirectory(ConfigFolderPath + @"\Logs");
-
-            StreamWriter sw = new StreamWriter(ConfigFolderPath + @"\Logs\" + DateTime.Today + " - " + Game.GameId);
-            
-            foreach(string s in SpellsNotInDatabase)
-            {
-                sw.WriteLine(s);
-            }
-            sw.Close();
         }
 
         private static void Loading_OnLoadingComplete(EventArgs args)
@@ -117,8 +99,6 @@ namespace UnsignedEvade
                 newSpellInstance.startPosition = args.Start;
                 if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
                     newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
-                else if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.ConeAndLinearSkillshot)
-                    newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.ConeAndLinearRange);
                 else
                     newSpellInstance.endPosition = args.End;
 
@@ -330,8 +310,7 @@ namespace UnsignedEvade
                                     if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
                                         KeepList.Add(info);
                             }
-                            else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSkillshot
-                                || info.SpellType == SpellInfo.SpellTypeInfo.ConeAndLinearSkillshot)
+                            else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSkillshot)
                             {
                                 float timeItTakesToCast = info.Delay + info.TravelTime;
                                 float timeSinceCast = Game.Time - info.TimeOfCast;
@@ -484,11 +463,6 @@ namespace UnsignedEvade
                             Geometry.DrawConeSkillshot(info.startPosition, info.endPosition, info.ConeDegrees, info.Range);
                         else
                             Geometry.DrawConeSkillshot(info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.ConeDegrees, info.Range);
-                    }
-                    else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeAndLinearSkillshot)
-                    {
-                        Geometry.DrawConeSkillshot(info.startPosition, info.endPosition, info.ConeDegrees, info.Range);
-                        Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.ConeAndLinearRange, info.CollisionCount);
                     }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive)
                         Geometry.DrawCircularSkillshot(info.caster.Position, info.Radius, info.SecondRadius);
