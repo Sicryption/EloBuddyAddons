@@ -112,7 +112,7 @@ namespace UnsignedRenekton
                         if (minion != null)
                             Program.E.Cast(minion.Position);
                     }
-                    if (Program.E.Name == "renektondice")
+                    if (Program.E.Name == "RenektonDice")
                     {
                         Obj_AI_Base minion = GetEnemyKS(Abilities.Dice, GameObjectType.obj_AI_Minion);
                         if (minion != null)
@@ -165,7 +165,7 @@ namespace UnsignedRenekton
                         Program.E.Cast(enemy);
                     }
                 }
-                if (Program.E.Name == "renektondice")
+                if (Program.E.Name == "RenektonDice")
                 {
                     Obj_AI_Base enemy = GetEnemyKS(Abilities.Dice, GameObjectType.AIHeroClient);
                     if (enemy != null)
@@ -286,7 +286,7 @@ namespace UnsignedRenekton
                 }
                 else if(QReady && comboEnemy.Distance(Renekton) <= Program.QRange)
                     Program.Q.Cast();
-                else if (Program.E.Name == "renektondice" && EReady && !WReady && Renekton.CanMove)
+                else if (Program.E.Name == "RenektonDice" && EReady && !WReady && Renekton.CanMove)
                 {
                     if (beginningComboPosition.Distance(Renekton.Position) >= Program.E.Range)
                     {
@@ -390,7 +390,7 @@ namespace UnsignedRenekton
                 {
                     Program.Q.Cast();
                 }
-                else if (Program.E.Name == "renektondice" && EReady && !WReady && Renekton.CanMove)
+                else if (Program.E.Name == "RenektonDice" && EReady && !WReady && Renekton.CanMove)
                 {
                     Vector2 dashPos = Renekton.ServerPosition.Extend(comboEnemy, Program.E.Range);
                     Program.E.Cast(dashPos.To3DWorld());
