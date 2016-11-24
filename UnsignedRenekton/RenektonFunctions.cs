@@ -206,36 +206,36 @@ namespace UnsignedRenekton
                         {
                             //Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
                             //Program.E.Cast(dashPos.To3DWorld());
-                            Program.E.Cast(minion);
+                            Program.E.Cast(minion.Position);
                         }
                         else
                         {
                             Obj_AI_Base minion2 = GetEnemy(Abilities.Slice, GameObjectType.obj_AI_Minion);
-                            if (minion != null)
+                            if (minion2 != null)
                             {
                                 //Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
                                // Program.E.Cast(dashPos.To3DWorld());
-                                Program.E.Cast(minion2);
+                                Program.E.Cast(minion2.Position);
                             }
                         }
                     }
-                    if (Program.E.Name == "renektondice")
+                    if (Program.E.Name == "RenektonDice")
                     {
-                        Obj_AI_Base minion = GetEnemyKS(Abilities.Slice, GameObjectType.obj_AI_Minion);
+                        Obj_AI_Base minion = GetEnemyKS(Abilities.Dice, GameObjectType.obj_AI_Minion);
                         if (minion != null)
                         {
                             //Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
                             //Program.E.Cast(dashPos.To3DWorld());
-                            Program.E.Cast(minion);
+                            Program.E.Cast(minion.Position);
                         }
                         else
                         {
-                            Obj_AI_Base minion2 = GetEnemy(Abilities.Slice, GameObjectType.obj_AI_Minion);
-                            if (minion != null)
+                            Obj_AI_Base minion2 = GetEnemy(Abilities.Dice, GameObjectType.obj_AI_Minion);
+                            if (minion2 != null)
                             {
                                 //Vector2 dashPos = Renekton.ServerPosition.Extend(minion, Program.E.Range * Program.Random.NextFloat(0, 0.05f));
                                 // Program.E.Cast(dashPos.To3DWorld());
-                                Program.E.Cast(minion2);
+                                Program.E.Cast(minion2.Position);
                             }
                         }
                     }
