@@ -3216,7 +3216,8 @@ namespace UnsignedEvade
             #endregion
         };
         #endregion
-        
+
+        #region Spell/Missile Creation
         public static SpellInfo CreateLinearSkillshot(string spellName, string missileName, string championName,
             float range, float missileSpeed, float missileMinSpeed, float missileMaxSpeed, float width, bool canVaryInLength, SpellInfo.SpellSlot slot,
             SpellInfo.CrowdControlType ccType = SpellInfo.CrowdControlType.None)
@@ -3742,6 +3743,7 @@ namespace UnsignedEvade
                 Slot = slot,
             };
         }
+        #endregion
 
         public static SpellInfo GetSpellInfo(string spellOrMissileName)
         {
@@ -3754,6 +3756,10 @@ namespace UnsignedEvade
                         return info;
             }
             return null;
+        }
+        public static List<SpellInfo> GetSpells(string spellName)
+        {
+            return SpellList.Where(a => a.SpellName == spellName).ToList();
         }
 
         public static SpellInfo CreateInstancedSpellInfo(SpellInfo info)
@@ -3788,6 +3794,7 @@ namespace UnsignedEvade
         {
             List<string> ChampionNames = new List<string>();
             foreach (AIHeroClient hero in EntityManager.Heroes.AllHeroes)
+                //this check is for one for all
                 if (!ChampionNames.Contains(hero.ChampionName))
                     ChampionNames.Add(hero.ChampionName);
 

@@ -27,7 +27,6 @@ namespace UnsignedEvade
 {
     internal class Program
     {
-        public static readonly string ConfigFolderPath = Path.Combine(SandboxConfig.DataDirectory);
         public static List<string> SpellsNotInDatabase = new List<string>();
 
         public static List<SpellInfo> activeSpells = new List<SpellInfo>();
@@ -52,7 +51,7 @@ namespace UnsignedEvade
             Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
             Obj_AI_Base.OnBuffLose += Obj_AI_Base_OnBuffLose;
         }
-
+        
         private static void Obj_AI_Base_OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
         {
             if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Buff Losses"))
@@ -88,37 +87,41 @@ namespace UnsignedEvade
                 args.SData.Name.ToLower().Contains("critattack"))
                 return;
 
-            //Console.WriteLine("SpellCast at: " + Game.Time);
-            SpellInfo info = SpellDatabase.GetSpellInfo(args.SData.Name);
-            if (info != null 
-                && (location == SpellInfo.SpellCreationLocation.OnProcessSpell || info.TravelTime == -1f)
-                && info.SpellName != "")
+            #region Adding Spell to Active Spells
+            List<SpellInfo> spells = SpellDatabase.GetSpells(args.SData.Name);
+            foreach (SpellInfo info in spells)
             {
-                SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
+                if (info != null
+                    && (location == SpellInfo.SpellCreationLocation.OnProcessSpell || info.TravelTime == -1f)
+                    && info.SpellName != "")
+                {
+                    SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
 
-                newSpellInstance.startPosition = args.Start;
-                if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
-                    newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
-                else
-                    newSpellInstance.endPosition = args.End;
+                    newSpellInstance.startPosition = args.Start;
+                    if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
+                        newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
+                    else
+                        newSpellInstance.endPosition = args.End;
 
-                newSpellInstance.MissileName = "";
-                newSpellInstance.startingDirection = sender.Direction;
-                newSpellInstance.target = args.Target;
-                newSpellInstance.caster = sender;
-                newSpellInstance.CreationType = location;
-                newSpellInstance.TimeOfCast = Game.Time;
-                
-                if(newSpellInstance.GetChampionSpell().SData.MaxAmmo != -1)
-                    newSpellInstance.startingAmmoCount = newSpellInstance.GetChampionSpell().Ammo;
+                    newSpellInstance.MissileName = "";
+                    newSpellInstance.startingDirection = sender.Direction;
+                    newSpellInstance.target = args.Target;
+                    newSpellInstance.caster = sender;
+                    newSpellInstance.CreationType = location;
+                    newSpellInstance.TimeOfCast = Game.Time;
 
-                //Console.WriteLine("Added Spell " + newSpellInstance.SpellName + " - " + Game.Time);
-                activeSpells.Add(newSpellInstance);
+                    if (newSpellInstance.GetChampionSpell().SData.MaxAmmo != -1)
+                        newSpellInstance.startingAmmoCount = newSpellInstance.GetChampionSpell().Ammo;
+
+                    //Console.WriteLine("Added Spell " + newSpellInstance.SpellName + " - " + Game.Time);
+                    activeSpells.Add(newSpellInstance);
+                }
             }
+            #endregion
 
             #region Print Out Spell Information
             if ((!MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show only Enemy Projectiles") || sender.IsEnemy)
-                && info == null)
+                && spells.Count == 0)
             {
                 //spells
                 if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Debug Projectile Creation"))
@@ -259,7 +262,7 @@ namespace UnsignedEvade
             RefreshSpellList();
             if (_Player.IsDead)
                 return;
-
+            
             try
             {
                 DrawDirection();
