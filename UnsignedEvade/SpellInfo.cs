@@ -29,9 +29,9 @@ namespace UnsignedEvade
         public bool CanVaryInLength = false;
         public string[] OtherMissileNames = new string[0];
         public SpellSlot Slot = SpellSlot.None;
-        public SpellTypeInfo SpellType = SpellTypeInfo.None;
         public CrowdControlType CCtype = CrowdControlType.None;
-        public SpellCreationLocation CreationType = SpellCreationLocation.None;
+        public SpellCreationLocation CreationLocation = SpellCreationLocation.None;
+        public SpellTypeInfo SpellType = SpellTypeInfo.none;
         public Buff BuffType = Buff.None;
         public Dashtype DashType = Dashtype.None;
 
@@ -60,36 +60,53 @@ namespace UnsignedEvade
         
         public enum SpellCreationLocation
         {
-            OnSpellCast,
             OnObjectCreate,
             OnProcessSpell,
             None
         }
-
+        public enum SpellTypeInfo
+        {
+            none,
+            ArcSkillshot,
+            LinearSkillshot,
+            LinearSkillshotNoDamage,
+            LinearMissile,
+            LinearSpellWithDuration,
+            LinearSpellWithBuff,
+            LinearDash,
+            TargetedMissile,
+            TargetedSpell,
+            TargetedSpellWithDuration,
+            TargetedChannel,
+            TargetedDash,
+            CircularSkillshot,
+            CircularSkillshotDash,
+            CircularSpell,
+            CircularSpellWithDuration,
+            CircularSpellWithBuff,
+            BlinkDash,
+            PassiveSpell,
+            PassiveSpellWithDuration,
+            PassiveSpellWithBuff,
+            ConeSpell,
+            ConeSpellWithBuff,
+            SelfActive,
+            SelfActiveNoDamage,
+            SelfActiveWithBuff,
+            SelfActiveToggleable,
+            TargetedActive,
+            Wall,
+            CircularWall,
+            AutoAttack,
+            AutoAttackWithSplashDamage,
+        }
+        
         public enum Dashtype
         {
             Linear,//lucian e, gragas e
             Blink,//ez e, flash
             TargetedLinear,//akali r, lee sin w
             Targeted,//lee sin q2, vi r
-            None
-        }
-
-        public enum SpellTypeInfo
-        {
-            CircularSkillshot,
-            LinearSkillshot,
-            ArcSkillshot,
-            TargetedActive, //ivern E
-            SelfActive,
-            SelfActiveNoDamage,//alistar E
-            PassiveActive,
-            Targeted,
-            TargetedChannel,//Fiddle W
-            Wall,
-            MovingWall,
-            CircularWall,
-            ConeSkillshot,
             None
         }
         public enum CrowdControlType

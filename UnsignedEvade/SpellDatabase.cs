@@ -17,24 +17,9 @@ namespace UnsignedEvade
         {
             #region AllChampions
             //Ludens Echo
-            new SpellInfo()
-            {
-                MissileName = "ItemMagicShankMis",
-                MissileSpeed = 1400f,
-                MissileMinSpeed = 1400f,
-                MissileMaxSpeed = 1400f,
-                Range = 725f,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
-                CCtype = SpellInfo.CrowdControlType.None,
-            },
+            CreateTargetedMissile("none", "ItemMagicShankMis","All", 725f, 1400f, 1400f, 1400f, SpellInfo.SpellSlot.None),
             //Tiamat
-            new SpellInfo()
-            {
-                SpellName = "ItemTiamatCleave",
-                Range = 325f,
-                SpellType = SpellInfo.SpellTypeInfo.SelfActive,
-                CCtype = SpellInfo.CrowdControlType.None,
-            },
+            CreateSelfActive("ItemTiamatCleave", "All", 325f, SpellInfo.SpellSlot.None),
             //Protobelt
             new SpellInfo()
             {
@@ -60,7 +45,7 @@ namespace UnsignedEvade
                 Width = 0f,
                 Radius = 500f,
                 ConeDegrees = 45f,
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //BOTRK
@@ -72,14 +57,14 @@ namespace UnsignedEvade
                 MissileMinSpeed = 1200f,
                 MissileMaxSpeed = 1200f,
                 Range = 550f,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
                 CCtype = SpellInfo.CrowdControlType.Slow,
             },
             //Seraphs Embrace Shield
             new SpellInfo()
             {
                 SpellName = "ItemSeraphsEmbrace",
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Pink Vision Item to give enemies of invis traps on acensions
@@ -94,7 +79,7 @@ namespace UnsignedEvade
             new SpellInfo()
             {
                 SpellName = "ZhonyasHourglass",
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Zhonyas
@@ -102,7 +87,7 @@ namespace UnsignedEvade
             {
                 SpellName = "BilgewaterCutlass",
                 Range = 550f,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
                 CCtype = SpellInfo.CrowdControlType.Slow,
             },
             //BOTRK
@@ -126,7 +111,7 @@ namespace UnsignedEvade
             new SpellInfo()
             {
                 SpellName = "recall",
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Teleport
@@ -134,7 +119,7 @@ namespace UnsignedEvade
             {
                 SpellName = "SummonerTeleport",
                 Range = int.MaxValue,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Smite
@@ -142,7 +127,7 @@ namespace UnsignedEvade
             {
                 SpellName = "SummonerSmite",
                 Range = 500f,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Flash
@@ -150,7 +135,7 @@ namespace UnsignedEvade
             {
                 SpellName = "SummonerFlash",
                 Range = 425,
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.LinearDash,
                 DashType = SpellInfo.Dashtype.Blink,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
@@ -159,14 +144,14 @@ namespace UnsignedEvade
             {
                 SpellName = "SummonerDot",
                 Range = 600,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedSpellWithDuration,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Heal
             new SpellInfo()
             {
                 SpellName = "SummonerHeal",
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.SelfActiveNoDamage,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Exhaust
@@ -174,35 +159,35 @@ namespace UnsignedEvade
             {
                 SpellName = "SummonerExhaust",
                 Range = 650f,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Heal
             new SpellInfo()
             {
                 SpellName = "SummonerBoost",
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Youmuus
             new SpellInfo()
             {
                 SpellName = "YoumusBlade",
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Ghost
             new SpellInfo()
             {
                 SpellName = "SummonerHaste",
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Barrier
             new SpellInfo()
             {
                 SpellName = "SummonerBarrier",
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Blue Buff something?
@@ -213,7 +198,7 @@ namespace UnsignedEvade
                 MissileMinSpeed = 1600f,
                 MissileMaxSpeed = 1600f,
                 Range = 1200f,
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Hextech GLP
@@ -257,35 +242,20 @@ namespace UnsignedEvade
             CreatePassiveSpell("AatroxR", "Aatrox", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackSpeedIncrease),
             CreatePassiveSpell("AatroxR", "Aatrox", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AutoAttackRangeIncrease),
             #endregion
+            //fix ahri w when no enemies around
             #region Ahri
             //q
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.Q,
-            },
+            CreateLinearSkillshot("AhriOrbofDeception", "AhriOrbMissile", "Ahri", 1000f, 1100f, 1100f, 1100f, 100f, false, SpellInfo.SpellSlot.Q),
+            CreateLinearSkillshot("AhriOrbofDeception", "AhriOrbReturn", "Ahri", 1000f, 1100f, 1100f, 1100f, 100f, false, SpellInfo.SpellSlot.Q),
             //w
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.W,
-            },
+            CreateSelfActive("AhriFoxFire", "Ahri", "AhriFoxFire", 700, SpellInfo.SpellSlot.W),
+            CreateLinearMissile("AhriFoxFireMissile", "Ahri", 600f, 1800f, 1800f, 1800f, 5f),
+            CreateLinearMissile("AhriFoxFireMissileTwo", "Ahri", 600f, 1800f, 1800f, 1800f, 5f),
             //e
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
-                CCtype = SpellInfo.CrowdControlType.Charm,
-                Slot = SpellInfo.SpellSlot.E,
-            },
+            CreateLinearSkillshot("AhriSeduce", "AhriSeduceMissile", "Ahri", 1000f, 1550f, 1550f, 1550f, 60f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Charm),
             //r (bolts, not he dash itself)
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.SelfActive,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.R,
-            },
+            CreateLinearDash("AhriTumble", "Ahri", 400f, 0f, SpellInfo.SpellSlot.R),
+            CreateLinearMissile("AhriTumbleMissile", "Ahri", 800f, 1400f, 1400f, 1400f, 0f),
             #endregion
             //get akali q projectile. Add new Akali W
             #region Akali
@@ -376,7 +346,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -390,7 +360,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -429,7 +399,7 @@ namespace UnsignedEvade
                 MissileSpeed = 500f,
                 MissileMinSpeed = 500f,
                 MissileMaxSpeed = 500f,
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -453,7 +423,7 @@ namespace UnsignedEvade
                 Range = 250f,
                 MissileSpeed = 500f,
                 MissileMinSpeed = 500f,
-                SpellType = SpellInfo.SpellTypeInfo.MovingWall,
+                SpellType = SpellInfo.SpellTypeInfo.LinearSpellWithDuration,
                 CCtype = SpellInfo.CrowdControlType.KnockBack,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -469,7 +439,7 @@ namespace UnsignedEvade
                 SpellName = "BardWDirectHeal",
                 ChampionName = "Bard",
                 Range = 800f,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -533,14 +503,14 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -599,14 +569,14 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -659,7 +629,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -679,7 +649,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -693,7 +663,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -736,14 +706,14 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //q spider
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -757,7 +727,7 @@ namespace UnsignedEvade
             //w spider
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -771,14 +741,14 @@ namespace UnsignedEvade
             //e spider
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -836,14 +806,14 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -859,7 +829,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -873,7 +843,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.KnockUp,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -987,7 +957,7 @@ namespace UnsignedEvade
             //r cone split
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1010,7 +980,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.KnockBack,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -1034,7 +1004,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -1048,7 +1018,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1078,7 +1048,7 @@ namespace UnsignedEvade
             //q
             CreateLinearSkillshot("IvernQ", "IvernQ", "Ivern", 1100f, 1300f, 1300f, 1300f, 65f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Root),
             //w
-            CreateWall("IvernW", "Ivern", 1600f, 300f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None),
+            CreateWall("IvernW", "Ivern", 1600f, 300f, 15f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None),
             //e
             CreateTargetedActive("IvernE", "Ivern", 750f, 525f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Shield),
             //r
@@ -1098,14 +1068,14 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -1145,7 +1115,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -1166,14 +1136,14 @@ namespace UnsignedEvade
             //w ranged
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.KnockAside,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -1187,7 +1157,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1255,7 +1225,7 @@ namespace UnsignedEvade
                 OtherMissileNames = new string[] { "KarthusLayWasteA1", "KarthusLayWasteA2",},
             },*/
             //w
-            CreateWall("KarthusWallOfPain", "Karthus", 1000f, 5f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
+            CreateWall("KarthusWallOfPain", "Karthus", 1000f, 5f, 5f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
             //e
             CreateSelfActive("KarthusDefile", "Karthus", "KarthusDefile", 550f, SpellInfo.SpellSlot.E),
             //r
@@ -1314,7 +1284,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -1335,7 +1305,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1344,7 +1314,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -1358,7 +1328,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -1374,7 +1344,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -1388,21 +1358,21 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //w skarrl
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e skarrl
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -1429,7 +1399,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -1450,7 +1420,7 @@ namespace UnsignedEvade
             //rq
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1523,7 +1493,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1550,14 +1520,14 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Polymorph,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -1612,14 +1582,14 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Suppression,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1635,7 +1605,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Root,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -1683,14 +1653,14 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -1704,7 +1674,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1719,35 +1689,19 @@ namespace UnsignedEvade
             //r
             CreateSelfActive("SoulShackles", "Morgana", "null", 625f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun),
             #endregion
+            //nami w on enemy
             #region Nami
             //q
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
-                CCtype = SpellInfo.CrowdControlType.KnockUp,
-                Slot = SpellInfo.SpellSlot.Q,
-            },
+            CreateLinearSkillshotNoDamage("NamiQMissile", "NamiQMissile", "Nami", 850f, 2500f, 2500f, 2500f, 175f, true, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp),
+            CreateCircularSpell("NamiQ", "Nami", 0.75f, 850f, 175f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None, SpellInfo.CrowdControlType.KnockUp),
             //w
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.W,
-            },
+            CreateTargetedMissile("NamiW", "NamiWEnemy", "Nami", 725f, 2500f, 2500f, 2500f, SpellInfo.SpellSlot.W),
+            CreateTargetedMissile("NamiW", "NamiWAlly", "Nami", 725f, 2500f, 2500f, 2500f, SpellInfo.SpellSlot.W),
             //e
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.E,
-            },
+            CreateTargetedSpell("NamiE", "Nami", 800f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease),
             //r
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.MovingWall,
-                CCtype = SpellInfo.CrowdControlType.KnockUp,
-                Slot = SpellInfo.SpellSlot.R,
-            },
+            CreateLinearSpell("NamiR", "Nami", 0f, 2750f, 400f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.KnockUp),
+            CreateLinearSkillshot("NamiRMissile", "NamiRMissile", "Nami", 2750f, 850f, 850f, 850f, 400f, false, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.KnockUp),
             #endregion
             //nasus q and r buff names
             //nasus e duration
@@ -1772,7 +1726,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -1786,7 +1740,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.KnockUp,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1826,14 +1780,14 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Fear,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Nearsight,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -1871,7 +1825,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -1894,21 +1848,21 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -1938,7 +1892,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -1975,7 +1929,7 @@ namespace UnsignedEvade
                 Width = 200f,
                 Radius = 300f,
                 ConeDegrees = 45f,
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },*/
@@ -1998,7 +1952,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -2012,21 +1966,21 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //w burrowed
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -2040,7 +1994,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2106,7 +2060,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2145,14 +2099,14 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -2182,7 +2136,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -2223,7 +2177,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -2237,7 +2191,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2246,14 +2200,14 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //q drag
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -2281,7 +2235,7 @@ namespace UnsignedEvade
             //e drag
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -2309,7 +2263,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2325,7 +2279,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -2376,7 +2330,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -2390,7 +2344,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Suppression,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2443,7 +2397,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -2473,7 +2427,7 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.Stun,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -2496,21 +2450,21 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Suppression,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2519,21 +2473,21 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -2550,7 +2504,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -2575,7 +2529,7 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -2618,7 +2572,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -2632,14 +2586,14 @@ namespace UnsignedEvade
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.KnockBack,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2648,7 +2602,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -2669,7 +2623,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2797,21 +2751,21 @@ namespace UnsignedEvade
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
             //e
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.KnockUp,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2820,7 +2774,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -2850,7 +2804,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -2871,7 +2825,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -2880,14 +2834,14 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.KnockUp,
                 Slot = SpellInfo.SpellSlot.Q,
             },
             //w
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.W,
             },
@@ -2901,7 +2855,7 @@ namespace UnsignedEvade
             //r
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.R,
             },
@@ -3034,7 +2988,7 @@ namespace UnsignedEvade
                 MissileMinSpeed = 500f,
                 MissileMaxSpeed = 500f,
                 DashType = SpellInfo.Dashtype.Linear,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -3048,7 +3002,7 @@ namespace UnsignedEvade
                 MissileMinSpeed = 500f,
                 MissileMaxSpeed = 500f,
                 DashType = SpellInfo.Dashtype.Linear,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
             },
@@ -3061,7 +3015,7 @@ namespace UnsignedEvade
                 Range = 1200f,
                 OtherMissileNames = new string[] { "YasuoRDummySpell" },
                 DashType = SpellInfo.Dashtype.Blink,
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.Suspension,
                 Slot = SpellInfo.SpellSlot.R,
             },*/
@@ -3070,7 +3024,7 @@ namespace UnsignedEvade
             //q
             new SpellInfo()
             {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.Q,
             },
@@ -3255,7 +3209,7 @@ namespace UnsignedEvade
                 Width = width,
                 CanVaryInLength = canVaryInLength,
                 BuffType = buffType,
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3274,7 +3228,7 @@ namespace UnsignedEvade
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
                 Width = width,
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.LinearMissile,
                 CCtype = ccType,
             };
         }
@@ -3289,7 +3243,7 @@ namespace UnsignedEvade
                 Range = range,
                 Delay = duration + 0.25f,
                 Width = width,
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.LinearSpellWithDuration,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3305,7 +3259,7 @@ namespace UnsignedEvade
                 Range = range,
                 BuffName = buffName,
                 Width = width,
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.LinearSpellWithBuff,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3320,7 +3274,8 @@ namespace UnsignedEvade
                 ChampionName = championName,
                 Range = range,
                 Width = width,
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.LinearDash,
+                DashType = SpellInfo.Dashtype.Linear,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3339,7 +3294,7 @@ namespace UnsignedEvade
                 MissileSpeed = missileSpeed,
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3354,7 +3309,7 @@ namespace UnsignedEvade
                 SpellName = spellName,
                 ChampionName = championName,
                 Range = range,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
                 BuffType = buffType,
                 CCtype = ccType,
                 Slot = slot,
@@ -3370,7 +3325,7 @@ namespace UnsignedEvade
                 ChampionName = championName,
                 Range = range,
                 Delay = 0.25f + extraDelay,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedSpellWithDuration,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3400,7 +3355,7 @@ namespace UnsignedEvade
                 ChampionName = championName,
                 Range = range,
                 DashType = dashType,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedDash,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3463,7 +3418,7 @@ namespace UnsignedEvade
                 Delay = duration + 0.25f,
                 CanVaryInLength = canVaryInLength,
                 BuffType = buffType,
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.CircularSpellWithDuration,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3481,7 +3436,7 @@ namespace UnsignedEvade
                 Radius = radius,
                 CanVaryInLength = canVaryInLength,
                 BuffType = buffType,
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.CircularSpell,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3500,7 +3455,7 @@ namespace UnsignedEvade
                 Radius = radius,
                 CanVaryInLength = canVaryInLength,
                 BuffType = buffType,
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.CircularSpellWithBuff,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3518,7 +3473,7 @@ namespace UnsignedEvade
                 CanVaryInLength = true,
                 Radius = impactRadius,
                 DashType = dashType,
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshotDash,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3534,7 +3489,7 @@ namespace UnsignedEvade
                 Range = range,
                 CanVaryInLength = true,
                 DashType = SpellInfo.Dashtype.Blink,
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.BlinkDash,
                 CCtype = ccType,
                 Slot = slot,
             };
@@ -3547,7 +3502,7 @@ namespace UnsignedEvade
             {
                 SpellName = spellName,
                 ChampionName = championName,
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 BuffType = buffType,
                 CCtype = ccType,
                 Slot = slot,
@@ -3561,7 +3516,7 @@ namespace UnsignedEvade
             {
                 SpellName = spellName,
                 ChampionName = championName,
-                SpellType = SpellInfo.SpellTypeInfo.PassiveActive,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithDuration,
                 Delay = extraDelay + 0.25f,
                 BuffType = buffType,
                 CCtype = ccType,
@@ -3577,7 +3532,7 @@ namespace UnsignedEvade
                 SpellName = spellName,
                 ChampionName = championName,
                 Range = range,
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpell,
                 ConeDegrees = coneAngleInDegrees,
                 CCtype = ccType,
                 Slot = slot,
@@ -3593,7 +3548,7 @@ namespace UnsignedEvade
                 ChampionName = championName,
                 BuffName = buffName,
                 Range = range,
-                SpellType = SpellInfo.SpellTypeInfo.ConeSkillshot,
+                SpellType = SpellInfo.SpellTypeInfo.ConeSpellWithBuff,
                 ConeDegrees = coneAngleInDegrees,
                 CCtype = ccType,
                 Slot = slot,
@@ -3625,7 +3580,7 @@ namespace UnsignedEvade
                 SpellName = spellName,
                 ChampionName = championName,
                 BuffName = buffName,
-                SpellType = SpellInfo.SpellTypeInfo.SelfActive,
+                SpellType = SpellInfo.SpellTypeInfo.SelfActiveWithBuff,
                 Radius = radius,
                 CCtype = ccType,
                 BuffType = buffType,
@@ -3650,7 +3605,7 @@ namespace UnsignedEvade
             };
         }
 
-        public static SpellInfo CreateWall(string spellName, string championName, float range, float width,
+        public static SpellInfo CreateWall(string spellName, string championName, float range, float width, float duration,
             SpellInfo.SpellSlot slot, SpellInfo.CrowdControlType ccType)
         {
             return new SpellInfo()
@@ -3692,7 +3647,7 @@ namespace UnsignedEvade
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
                 CCtype = ccType,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 Slot = SpellInfo.SpellSlot.Auto,
             };
         }
@@ -3710,7 +3665,7 @@ namespace UnsignedEvade
                 MissileMaxSpeed = missileMaxSpeed,
                 Radius = radius,
                 CCtype = ccType,
-                SpellType = SpellInfo.SpellTypeInfo.Targeted,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 Slot = SpellInfo.SpellSlot.Auto,
             };
         }
