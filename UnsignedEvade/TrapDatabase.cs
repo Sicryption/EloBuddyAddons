@@ -30,6 +30,13 @@ namespace UnsignedEvade
                 Name = "Noxious Trap",
                 Radius = 125f,
             },
+
+            //shaco box
+            new Trap()
+            {
+                Name = "Jack In The Box",
+                Radius = 300f,
+            },
         };
 
         public static string[] AllTrapNames()

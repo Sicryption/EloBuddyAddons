@@ -22,7 +22,7 @@ namespace UnsignedEvade
             TimeOfCast,
             startingAmmoCount = -1f;
         private float travelTime = 0;
-        public string ChampionName,
+        public string ChampionName = "All",
             MissileName = "",
             SpellName = "",
             BuffName = "";
@@ -92,11 +92,13 @@ namespace UnsignedEvade
             ConeSpellWithBuff,
             SelfActive,
             SelfActiveNoDamage,
+            SelfActiveNoDamageWithBuff,
             SelfActiveWithBuff,
             SelfActiveToggleable,
             TargetedActive,
             Wall,
             CircularWall,
+            PentaWall,
             AutoAttack,
             AutoAttackWithSplashDamage,
         }
@@ -160,6 +162,7 @@ namespace UnsignedEvade
             Pet,
             Shield,
             SpeedUp,
+            Slow,
             SpellShield,
             GuardianAngel,
             None

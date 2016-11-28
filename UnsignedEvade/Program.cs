@@ -390,7 +390,7 @@ namespace UnsignedEvade
                     float timeSinceCast = Game.Time - info.TimeOfCast;
                     float timeItTakesToCast = info.Delay + info.TravelTime;
 
-                    if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown() || info.caster.HasBuff(info.BuffName))
+                    if (timeSinceCast <= timeItTakesToCast ||  info.caster.HasBuff(info.BuffName))
                         KeepList.Add(info);
                 }
             }
@@ -482,10 +482,10 @@ namespace UnsignedEvade
                             //for on spell cast spells that dont have missiles
                             else if (info.MissileName == "" && info.BuffName == "")
                                 Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
-                            else if (info.MissileName == "" && info.BuffName != "")
-                                Geometry.DrawLinearSkillshot(info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                         }
                      }
+                    else if(info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff || info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration)
+                        Geometry.DrawLinearSkillshot(info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
 
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearDash)
                         Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
