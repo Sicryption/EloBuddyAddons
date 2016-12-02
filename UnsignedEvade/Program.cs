@@ -104,7 +104,7 @@ namespace UnsignedEvade
                     else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
                         newSpellInstance.endPosition = info.target.Position;
                     else
-                        newSpellInstance.endPosition = args.End;
+                        newSpellInstance.endPosition = args.End.To2D().To3D((int)args.Start.Z);
 
                     if (info.SpellName == "AkaliSmokeBomb")
                         newSpellInstance.endPosition += new Vector3(0, 30f, 0);

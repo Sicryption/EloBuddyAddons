@@ -257,10 +257,9 @@ namespace UnsignedEvade
             CreateLinearDash("AhriTumble", "Ahri", 400f, 0f, SpellInfo.SpellSlot.R),
             CreateLinearMissile("AhriTumbleMissile", "Ahri", 800f, 1400f, 1400f, 1400f, 0f),
             #endregion
-            //get akali q projectile. Add new Akali W
             #region Akali
             //q
-            CreateTargetedMissile("AkaliMota", "null", "Akali", 600f, 1000f, 1000f, 1000f, SpellInfo.SpellSlot.Q),
+            CreateTargetedMissile("AkaliMota", "AkaliMota", "Akali", 600f, 1000f, 1000f, 1000f, SpellInfo.SpellSlot.Q),
             //w
             //CreateCircularSpell("AkaliSmokeBomb", "Akali", 8f, 250f, 475f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.SpeedUp, SpellInfo.CrowdControlType.Slow),
             CreateCircularSpell("AkaliSmokeBomb", "Akali", 8f, 0f, 400f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.SpeedUp, SpellInfo.CrowdControlType.Slow),

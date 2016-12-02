@@ -31,7 +31,7 @@ namespace UnsignedEvade
 
         public static Vector3 CalculateEndPosition(Vector3 position, Vector3 endPosition, float range)
         {
-            return Extensions.Extend(position, endPosition, range).To3DWorld();
+            return Extensions.Extend(position, endPosition, range).To3D((int)position.Z);
         }
 
         //if onSpellCast was used then the spells end position is the direction the caster is facing extended to max range. IE: xerath q, velkoz r
