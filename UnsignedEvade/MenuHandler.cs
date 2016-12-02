@@ -12,25 +12,42 @@ namespace UnsignedEvade
 {
     class MenuHandler
     {
-        public static Menu mainMenu, DodgeMenu, DebugMenu, DrawMenu, SingedMenu;
-
+        public static Menu mainEvadeMenu, mainChampionEvadeMenu, DebugMenu, DrawMenu;
+        public static List<Menu> championMenus = new List<Menu>();
+        
         public static void Loading_OnLoadingComplete(EventArgs args)
         {
-            mainMenu = MainMenu.AddMenu("Unsigned Evade", "Unsigned Evade");
-
-            DodgeMenu = mainMenu.AddSubMenu("Dodge Menu");
-            DodgeMenu.AddGroupLabel("Dodge Settings");
+            mainEvadeMenu = MainMenu.AddMenu("Unsigned Evade", "Unsigned Evade");
+            mainChampionEvadeMenu = MainMenu.AddMenu("UE - Dodging", "UE - Champions");
             
-            DrawMenu = mainMenu.AddSubMenu("Draw Menu");
-            DrawMenu.AddGroupLabel("Draw Settings");
-            AddCheckboxes(ref DrawMenu, "Draw Friendly Spells/Missiles_false", "Draw Active Spells/Missiles");
+            DrawMenu = AddSubMenu(mainEvadeMenu, "Draw Menu");
+            AddCheckboxes(ref DrawMenu, "Draw Friendly Spells/Missiles_false", "Draw Active Spells/Missiles", "Draw Passive Spell Text");
+            DrawMenu.AddSeparator(4);
 
-            DebugMenu = mainMenu.AddSubMenu("Debug Menu");
-            DebugMenu.AddGroupLabel("Debug Settings");
+            DebugMenu = AddSubMenu(mainEvadeMenu, "Debug Menu");
             AddCheckboxes(ref DebugMenu, "Debug Spell/Missile Creation", "Debug Spell/Missile Deletion",
                 "Show only Enemy Spells/Missiles", "Show Particles_false", "Show All Object Names_false", 
                 "Show Buff Gains_false", "Show Buff Losses_false", "Draw Player Direction_false");
+
+            foreach(string s in EntityManager.Heroes.AllHeroes.GetChampionNames())
+            {
+                Menu champMenu = AddSubMenu(mainChampionEvadeMenu, s);
+
+                foreach(SpellInfo info in SpellDatabase.SpellList.Where(a=>a.ChampionName == s))
+                {
+                    string name = info.Slot.ToString();
+                    if (name == "None")
+                        name = info.SpellName;
+                    if (name == "")
+                        name = info.MissileName;
+
+                    CheckBox cb = AddCheckbox(ref champMenu, "Dodge " + name);
+                }
+
+                championMenus.Add(champMenu);
+            }
         }
+        
         public static void AddCheckboxes(ref Menu menu, params string[] checkBoxValues)
         {
             foreach (string s in checkBoxValues)

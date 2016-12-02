@@ -30,6 +30,7 @@ namespace UnsignedEvade
         public static List<string> SpellsNotInDatabase = new List<string>();
 
         public static List<SpellInfo> activeSpells = new List<SpellInfo>();
+        public static List<Tuple<string, int>> championSpellsDrawnOnChampion = new List<Tuple<string, int>>();
 
         public static readonly Random Random = new Random(DateTime.Now.Millisecond);
         public static AIHeroClient _Player { get { return ObjectManager.Player; } }
@@ -50,6 +51,9 @@ namespace UnsignedEvade
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
             Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
             Obj_AI_Base.OnBuffLose += Obj_AI_Base_OnBuffLose;
+
+            foreach (string playerName in EntityManager.Heroes.AllHeroes.GetNames())
+                championSpellsDrawnOnChampion.Add(new Tuple<string, int>(playerName, 0));
         }
         
         private static void Obj_AI_Base_OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
@@ -93,6 +97,7 @@ namespace UnsignedEvade
             foreach (SpellInfo info in spells)
             {
                 if (info != null
+                    && info.ShouldBeAccountedFor()
                     && (location == SpellInfo.SpellCreationLocation.OnProcessSpell || info.TravelTime == -1f)
                     && info.SpellName != "")
                 {
@@ -174,7 +179,8 @@ namespace UnsignedEvade
                     return;
                 
                 SpellInfo info = SpellDatabase.GetSpellInfo(projectile.SData.Name);
-                if (info != null)
+                if (info != null
+                    && info.ShouldBeAccountedFor())
                 {
                     //dont draw a spell if its missile was created  
                     if (activeSpells.ContainsSpellName(info.SpellName, true))
@@ -268,6 +274,7 @@ namespace UnsignedEvade
         private static void Drawing_OnDraw(EventArgs args)
         {
             RefreshSpellList();
+
             if (_Player.IsDead)
                 return;
             
@@ -343,7 +350,8 @@ namespace UnsignedEvade
                     if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
                         KeepList.Add(info);
                 }
-                else if(info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration)
+                else if(info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration
+                    || info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpellWithDuration)
                 {
                     if ((Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown()) && info.caster.IsFacing(info.endPosition))
                         KeepList.Add(info);
@@ -357,9 +365,12 @@ namespace UnsignedEvade
                         if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
                             KeepList.Add(info);
                 }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff)
+                else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff
+                    || info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpellWithBuff)
                 {
-                    if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown() || info.caster.HasBuff(info.BuffName))
+                    // i dont believe spells with buffs need cd checked
+                    //|| info.IsOffCooldown()
+                    if (Game.Time - info.TimeOfCast <= info.Delay  || info.caster.HasBuff(info.BuffName))
                         KeepList.Add(info);
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearDash)
@@ -503,6 +514,12 @@ namespace UnsignedEvade
                                 if (info.MissileName.ToLower().Contains("return") ||
                                     (info.MissileName == "DravenR" && info.missile.EndPosition.Distance(info.caster.Position) <= 50))
                                     Geometry.DrawLinearSkillshot(info.missile.Position, info.missile.SpellCaster.Position, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
+                                //ahri rotating w orbs
+                                else if(info.MissileName == "AhriFoxFireMissile" || info.MissileName == "AhriFoxFireMissileTwo")
+                                {
+                                    if(info.missile.Position.Distance(info.caster.Position) > 200)
+                                        Geometry.DrawLinearSkillshot(info.missile.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
+                                }
                                 else
                                     Geometry.DrawLinearSkillshot(info.missile.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                             }
@@ -518,7 +535,7 @@ namespace UnsignedEvade
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile || info.SpellType == SpellInfo.SpellTypeInfo.AutoAttack)
                     {
                         //targeted missiles are null before the spell is casted.
-                        if(info.missile != null)
+                        if (info.missile != null)
                             Geometry.DrawTargetedSpell(info.missile.Position, info.target);
                     }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedDash)
@@ -543,6 +560,19 @@ namespace UnsignedEvade
                         Geometry.DrawWall(info.startPosition, info.endPosition, info.Width, info.Radius);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularWall)
                         Geometry.DrawCircularWall(info.endPosition, info.Radius, info.SecondRadius);
+                    else if ((info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpellWithBuff ||
+                        info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpellWithDuration ||
+                        info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpell)
+                        && MenuHandler.DrawMenu.GetCheckboxValue("Draw Passive Spell Text"))
+                    {
+                        int spellCount = championSpellsDrawnOnChampion.Where(a => a.Item1 == info.caster.Name).FirstOrDefault().Item2;
+
+                        for (int i = 0; i < championSpellsDrawnOnChampion.Count; i++)
+                            if(championSpellsDrawnOnChampion[i].Item1 == info.caster.Name)
+                                championSpellsDrawnOnChampion[i] = new Tuple<string, int>(championSpellsDrawnOnChampion[i].Item1, championSpellsDrawnOnChampion[i].Item2 + 1);
+
+                        Drawing.DrawText(info.caster.Position.WorldToScreen() - new Vector2(0, 15 * spellCount), Geometry.drawColor, info.caster.BaseSkinName + " " + info.Slot + " Buff", 15);
+                    }
                 }
             }
         }

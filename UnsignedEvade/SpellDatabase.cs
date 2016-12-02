@@ -18,6 +18,10 @@ namespace UnsignedEvade
             #region AllChampions
             //Ludens Echo
             CreateTargetedMissile("none", "ItemMagicShankMis", "All", 725f, 1400f, 1400f, 1400f, SpellInfo.SpellSlot.None),
+            //recall
+            CreatePassiveSpell("recall", "All", "recall", 1f, SpellInfo.SpellSlot.None),
+            //Teleport
+            CreatePassiveSpell("SummonerTeleport", "All", "SummonerTeleport", 2f, SpellInfo.SpellSlot.None),
             //Tiamat
             CreateSelfActive("ItemTiamatCleave", "All", 325f, SpellInfo.SpellSlot.None),
             //Protobelt
@@ -105,21 +109,6 @@ namespace UnsignedEvade
                 Range = 5500f,//not sure on this. have to actually use the item to test
                 Radius = 550f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
-                CCtype = SpellInfo.CrowdControlType.None,
-            },
-            //recall
-            new SpellInfo()
-            {
-                SpellName = "recall",
-                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
-                CCtype = SpellInfo.CrowdControlType.None,
-            },
-            //Teleport
-            new SpellInfo()
-            {
-                SpellName = "SummonerTeleport",
-                Range = int.MaxValue,
-                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Smite
@@ -242,7 +231,6 @@ namespace UnsignedEvade
             CreatePassiveSpell("AatroxR", "Aatrox", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackSpeedIncrease),
             CreatePassiveSpell("AatroxR", "Aatrox", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AutoAttackRangeIncrease),
             #endregion
-            //fix ahri w when no enemies around
             #region Ahri
             //q
             CreateLinearSkillshot("AhriOrbofDeception", "AhriOrbMissile", "Ahri", 1000f, 1100f, 1100f, 1100f, 100f, false, SpellInfo.SpellSlot.Q),
@@ -2850,13 +2838,13 @@ namespace UnsignedEvade
                 ConeDegrees = 45f,
             */
             #endregion
-            //xin q knockup logic
+            //xin q knockup logic. happens on 3rd stack of q buff
             //xin r knockback logic
             #region XinZhao
             //q
-            CreatePassiveSpell("XenZhaoComboTarget", "XinZhao", SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp, SpellInfo.Buff.AttackDamageIncrease),
+            CreatePassiveSpell("XenZhaoComboTarget", "XinZhao", "XenZhaoComboTarget", SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp, SpellInfo.Buff.AttackDamageIncrease),
             //w
-            CreatePassiveSpell("XenZhaoBattleCry", "XinZhao", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackSpeedIncrease),
+            CreatePassiveSpell("XenZhaoBattleCry", "XinZhao", "XenZhaoBattleCry", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackSpeedIncrease),
             //e
             CreateTargetedDash("XenZhaoSweep", "XinZhao", 600f, SpellInfo.SpellSlot.E, SpellInfo.Dashtype.Linear, SpellInfo.CrowdControlType.Slow),
             //r
@@ -3448,7 +3436,23 @@ namespace UnsignedEvade
             {
                 SpellName = spellName,
                 ChampionName = championName,
-                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithDuration,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
+                BuffName = buffName,
+                BuffType = buffType,
+                CCtype = ccType,
+                Slot = slot,
+            };
+        }
+
+        public static SpellInfo CreatePassiveSpell(string spellName, string championName, string buffName, float delay, SpellInfo.SpellSlot slot,
+            SpellInfo.CrowdControlType ccType = SpellInfo.CrowdControlType.None, SpellInfo.Buff buffType = SpellInfo.Buff.None)
+        {
+            return new SpellInfo()
+            {
+                SpellName = spellName,
+                ChampionName = championName,
+                SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
+                Delay = delay,
                 BuffName = buffName,
                 BuffType = buffType,
                 CCtype = ccType,

@@ -76,6 +76,10 @@ namespace UnsignedEvade
         {
             return MenuHandler.GetCheckboxValue(self, text);
         }
+        public static CheckBox GetCheckbox(this Menu self, string text)
+        {
+            return MenuHandler.GetCheckbox(self, text);
+        }
         public static int GetSliderValue(this Menu self, string text)
         {
             return MenuHandler.GetSliderValue(self, text);
@@ -83,6 +87,42 @@ namespace UnsignedEvade
         public static string GetComboBoxText(this Menu self, string text)
         {
             return MenuHandler.GetComboBoxText(self, text);
+        }
+        public static ComboBox GetComboBox(this Menu self, string text)
+        {
+            return MenuHandler.GetComboBox(self, text);
+        }
+        public static List<string> GetChampionNames(this List<AIHeroClient> list)
+        {
+            List<string> names = new List<string>();
+            foreach (AIHeroClient cl in list)
+                if (!names.Contains(cl.ChampionName))
+                    names.Add(cl.ChampionName);
+            return names;
+        }
+        public static List<string> GetNames(this List<AIHeroClient> list)
+        {
+            List<string> names = new List<string>();
+            foreach (AIHeroClient cl in list)
+                if (!names.Contains(cl.Name))
+                    names.Add(cl.Name);
+            return names;
+        }
+        public static bool ShouldBeAccountedFor(this SpellInfo info)
+        {
+            Menu menu = MenuHandler.championMenus.Where(a => a.UniqueMenuId.Contains(info.ChampionName)).FirstOrDefault();
+            
+            //spells like recall/tp/items
+            if (menu == null)
+                return true;
+
+            string name = info.Slot.ToString();
+            if (name == "None")
+                name = info.SpellName;
+            if (name == "")
+                name = info.MissileName;
+            
+            return menu.GetCheckboxValue("Dodge " + name);
         }
     }
 }
