@@ -312,9 +312,10 @@ namespace UnsignedEvade
             //e
             CreateTargetedMissile("Frostbite", "Frostbite", "Anivia", 600f, 1600f, 1600f, 1600f, SpellInfo.SpellSlot.E),
             //r Handled under Particle Darabase
+            //should be handled with buff
             CreateCircularSpell("GlacialStorm", "Anivia", "null", 750f, 200f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Slow),
             #endregion
-            //do annie Q/W/R stun with buff. Add Annie E
+            //do annie Q/W/R stun with buff
             #region Annie
             //aa
             CreateAutoAttack("AnnieBasicAttack", "Annie", 1200f, 1200f, 1200f),
@@ -328,7 +329,7 @@ namespace UnsignedEvade
             //r
             CreateCircularSpell("InfernalGuardian", "Annie", 600f, 250f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.Pet, SpellInfo.CrowdControlType.Stun),
             #endregion
-            //add ashe basic attack having a slow, change E to not draw or dodge
+            //add ashe basic attack having a slow
             #region Ashe
             //q
             CreatePassiveSpell("AsheQ", "Ashe", SpellInfo.SpellSlot.Q),
@@ -338,7 +339,7 @@ namespace UnsignedEvade
             CreateLinearSkillshot("Volley", "VolleyRightAttack", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
             CreateLinearSkillshot("Volley", "VolleyAttackWithSound", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
             //e
-            CreateLinearSkillshot("AsheSpiritOfTheHawk", "AsheSpiritOfTheHawk", "Ashe", int.MaxValue, 1400f, 1400f, 1400f, 5f, true, SpellInfo.SpellSlot.E),            //r
+            CreateLinearSkillshotNoDamage("AsheSpiritOfTheHawk", "AsheSpiritOfTheHawk", "Ashe", int.MaxValue, 1400f, 1400f, 1400f, 5f, true, SpellInfo.SpellSlot.E),            //r
             //r
             CreateLinearSkillshot("EnchantedCrystalArrow", "EnchantedCrystalArrow", "Ashe", int.MaxValue, 1600f, 1600f, 1600f, 130f, false, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun),
             #endregion
@@ -598,10 +599,11 @@ namespace UnsignedEvade
             CreateLinearSkillshot("MissileBarrageMissile", "MissileBarrageMissile", "Corki", 1300f, 2000f, 2000f, 2000f, 40f, false, SpellInfo.SpellSlot.R),
             CreateLinearSkillshot("MissileBarrageMissile2", "MissileBarrageMissile2", "Corki", 1500f, 2000f, 2000f, 2000f, 40f, false, SpellInfo.SpellSlot.R),
             #endregion
-            //add darius Q inner range
+            //add darius Q inner range dodging
             #region Darius
             //q
-            CreateSelfActive("DariusCleave", "Darius", "dariusqcast", 270f, SpellInfo.SpellSlot.Q),
+            CreateSelfActive("DariusCleave", "Darius", "dariusqcast", 285f, SpellInfo.SpellSlot.Q),
+            CreateSelfActive("DariusCleave", "Darius", "dariusqcast", 400f, SpellInfo.SpellSlot.Q),
             //w
             CreatePassiveSpell("DariusNoxianTacticsONH", "Darius", "DariusNoxianTacticsONH", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
             //e

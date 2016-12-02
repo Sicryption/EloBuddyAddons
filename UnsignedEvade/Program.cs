@@ -54,13 +54,13 @@ namespace UnsignedEvade
         
         private static void Obj_AI_Base_OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
         {
-            if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Buff Losses"))
+            if (MenuHandler.DebugMenu.GetCheckboxValue("Show Buff Losses"))
                 Console.WriteLine(args.Buff.Name);
         }
 
         private static void Obj_AI_Base_OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
         {
-            if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Buff Gains"))
+            if (MenuHandler.DebugMenu.GetCheckboxValue("Show Buff Gains"))
                 Console.WriteLine(args.Buff.Name);
 
             foreach (SpellInfo info in activeSpells.Where(a => a.BuffName != ""))
@@ -127,11 +127,11 @@ namespace UnsignedEvade
             #endregion
 
             #region Print Out Spell Information
-            if ((!MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show only Enemy Projectiles") || sender.IsEnemy)
+            if ((!MenuHandler.DebugMenu.GetCheckboxValue("Show only Enemy Spells/Missiles") || sender.IsEnemy)
                 && spells.Count == 0)
             {
                 //spells
-                if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Debug Projectile Creation"))
+                if (MenuHandler.DebugMenu.GetCheckboxValue("Debug Spell/Missile Creation"))
                 {
                     string debugText = "";
                     debugText += "                SpellName = \"" + args.SData.Name + "\",\r\n";
@@ -203,9 +203,9 @@ namespace UnsignedEvade
                 else
                 {
                     #region Print Out Spell Information
-                    if ((!MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show only Enemy Projectiles")
+                    if ((!MenuHandler.DebugMenu.GetCheckboxValue("Show only Enemy Spells/Missiles")
                             || projectile.SpellCaster.IsEnemy))
-                        if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Debug Projectile Creation"))
+                        if (MenuHandler.DebugMenu.GetCheckboxValue("Debug Spell/Missile Creation"))
                         {
                             string debugText = "";
                             debugText += "                MissileName = \"" + projectile.SData.Name + "\",\r\n";
@@ -255,7 +255,7 @@ namespace UnsignedEvade
         {
             Obj_GeneralParticleEmitter particle = ob as Obj_GeneralParticleEmitter;
             ParticleInfo info = ParticleDatabase.GetParticleInfo(ob.Name);
-            if (info == null && MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show Particles"))
+            if (info == null && MenuHandler.DebugMenu.GetCheckboxValue("Show Particles"))
                 Console.WriteLine("\"" + ob.Name + "\",");
             else
             {
@@ -315,7 +315,7 @@ namespace UnsignedEvade
 
             foreach (AIHeroClient singed in EntityManager.Heroes.AllHeroes.Where(a => a.ChampionName == "Singed" && a.HasBuff("PoisonTrail")))
             {
-                if (singed.IsEnemy || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Friendly Projectiles"))
+                if (singed.IsEnemy || MenuHandler.DrawMenu.GetCheckboxValue("Draw Friendly Spells/Missiles"))
                 {
                     if (singed.Position.IsInRangeFromSingedPoison(75f))
                     {
@@ -481,9 +481,9 @@ namespace UnsignedEvade
             {
                 count++;
 
-                if (info.caster.IsEnemy || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Friendly Projectiles"))
+                if (info.caster.IsEnemy || MenuHandler.DrawMenu.GetCheckboxValue("Draw Friendly Spells/Missiles"))
                 {
-                    if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Draw Active Spells"))
+                    if (MenuHandler.DrawMenu.GetCheckboxValue("Draw Active Spells/Missiles"))
                     {
                         if (info.SpellName != "")
                             Drawing.DrawText(Vector2.Zero + new Vector2(0, 15 * count), Geometry.drawColor, info.SpellName, 15);
@@ -591,7 +591,7 @@ namespace UnsignedEvade
 
         private static void DrawTraps()
         {
-            foreach (Obj_AI_Minion trap in ObjectManager.Get<Obj_AI_Minion>().Where(a => a != null && (a.IsEnemy || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Friendly Projectiles")) && !a.IsDead && TrapDatabase.AllTrapNames().Contains(a.Name)))
+            foreach (Obj_AI_Minion trap in ObjectManager.Get<Obj_AI_Minion>().Where(a => a != null && (a.IsEnemy || MenuHandler.DrawMenu.GetCheckboxValue("Draw Friendly Spells/Missiles")) && !a.IsDead && TrapDatabase.AllTrapNames().Contains(a.Name)))
             {
                 Drawing.DrawCircle(trap.Position, TrapDatabase.getTrap(trap.Name).Radius, Geometry.drawColor);
             }
@@ -599,7 +599,8 @@ namespace UnsignedEvade
 
         private static void DrawIllaoiTentacles()
         {
-            foreach (Obj_AI_Minion tentacle in ObjectManager.Get<Obj_AI_Minion>().Where(a => a.Name == "God"))
+            //illaoi tentacle slam found under DrawParticals method
+            foreach (Obj_AI_Minion tentacle in ObjectManager.Get<Obj_AI_Minion>().Where(a => a.Name == "God" && (a.IsEnemy || MenuHandler.DrawMenu.GetCheckboxValue("Draw Friendly Spells/Missiles"))))
             {
                 Drawing.DrawCircle(tentacle.Position, 50, Geometry.drawColor);
             }
@@ -621,7 +622,7 @@ namespace UnsignedEvade
 
         private static void DrawObjectNames()
         {
-            if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Debug, "Show All Object Names"))
+            if (MenuHandler.DebugMenu.GetCheckboxValue("Show All Object Names"))
             {
                 int index = 0;
                 foreach (GameObject ob in ObjectManager.Get<GameObject>().Where(a => a.Position.Distance(Game.CursorPos) <= 500))
@@ -634,7 +635,7 @@ namespace UnsignedEvade
         
         private static void DrawDirection()
         {
-            if (MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Player Direction"))
+            if (MenuHandler.DebugMenu.GetCheckboxValue("Draw Player Direction"))
                 Drawing.DrawText(_Player.Position.WorldToScreen(), Geometry.drawColor, _Player.Direction.ToString(), 15);
         }
 

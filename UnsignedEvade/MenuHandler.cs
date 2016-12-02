@@ -12,15 +12,7 @@ namespace UnsignedEvade
 {
     class MenuHandler
     {
-        private static Menu mainMenu, DodgeMenu, DebugMenu, DrawMenu;
-
-        public enum MenuType
-        {
-            Main,
-            Dodge,
-            Debug,
-            Draw
-        }
+        public static Menu mainMenu, DodgeMenu, DebugMenu, DrawMenu, SingedMenu;
 
         public static void Loading_OnLoadingComplete(EventArgs args)
         {
@@ -31,54 +23,70 @@ namespace UnsignedEvade
             
             DrawMenu = mainMenu.AddSubMenu("Draw Menu");
             DrawMenu.AddGroupLabel("Draw Settings");
-            CreateCheckbox(ref DrawMenu, "Draw Friendly Projectiles", false);
-            CreateCheckbox(ref DrawMenu, "Draw Player Direction", false);
+            AddCheckboxes(ref DrawMenu, "Draw Friendly Spells/Missiles_false", "Draw Active Spells/Missiles");
 
             DebugMenu = mainMenu.AddSubMenu("Debug Menu");
             DebugMenu.AddGroupLabel("Debug Settings");
-            CreateCheckbox(ref DebugMenu, "Debug Projectile Creation");
-            CreateCheckbox(ref DebugMenu, "Debug Projectile Deletion");
-            CreateCheckbox(ref DebugMenu, "Show only Enemy Projectiles");
-            CreateCheckbox(ref DebugMenu, "Show Animation Names", false);
-            CreateCheckbox(ref DebugMenu, "Draw Active Spells", false);
-            CreateCheckbox(ref DebugMenu, "Show Particles", false);
-            CreateCheckbox(ref DebugMenu, "Show All Object Names", false);
-            CreateCheckbox(ref DebugMenu, "Show Buff Gains", false);
-            CreateCheckbox(ref DebugMenu, "Show Buff Losses", false);
+            AddCheckboxes(ref DebugMenu, "Debug Spell/Missile Creation", "Debug Spell/Missile Deletion",
+                "Show only Enemy Spells/Missiles", "Show Particles_false", "Show All Object Names_false", 
+                "Show Buff Gains_false", "Show Buff Losses_false", "Draw Player Direction_false");
         }
-
-        private static CheckBox CreateCheckbox(ref Menu menu, string name, bool defaultValue = true)
+        public static void AddCheckboxes(ref Menu menu, params string[] checkBoxValues)
         {
-            return menu.Add(name, new CheckBox(name, defaultValue));
-        }
-
-        private static Menu getMenu(MenuType type)
-        {
-            switch(type)
+            foreach (string s in checkBoxValues)
             {
-                case MenuType.Debug:
-                    return DebugMenu;
-                case MenuType.Main:
-                    return mainMenu;
-                case MenuType.Dodge:
-                    return DodgeMenu;
-                case MenuType.Draw:
-                    return DrawMenu;
+                if (s.Length > "_false".Length && s.Contains("_false"))
+                    AddCheckbox(ref menu, s.Remove(s.IndexOf("_false"), 6), false);
+                else
+                    AddCheckbox(ref menu, s, true);
             }
-            return null;
         }
-
-        public static CheckBox GetCheckbox(MenuType menuType, string uniqueName)
+        public static Menu AddSubMenu(Menu startingMenu, string text)
         {
-            CheckBox checkbox = getMenu(menuType).Get<CheckBox>(uniqueName);
+            Menu menu = startingMenu.AddSubMenu(text, text + ".");
+            menu.AddGroupLabel(text + " Settings");
+            return menu;
+        }
+        public static CheckBox AddCheckbox(ref Menu menu, string text, bool defaultValue = true)
+        {
+            return menu.Add(menu.UniqueMenuId + text, new CheckBox(text, defaultValue));
+        }
+        public static CheckBox GetCheckbox(Menu menu, string text)
+        {
+            return menu.Get<CheckBox>(menu.UniqueMenuId + text);
+        }
+        public static bool GetCheckboxValue(Menu menu, string text)
+        {
+            CheckBox checkbox = GetCheckbox(menu, text);
+
             if (checkbox == null)
-                Console.WriteLine("Checkbox " + uniqueName + " does not exist under this menu type: " + menuType.ToString());
-            return checkbox;
-        }
+                Console.WriteLine("Checkbox (" + text + ") not found under menu (" + menu.DisplayName + "). Unique ID (" + menu.UniqueMenuId + text + ")");
 
-        public static bool GetCheckboxValue(MenuType menuType, string uniqueName)
+            return checkbox.CurrentValue;
+        }
+        public static ComboBox AddComboBox(Menu menu, string text, int defaultValue = 0, params string[] values)
         {
-            return GetCheckbox(menuType, uniqueName).CurrentValue;
+            return menu.Add(menu.UniqueMenuId + text, new ComboBox(text, defaultValue, values));
+        }
+        public static ComboBox GetComboBox(Menu menu, string text)
+        {
+            return menu.Get<ComboBox>(menu.UniqueMenuId + text);
+        }
+        public static string GetComboBoxText(Menu menu, string text)
+        {
+            return menu.Get<ComboBox>(menu.UniqueMenuId + text).SelectedText;
+        }
+        public static Slider GetSlider(Menu menu, string text)
+        {
+            return menu.Get<Slider>(menu.UniqueMenuId + text);
+        }
+        public static int GetSliderValue(Menu menu, string text)
+        {
+            return menu.Get<Slider>(menu.UniqueMenuId + text).CurrentValue;
+        }
+        public static Slider AddSlider(Menu menu, string text, int defaultValue, int minimumValue, int maximumValue)
+        {
+            return menu.Add(menu.UniqueMenuId + text, new Slider(text, defaultValue, minimumValue, maximumValue));
         }
     }
 }

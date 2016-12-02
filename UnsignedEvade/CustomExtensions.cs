@@ -72,5 +72,17 @@ namespace UnsignedEvade
                     return true;
             return false;
         }
+        public static bool GetCheckboxValue(this Menu self, string text)
+        {
+            return MenuHandler.GetCheckboxValue(self, text);
+        }
+        public static int GetSliderValue(this Menu self, string text)
+        {
+            return MenuHandler.GetSliderValue(self, text);
+        }
+        public static string GetComboBoxText(this Menu self, string text)
+        {
+            return MenuHandler.GetComboBoxText(self, text);
+        }
     }
 }
