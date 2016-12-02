@@ -773,35 +773,55 @@ namespace UnsignedEvade
             //buff name: fiorarmark
             CreateTargetedSpell("FioraR", "Fiora", 500f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease),
             #endregion
+            //not sure on fizz w buff name/
+            //fix fizz e
+            //fix fizz r attachment
             #region Fizz
             //q
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.Q,
-            },
+            CreateTargetedDash("FizzQ", "Fizz", 550f, SpellInfo.SpellSlot.Q, SpellInfo.Dashtype.TargetedLinear),
             //w
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.W,
-            },
+            CreatePassiveSpell("FizzW", "Fizz", "fizzwdot", SpellInfo.SpellSlot.W),
             //e
-            new SpellInfo()
+            /*new SpellInfo()
             {
+                SpellName = "FizzE",
+                ChampionName = "Fizz",
+                Range = 25000f,
+                MissileSpeed = 20f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 330f,
+                ConeDegrees = 45f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
-            },
+            },*/
+            CreateLinearSkillshot("FizzR", "FizzRMissile", "Fizz", 1000f, 1300f, 1300f, 1300f, 80f, true, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Slow),
             //r
-            new SpellInfo()
+            /*new SpellInfo()
             {
+            SpellName = "FizzR",
+                ChampionName = "Fizz",
+                Range = 10000f,
+                MissileSpeed = 1300f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 150f,
+                Radius = 300f,
+                ConeDegrees = 45f,
+
+                MissileName = "FizzRMissile",
+                ChampionName = "Fizz",
+                MissileSpeed = 1300f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Range = 10000f,
+                Width = 80f,
                 SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.KnockUp,
                 Slot = SpellInfo.SpellSlot.R,
-            },
+            },*/
             #endregion
             //get galio R buff name
             #region Galio
