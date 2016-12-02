@@ -734,18 +734,17 @@ namespace UnsignedEvade
             //r
             CreateLinearSkillshot("EzrealTrueshotBarrage", "EzrealTrueshotBarrage", "Ezreal", int.MaxValue, 2000f, 2000f, 2000f, 160f, false, SpellInfo.SpellSlot.W),
             #endregion
-            //fiddlesticks buff name
             #region Fiddlesticks
             //q
             CreateTargetedSpell("Terrify", "FiddleSticks", 525f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Fear),
             //w
             CreateTargetedSpell("Drain", "FiddleSticks", 575f, SpellInfo.SpellSlot.W),
-            CreateTargetedChannel("DrainChannel", "FiddleSticks", "null", 650f, SpellInfo.SpellSlot.W),
+            CreateTargetedChannel("DrainChannel", "FiddleSticks", "DrainChannel", 650f, SpellInfo.SpellSlot.W),
             //e
             CreateTargetedMissile("FiddlesticksDarkWind", "FiddlesticksDarkWind", "FiddleSticks", 750f, 1100f, 1100f, 1100f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Silence),
             CreateTargetedMissile("FiddlesticksDarkWind", "FiddleSticksDarkWindMissile", "FiddleSticks", 750f, 1100f, 1100f, 1100f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Silence),
             //r
-            CreateSelfActive("Crowstorm", "FiddleSticks", 600f, SpellInfo.SpellSlot.R),
+            CreateSelfActive("Crowstorm", "FiddleSticks", "Crowstorm", 600f, SpellInfo.SpellSlot.R),
             CreateBlinkDash("Crowstorm", "FiddleSticks", 800f, SpellInfo.SpellSlot.R),
             #endregion
             //do fiora w cc calculations

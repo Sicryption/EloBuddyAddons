@@ -21,7 +21,7 @@ namespace UnsignedEvade
             mainChampionEvadeMenu = MainMenu.AddMenu("UE - Dodging", "UE - Champions");
             
             DrawMenu = AddSubMenu(mainEvadeMenu, "Draw Menu");
-            AddCheckboxes(ref DrawMenu, "Draw Friendly Spells/Missiles_false", "Draw Active Spells/Missiles", "Draw Passive Spell Text");
+            AddCheckboxes(ref DrawMenu, "Draw Spells/Missiles", "Draw Friendly Spells/Missiles_false", "Draw Active Spells/Missiles", "Draw Passive Spell Text");
             DrawMenu.AddSeparator(4);
 
             DebugMenu = AddSubMenu(mainEvadeMenu, "Debug Menu");

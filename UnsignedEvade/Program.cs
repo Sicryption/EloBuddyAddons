@@ -275,7 +275,7 @@ namespace UnsignedEvade
         {
             RefreshSpellList();
 
-            if (_Player.IsDead)
+            if (_Player.IsDead || !MenuHandler.DrawMenu.GetCheckboxValue("Draw Spells/Missiles"))
                 return;
             
             try
