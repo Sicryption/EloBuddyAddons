@@ -1102,6 +1102,11 @@ namespace UnsignedEvade
             #endregion
             //add jhin stun only on buff
             #region Jhin
+            //aa
+            CreateAutoAttack("JhinBasicAttack", "Jhin", 2600f, 2600f, 2600f),
+            CreateAutoAttack("JhinBasicAttack2", "Jhin", 2600f, 2600f, 2600f),
+            CreateAutoAttack("JhinBasicAttack3", "Jhin", 2600f, 2600f, 2600f),
+            CreateAutoAttack("JhinPassiveAttack", "Jhin", 2600f, 2600f, 2600f),
             //q
             CreateTargetedMissile("JhinQ", "JhinQ", "Jhin", 550f, 1800f, 1800f, 1800f, SpellInfo.SpellSlot.Q),
             //w
