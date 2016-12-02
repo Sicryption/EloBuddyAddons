@@ -109,8 +109,8 @@ namespace UnsignedEvade
                     newSpellInstance.caster = sender;
                     newSpellInstance.CreationLocation = location;
                     newSpellInstance.TimeOfCast = Game.Time;
-
-                    if (newSpellInstance.GetChampionSpell().SData.MaxAmmo != -1)
+                    
+                    if (newSpellInstance.GetChampionSpell() != null && newSpellInstance.GetChampionSpell().SData.MaxAmmo != -1)
                         newSpellInstance.startingAmmoCount = newSpellInstance.GetChampionSpell().Ammo;
 
                     //Console.WriteLine("Added Spell " + newSpellInstance.SpellName + " - " + Game.Time);
@@ -315,10 +315,14 @@ namespace UnsignedEvade
                 //if is dash and dashtype is linear
                 if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot ||
                     info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage ||
-                    info.SpellType == SpellInfo.SpellTypeInfo.LinearMissile ||
-                    info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration)
+                    info.SpellType == SpellInfo.SpellTypeInfo.LinearMissile)
                 {
                     if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
+                        KeepList.Add(info);
+                }
+                if(info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration)
+                {
+                    if ((Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown()) && info.caster.IsFacing(info.endPosition))
                         KeepList.Add(info);
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile ||
@@ -332,7 +336,7 @@ namespace UnsignedEvade
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff)
                 {
-                    if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown() && info.caster.HasBuff(info.BuffName))
+                    if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown() || info.caster.HasBuff(info.BuffName))
                         KeepList.Add(info);
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearDash)
@@ -483,15 +487,16 @@ namespace UnsignedEvade
                             else if (info.MissileName == "" && info.BuffName == "")
                                 Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                         }
-                     }
-                    else if(info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff || info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration)
+                    }
+                    else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff || info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration)
                         Geometry.DrawLinearSkillshot(info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
-
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearDash)
                         Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile)
                     {
-                        Geometry.DrawTargetedSpell(info.missile.Position, info.target);
+                        //targeted missiles are null before the spell is casted.
+                        if(info.missile != null)
+                            Geometry.DrawTargetedSpell(info.missile.Position, info.target);
                     }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedDash)
                     {

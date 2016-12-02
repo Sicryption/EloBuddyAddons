@@ -186,8 +186,6 @@ namespace UnsignedEvade
             EloBuddy.SpellSlot slot = GetEBSpellSlot();
             if(slot != EloBuddy.SpellSlot.Unknown)
                 return caster.Spellbook.GetSpell(slot);
-
-            Console.WriteLine("Champion Spell was null: " + SpellName);
             return null;
         }
     }

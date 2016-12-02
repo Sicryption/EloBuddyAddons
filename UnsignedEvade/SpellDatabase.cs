@@ -324,7 +324,7 @@ namespace UnsignedEvade
             //w
             CreateConeSpell("Incinerate", "Annie", 600f, 24.76f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Stun),
             //e
-            CreatePassiveSpell("null", "Annie", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
+            CreatePassiveSpell("MoltenShield", "Annie", "MoltenShield", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
             //r
             CreateCircularSpell("InfernalGuardian", "Annie", 600f, 250f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.Pet, SpellInfo.CrowdControlType.Stun),
             #endregion
@@ -1655,33 +1655,55 @@ namespace UnsignedEvade
             #endregion
             #region Nautilus
             //q
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
-                CCtype = SpellInfo.CrowdControlType.Pull,
-                Slot = SpellInfo.SpellSlot.Q,
-            },
+            CreateLinearSpell("NautilusAnchorDrag", "Nautilus", 0f, 1000f, 90f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp),
+            CreateLinearSkillshot("NautilusAnchorDragMissile", "NautilusAnchorDragMissile", "Nautilus", 1000f, 2000f, 2000f, 2000f, 90f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp),
             //w
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.W,
-            },
+            CreatePassiveSpell("NautilusPiercingGaze", "Nautilus", "nautiluspiercinggazeshield", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Shield),
             //e
+            CreateCircularSpell("NautilusSplashZone", "Nautilus", 1f, 0f, 600f, false, SpellInfo.SpellSlot.E, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Slow),
+            /*
             new SpellInfo()
             {
+                SpellName = "NautilusSplashZone",
+                ChampionName = "Nautilus",
+                Range = 600f,
+                MissileSpeed = 0f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 600f,
+                ConeDegrees = 45f,
+                
+                MissileName = "NautilusSplashZoneSplash",
+                ChampionName = "Nautilus",
+                MissileSpeed = 450f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Range = 350f,
+                Width = 85f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.Slow,
                 Slot = SpellInfo.SpellSlot.E,
             },
+            */
             //r
-            new SpellInfo()
+            CreateTargetedSpell("NautilusGrandLine", "Nautilus", 825f, 0f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.KnockUp),
+            /*new SpellInfo()
             {
+                 SpellName = "NautilusGrandLine",
+                ChampionName = "Nautilus",
+                Range = 825f,
+                MissileSpeed = 1400f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 100f,
+                ConeDegrees = 45f,
+
                 SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
                 CCtype = SpellInfo.CrowdControlType.KnockUp,
                 Slot = SpellInfo.SpellSlot.R,
-            },
+            },*/
             #endregion
             //nidalee q tiger buff name
             //nidalee e in  tiger stance
@@ -1958,7 +1980,7 @@ namespace UnsignedEvade
             #region Rengar
             //q
             CreateConeSpell("RengarQ", "Rengar", 325f, 90f, SpellInfo.SpellSlot.Q),
-            CreateLinearSpell("RengarQ", "Rengar", 0.5f, 450f, 55f, SpellInfo.SpellSlot.Q),
+            CreateLinearSpell("RengarQ", "Rengar", 0.25f, 450f, 55f, SpellInfo.SpellSlot.Q),
             //q emp
             CreateConeSpell("RengarQEmp", "Rengar", 325f, 90f, SpellInfo.SpellSlot.Q),
             CreateLinearSpell("RengarQEmp", "Rengar", 0.5f, 450f, 55f, SpellInfo.SpellSlot.Q),
@@ -2010,7 +2032,7 @@ namespace UnsignedEvade
             //w
             CreatePassiveSpell("RumbleShield", "Rumble", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Shield),
             //e
-            CreateLinearSkillshot("null", "RumbleGrenadeMissile", "Rumble", 50f, 2000f, 2000f, 2000f, 60f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
+            CreateLinearSkillshot("null", "RumbleGrenadeMissile", "Rumble", 850f, 2000f, 2000f, 2000f, 60f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
             //r Handled by Particle Manager
             /*new SpellInfo()
             {
@@ -3021,7 +3043,7 @@ namespace UnsignedEvade
                 MissileSpeed = missileSpeed,
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
-                Width = width,
+                Width = width * 2,
                 CanVaryInLength = canVaryInLength,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = ccType,
@@ -3042,7 +3064,7 @@ namespace UnsignedEvade
                 MissileSpeed = missileSpeed,
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
-                Width = width,
+                Width = width * 2,
                 CanVaryInLength = canVaryInLength,
                 BuffType = buffType,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage,
@@ -3063,7 +3085,7 @@ namespace UnsignedEvade
                 MissileSpeed = missileSpeed,
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
-                Width = width,
+                Width = width * 2,
                 SpellType = SpellInfo.SpellTypeInfo.LinearMissile,
                 CCtype = ccType,
             };
@@ -3078,7 +3100,7 @@ namespace UnsignedEvade
                 ChampionName = championName,
                 Range = range,
                 Delay = duration + 0.25f,
-                Width = width,
+                Width = width * 2,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSpellWithDuration,
                 CCtype = ccType,
                 Slot = slot,
@@ -3094,7 +3116,7 @@ namespace UnsignedEvade
                 ChampionName = championName,
                 Range = range,
                 BuffName = buffName,
-                Width = width,
+                Width = width * 2,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSpellWithBuff,
                 CCtype = ccType,
                 Slot = slot,
@@ -3109,7 +3131,7 @@ namespace UnsignedEvade
                 SpellName = spellName,
                 ChampionName = championName,
                 Range = range,
-                Width = width,
+                Width = width * 2,
                 SpellType = SpellInfo.SpellTypeInfo.LinearDash,
                 DashType = SpellInfo.Dashtype.Linear,
                 CCtype = ccType,
