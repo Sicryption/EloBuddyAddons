@@ -2219,26 +2219,26 @@ namespace UnsignedEvade
                 Slot = SpellInfo.SpellSlot.R,
             },
             #endregion
-            //add singed q and r
             #region Singed
             //q
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.Q,
-            },
+            //q is handled under DrawSingedPoison and RefreshSpellList. It is treated like a particle but isnt.
+            /*
+            SpellName = "PoisonTrail",
+                ChampionName = "Singed",
+                Range = 20f,
+                MissileSpeed = 347.8f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 210f,
+                ConeDegrees = 45f,
+            */
             //w
             CreateCircularSpell("MegaAdhesive", "Singed", 5f, 1000f, 265f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Slow),
             //e
             CreateTargetedSpell("Fling", "Singed", 125f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.KnockUp),
             //r
-            new SpellInfo()
-            {
-                SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
-                CCtype = SpellInfo.CrowdControlType.None,
-                Slot = SpellInfo.SpellSlot.R,
-            },
+            CreatePassiveSpell("InsanityPotion", "Singed", "InsanityPotion", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp),
             #endregion
             //sion q knockup logic
             //sion r dash logic

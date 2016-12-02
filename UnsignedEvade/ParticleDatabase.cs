@@ -8,6 +8,8 @@ namespace UnsignedEvade
 {
     class ParticleDatabase
     {
+        public static List<ParticleInfo> SingedPoisonTrails = new List<ParticleInfo>();
+
         private static List<ParticleInfo> particleDatabase = new List<ParticleInfo>()
         {
             //Corki W 

@@ -76,6 +76,7 @@ namespace UnsignedEvade
         private static void AIHeroClient_OnSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             //HandleSpellCast(sender, args, SpellInfo.SpellCreationLocation.OnSpellCast);
+            //actually canceling of spells if this isnt casted
         }
 
         private static void HandleSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args, SpellInfo.SpellCreationLocation location)
@@ -96,7 +97,7 @@ namespace UnsignedEvade
                     && info.SpellName != "")
                 {
                     SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
-
+                    
                     newSpellInstance.startPosition = args.Start;
                     if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) 
                         && (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration))
@@ -104,7 +105,7 @@ namespace UnsignedEvade
                     else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
                         newSpellInstance.endPosition = info.target.Position;
                     else
-                        newSpellInstance.endPosition = args.End.To2D().To3D((int)args.Start.Z);
+                        newSpellInstance.endPosition = args.End.To2D().To3D((int)sender.Position.Z);
 
                     if (info.SpellName == "AkaliSmokeBomb")
                         newSpellInstance.endPosition += new Vector3(0, 30f, 0);
@@ -278,13 +279,14 @@ namespace UnsignedEvade
                 DrawParticles();
                 DrawTraps();
                 DrawIllaoiTentacles();
+                DrawSingedPoison();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
         }
-       
+
         private static void RefreshSpellList()
         {
             //when removing object from below add it to this list then cross reference in another method and reset.
@@ -311,6 +313,20 @@ namespace UnsignedEvade
                 }
             }
 
+            foreach (AIHeroClient singed in EntityManager.Heroes.AllHeroes.Where(a => a.ChampionName == "Singed" && a.HasBuff("PoisonTrail")))
+            {
+                if (singed.IsEnemy || MenuHandler.GetCheckboxValue(MenuHandler.MenuType.Draw, "Draw Friendly Projectiles"))
+                {
+                    if (singed.Position.IsInRangeFromSingedPoison(75f))
+                    {
+                        ParticleInfo closestSingedPoison = ParticleDatabase.SingedPoisonTrails.OrderBy(a => a.Position.Distance(singed)).FirstOrDefault();
+                        if (closestSingedPoison != null)
+                            closestSingedPoison.CreationTime = Game.Time;
+                    }
+                    else
+                        ParticleDatabase.SingedPoisonTrails.Add(new ParticleInfo() { Delay = 3.25f, Radius = 80f, CreationTime = Game.Time, Position = singed.Position });
+                }
+            }
             activeSpells = KeepList;
         }
 
@@ -587,6 +603,20 @@ namespace UnsignedEvade
             {
                 Drawing.DrawCircle(tentacle.Position, 50, Geometry.drawColor);
             }
+        }
+
+        private static void DrawSingedPoison()
+        {
+            List<ParticleInfo> replacementPoisonList = new List<ParticleInfo>();
+            foreach (ParticleInfo info in ParticleDatabase.SingedPoisonTrails)
+            {
+                if (Game.Time - (info.CreationTime + info.Delay) <= 0)
+                {
+                    Geometry.DrawCircularSkillshot(info.Position, info.Radius);
+                    replacementPoisonList.Add(info);
+                }
+            }
+            ParticleDatabase.SingedPoisonTrails = replacementPoisonList;
         }
 
         private static void DrawObjectNames()

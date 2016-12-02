@@ -1,9 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 using EloBuddy;
+using EloBuddy.SDK;
+using EloBuddy.SDK.Enumerations;
+using EloBuddy.SDK.Events;
+using EloBuddy.SDK.Spells;
+using EloBuddy.SDK.Menu;
+using EloBuddy.SDK.Menu.Values;
+using SharpDX;
+using System.Linq;
+using System.IO;
+using EloBuddy.Sandbox;
 
 namespace UnsignedEvade
 {
@@ -56,6 +64,13 @@ namespace UnsignedEvade
                 if (inf.MissileName == name && (!blankSpellName || inf.SpellName == ""))
                     return inf;
             return null;
+        }
+        public static bool IsInRangeFromSingedPoison(this Vector3 pos, float range)
+        {
+            foreach (ParticleInfo info in ParticleDatabase.SingedPoisonTrails)
+                if (pos.IsInRange(info.Position, range))
+                    return true;
+            return false;
         }
     }
 }

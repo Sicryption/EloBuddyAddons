@@ -102,7 +102,6 @@ namespace UnsignedEvade
             AutoAttack,
             AutoAttackWithSplashDamage,
         }
-        
         public enum Dashtype
         {
             Linear,//lucian e, gragas e
@@ -134,8 +133,7 @@ namespace UnsignedEvade
             Suspension,//Yasuo R
             Suppression,//Malzahar R, Warwick R
             None
-        }
-        
+        }  
         public enum SpellSlot
         {
             Q,
@@ -145,7 +143,6 @@ namespace UnsignedEvade
             Auto,
             None
         } 
-
         public enum Buff
         {
             AttackDamageIncrease,

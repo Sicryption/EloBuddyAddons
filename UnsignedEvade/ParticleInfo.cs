@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EloBuddy;
+using SharpDX;
 
 namespace UnsignedEvade
 {
@@ -19,6 +20,7 @@ namespace UnsignedEvade
             CreationTime = -1f,
             Delay = 0;
         public List<string> otherNames = new List<string>();
+        public Vector3 Position;
 
         public SpellTypeInfo SpellType;
         
