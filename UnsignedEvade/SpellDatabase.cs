@@ -262,7 +262,8 @@ namespace UnsignedEvade
             //q
             CreateTargetedMissile("AkaliMota", "null", "Akali", 600f, 1000f, 1000f, 1000f, SpellInfo.SpellSlot.Q),
             //w
-            CreateCircularSpell("AkaliSmokeBomb", "Akali", 8f, 250f, 475f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.SpeedUp, SpellInfo.CrowdControlType.Slow),
+            //CreateCircularSpell("AkaliSmokeBomb", "Akali", 8f, 250f, 475f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.SpeedUp, SpellInfo.CrowdControlType.Slow),
+            CreateCircularSpell("AkaliSmokeBomb", "Akali", 8f, 0f, 400f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.SpeedUp, SpellInfo.CrowdControlType.Slow),
             //e
             CreateSelfActive("AkaliShadowSwipe", "Akali", 325f, SpellInfo.SpellSlot.E),
             //r
@@ -472,10 +473,9 @@ namespace UnsignedEvade
             //q
             CreateLinearSkillshot("RocketGrab", "RocketGrabMissile", "Blitzcrank", 1050f, 1800f, 1800f, 1800f, 70f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Pull),
             //w
-            CreatePassiveSpell("Overdrive", "Blitzcrank", 5f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp),
-            CreatePassiveSpell("Overdrive", "Blitzcrank", 5f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackSpeedIncrease),
+            CreatePassiveSpell("Overdrive", "Blitzcrank", "Overdrive", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp),
             //e
-            CreatePassiveSpell("PowerFist", "Blizcrank", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.KnockUp),
+            CreatePassiveSpell("PowerFist", "Blitzcrank", "PowerFist", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.KnockUp),
             //r
             CreateSelfActive("StaticField", "Blitzcrank", 600f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Silence),
             #endregion
@@ -1114,9 +1114,40 @@ namespace UnsignedEvade
             //w
             CreateLinearSpell("JhinW", "Jhin", 1f, 2500f, 40f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Stun),
             //e handled as a trap
+            /*
+            SpellName = "JhinE",
+                ChampionName = "Jhin",
+                Range = 750f,
+                MissileSpeed = 1000f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 120f,
+                Radius = 135f,
+                ConeDegrees = 45f,
+
+                MissileName = "JhinETrap",
+                ChampionName = "Jhin",
+                MissileSpeed = 1600f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Range = 2000f,
+                Width = 120f,
+                */
             //r
+            CreateLinearSkillshot("JhinRShot", "JhinRShotMis4", "Jhin", 3500f, 1200f, 1200f, 1200f, 80f, false, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.HeavySlow),
             CreateLinearSkillshot("JhinRShot", "JhinRShotMis", "Jhin", 3500f, 1200f, 1200f, 1200f, 80f, false, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.HeavySlow),
-            #endregion
+            /*
+            SpellName = "JhinR",
+                ChampionName = "Jhin",
+                Range = 25000f,
+                MissileSpeed = 828.5f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 550f,
+                ConeDegrees = 45f,
+                */
+                #endregion
             #region Jinx
             //aa
             CreateAutoAttack("JinxBasicAttack", "Jinx", 2750f, 2750f, 2750f),

@@ -98,12 +98,16 @@ namespace UnsignedEvade
                     SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
 
                     newSpellInstance.startPosition = args.Start;
-                    if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
+                    if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) 
+                        && (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration))
                         newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
                     else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
                         newSpellInstance.endPosition = info.target.Position;
                     else
                         newSpellInstance.endPosition = args.End;
+
+                    if (info.SpellName == "AkaliSmokeBomb")
+                        newSpellInstance.endPosition += new Vector3(0, 30f, 0);
 
                     newSpellInstance.MissileName = "";
                     newSpellInstance.startingDirection = sender.Direction;
@@ -333,7 +337,7 @@ namespace UnsignedEvade
                     info.SpellType == SpellInfo.SpellTypeInfo.TargetedSpellWithDuration)
                 {
                     //targeted spells dont have missiles if they are cast on themseleves. IE: nami w
-                    if (info.target != info.caster)
+                    if (info.target != null && info.target != info.caster)
                         if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
                             KeepList.Add(info);
                 }
