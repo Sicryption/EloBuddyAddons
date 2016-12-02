@@ -100,6 +100,8 @@ namespace UnsignedEvade
                     newSpellInstance.startPosition = args.Start;
                     if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
                         newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
+                    else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
+                        newSpellInstance.endPosition = info.target.Position;
                     else
                         newSpellInstance.endPosition = args.End;
 
@@ -331,19 +333,9 @@ namespace UnsignedEvade
                     info.SpellType == SpellInfo.SpellTypeInfo.TargetedSpellWithDuration)
                 {
                     //targeted spells dont have missiles if they are cast on themseleves. IE: nami w
-                    Chat.Print(info.target);
                     if (info.target != info.caster)
-                    {
-                        if (info.Slot == SpellInfo.SpellSlot.Auto)
-                        {
+                        if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
                             KeepList.Add(info);
-                        }
-                        else
-                        {
-                            if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
-                                KeepList.Add(info);
-                        }
-                    }
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff)
                 {
@@ -357,7 +349,7 @@ namespace UnsignedEvade
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedDash)
                 {
-                    if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
+                    if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay)
                         KeepList.Add(info);
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell)
@@ -420,6 +412,7 @@ namespace UnsignedEvade
 
         private static void HandleMissiles(SpellInfo info, List<SpellInfo> KeepList)
         {
+            //basic attacks are handled under HandleBasicAttacks
             try
             {
                 if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.LinearMissile || info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage)
@@ -502,7 +495,7 @@ namespace UnsignedEvade
                         Geometry.DrawLinearSkillshot(info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearDash)
                         Geometry.DrawLinearSkillshot(info.caster.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
-                    else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile)
+                    else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile || info.SpellType == SpellInfo.SpellTypeInfo.AutoAttack)
                     {
                         //targeted missiles are null before the spell is casted.
                         if(info.missile != null)
@@ -513,6 +506,8 @@ namespace UnsignedEvade
                         //lee sin does not have a target set. the target set is the one hovered over.
                         if (info.DashType == SpellInfo.Dashtype.Targeted && info.target != null)
                             Geometry.DrawTargetedSpell(info.caster.Position, info.target);
+                        else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
+                            Geometry.DrawTargetedSpell(info.caster.Position, info.endPosition);
                     }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
                         Geometry.DrawCircularSkillshot(info.missile.EndPosition, info.Radius, info.SecondRadius);
