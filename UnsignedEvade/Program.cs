@@ -191,6 +191,7 @@ namespace UnsignedEvade
 
                     if (!activeSpells.Contains(newSpellInstance))
                         activeSpells.Add(newSpellInstance);
+
                 }
                 else
                 {
@@ -320,7 +321,7 @@ namespace UnsignedEvade
                     if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
                         KeepList.Add(info);
                 }
-                if(info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration)
+                else if(info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration)
                 {
                     if ((Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown()) && info.caster.IsFacing(info.endPosition))
                         KeepList.Add(info);
@@ -330,9 +331,19 @@ namespace UnsignedEvade
                     info.SpellType == SpellInfo.SpellTypeInfo.TargetedSpellWithDuration)
                 {
                     //targeted spells dont have missiles if they are cast on themseleves. IE: nami w
-                    if(info.target != info.caster)
-                        if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
+                    Chat.Print(info.target);
+                    if (info.target != info.caster)
+                    {
+                        if (info.Slot == SpellInfo.SpellSlot.Auto)
+                        {
                             KeepList.Add(info);
+                        }
+                        else
+                        {
+                            if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
+                                KeepList.Add(info);
+                        }
+                    }
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff)
                 {
@@ -346,9 +357,8 @@ namespace UnsignedEvade
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedDash)
                 {
-                    if (info.DashType == SpellInfo.Dashtype.TargetedLinear)
-                        if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
-                            KeepList.Add(info);
+                    if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
+                        KeepList.Add(info);
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell)
                 {
@@ -530,8 +540,6 @@ namespace UnsignedEvade
                     && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null
                     && info.missile.EndPosition.Distance(info.missile) <= info.caster.GetAutoAttackRange() * 2)
                     KeepList.Add(info);
-
-                //Console.WriteLine(info.missile.Position + "|" + info.missile.EndPosition);
             }
         }
 

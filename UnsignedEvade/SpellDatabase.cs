@@ -1107,8 +1107,10 @@ namespace UnsignedEvade
             CreateAutoAttack("JhinBasicAttack2", "Jhin", 2600f, 2600f, 2600f),
             CreateAutoAttack("JhinBasicAttack3", "Jhin", 2600f, 2600f, 2600f),
             CreateAutoAttack("JhinPassiveAttack", "Jhin", 2600f, 2600f, 2600f),
+            CreateAutoAttack("JhinCritAttack", "Jhin", 2600f, 2600f, 2600f),
             //q
             CreateTargetedMissile("JhinQ", "JhinQ", "Jhin", 550f, 1800f, 1800f, 1800f, SpellInfo.SpellSlot.Q),
+            CreateTargetedMissile("JhinQ", "JhinQMisBounce", "Jhin", 550f, 1800f, 1800f, 1800f, SpellInfo.SpellSlot.Q),
             //w
             CreateLinearSpell("JhinW", "Jhin", 1f, 2500f, 40f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Stun),
             //e handled as a trap
@@ -3526,7 +3528,7 @@ namespace UnsignedEvade
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
                 CCtype = ccType,
-                SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
+                SpellType = SpellInfo.SpellTypeInfo.AutoAttack,
                 Slot = SpellInfo.SpellSlot.Auto,
             };
         }
