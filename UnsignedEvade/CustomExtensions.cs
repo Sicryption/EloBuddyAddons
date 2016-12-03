@@ -116,12 +116,9 @@ namespace UnsignedEvade
             if (menu == null)
                 return true;
 
-            string name = info.Slot.ToString();
-            if (name == "None")
-                name = info.SpellName;
+            string name = info.SpellName;
             if (name == "")
                 name = info.MissileName;
-            
             return menu.GetCheckboxValue("Dodge " + name);
         }
     }

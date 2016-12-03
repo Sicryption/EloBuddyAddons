@@ -35,9 +35,7 @@ namespace UnsignedEvade
 
                 foreach(SpellInfo info in SpellDatabase.SpellList.Where(a=>a.ChampionName == s))
                 {
-                    string name = info.Slot.ToString();
-                    if (name == "None")
-                        name = info.SpellName;
+                    string name = info.SpellName;
                     if (name == "")
                         name = info.MissileName;
 

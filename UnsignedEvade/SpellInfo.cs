@@ -74,9 +74,11 @@ namespace UnsignedEvade
             LinearSpellWithDuration,
             LinearSpellWithBuff,
             LinearDash,
+            TargetedActive,
             TargetedMissile,
             TargetedSpell,
             TargetedSpellWithDuration,
+            TargetedPassiveSpell,
             TargetedChannel,
             TargetedDash,
             CircularSkillshot,
@@ -95,7 +97,6 @@ namespace UnsignedEvade
             SelfActiveNoDamageWithBuff,
             SelfActiveWithBuff,
             SelfActiveToggleable,
-            TargetedActive,
             Wall,
             CircularWall,
             PentaWall,
@@ -106,6 +107,7 @@ namespace UnsignedEvade
         {
             Linear,//lucian e, gragas e
             Blink,//ez e, flash
+            FixedDistance,//nidalee w
             TargetedLinear,//akali r, lee sin w
             Targeted,//lee sin q2, vi r
             None

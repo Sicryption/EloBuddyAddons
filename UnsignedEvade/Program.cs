@@ -104,11 +104,13 @@ namespace UnsignedEvade
                     SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
                     
                     newSpellInstance.startPosition = args.Start;
-                    if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range) 
-                        && (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration))
+                    if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range)
+                        && (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.LinearDash || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration))
                         newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
                     else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
                         newSpellInstance.endPosition = info.target.Position;
+                    else if (info.DashType == SpellInfo.Dashtype.FixedDistance)
+                        newSpellInstance.endPosition = info.caster.Position.Extend(args.End, info.Range).To3D((int)info.caster.Position.Z);
                     else
                         newSpellInstance.endPosition = args.End.To2D().To3D((int)sender.Position.Z);
 
@@ -275,6 +277,9 @@ namespace UnsignedEvade
         {
             RefreshSpellList();
 
+            for (int i = 0; i < championSpellsDrawnOnChampion.Count; i++)
+                championSpellsDrawnOnChampion[i] = new Tuple<string, int>(championSpellsDrawnOnChampion[i].Item1, 0);
+
             if (_Player.IsDead || !MenuHandler.DrawMenu.GetCheckboxValue("Draw Spells/Missiles"))
                 return;
             
@@ -343,11 +348,26 @@ namespace UnsignedEvade
             try
             {
                 //if is dash and dashtype is linear
-                if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot ||
-                    info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage ||
-                    info.SpellType == SpellInfo.SpellTypeInfo.LinearMissile)
+                if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot
+                    || info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage
+                    || info.SpellType == SpellInfo.SpellTypeInfo.LinearMissile
+                    || info.SpellType == SpellInfo.SpellTypeInfo.Wall
+                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularWall
+                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot
+                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell
+                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration
+                    || info.SpellType == SpellInfo.SpellTypeInfo.SelfActive
+                    || info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell)
                 {
-                    if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
+                    float timeSinceCast = Game.Time - info.TimeOfCast;
+                    float timeItTakesToCast = info.Delay + info.TravelTime;
+
+                    if(info.SpellName.Contains("RekSaiQAttack"))
+                    {
+                        if (timeSinceCast <= timeItTakesToCast)
+                            KeepList.Add(info);
+                    }
+                    else if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
                         KeepList.Add(info);
                 }
                 else if(info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration
@@ -356,78 +376,34 @@ namespace UnsignedEvade
                     if ((Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown()) && info.caster.IsFacing(info.endPosition))
                         KeepList.Add(info);
                 }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile ||
-                    info.SpellType == SpellInfo.SpellTypeInfo.TargetedSpell ||
-                    info.SpellType == SpellInfo.SpellTypeInfo.TargetedSpellWithDuration)
+                else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile
+                    || info.SpellType == SpellInfo.SpellTypeInfo.TargetedSpell
+                    || info.SpellType == SpellInfo.SpellTypeInfo.TargetedSpellWithDuration)
                 {
                     //targeted spells dont have missiles if they are cast on themseleves. IE: nami w
                     if (info.target != null && info.target != info.caster)
                         if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
                             KeepList.Add(info);
                 }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff
-                    || info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpellWithBuff)
-                {
-                    // i dont believe spells with buffs need cd checked
-                    //|| info.IsOffCooldown()
-                    if (Game.Time - info.TimeOfCast <= info.Delay  || info.caster.HasBuff(info.BuffName))
-                        KeepList.Add(info);
-                }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearDash)
-                {
-                    if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
-                        KeepList.Add(info);
-                }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedDash)
+                else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearDash
+                    || info.SpellType == SpellInfo.SpellTypeInfo.TargetedDash
+                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash)
                 {
                     if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay)
                         KeepList.Add(info);
                 }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell)
-                {
-                    float timeItTakesToCast = info.Delay + info.TravelTime;
-                    float timeSinceCast = Game.Time - info.TimeOfCast;
-                    if (timeSinceCast <= timeItTakesToCast
-                        || info.IsOffCooldown())
-                        KeepList.Add(info);
-                }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpellWithBuff)
+                else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpellWithBuff
+                    || info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff
+                    || info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpellWithBuff
+                    || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveWithBuff
+                    || info.SpellType == SpellInfo.SpellTypeInfo.TargetedPassiveSpell)
                 {
                     float timeItTakesToCast = info.Delay + info.TravelTime;
                     float timeSinceCast = Game.Time - info.TimeOfCast;
                     if (info.caster.HasBuff(info.BuffName)
                         || timeSinceCast <= timeItTakesToCast
-                        || info.IsOffCooldown()
                         //this is so mf's ult isn't angled away from where it was casted
                         && (info.startingDirection == null || info.startingDirection == info.caster.Direction))
-                        KeepList.Add(info);
-                }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall
-                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularWall
-                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot
-                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell
-                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration)
-                {
-                    float timeSinceCast = Game.Time - info.TimeOfCast;
-                    float timeItTakesToCast = info.Delay + info.TravelTime;
-
-                    if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
-                        KeepList.Add(info);
-                }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive)
-                {
-                    float timeSinceCast = Game.Time - info.TimeOfCast;
-                    float timeItTakesToCast = info.Delay + info.TravelTime;
-
-                    if (timeSinceCast <= timeItTakesToCast || info.IsOffCooldown())
-                        KeepList.Add(info);
-                }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveWithBuff)
-                {
-                    float timeSinceCast = Game.Time - info.TimeOfCast;
-                    float timeItTakesToCast = info.Delay + info.TravelTime;
-
-                    if (timeSinceCast <= timeItTakesToCast ||  info.caster.HasBuff(info.BuffName))
                         KeepList.Add(info);
                 }
             }
@@ -548,6 +524,8 @@ namespace UnsignedEvade
                     }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
                         Geometry.DrawCircularSkillshot(info.missile.EndPosition, info.Radius, info.SecondRadius);
+                    else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash)
+                        Geometry.DrawCircularSkillshot(info.endPosition, info.Radius, info.SecondRadius);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithBuff || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration)
                         Geometry.DrawCircularSkillshot(info.endPosition, info.Radius, info.SecondRadius);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell)
@@ -571,7 +549,26 @@ namespace UnsignedEvade
                             if(championSpellsDrawnOnChampion[i].Item1 == info.caster.Name)
                                 championSpellsDrawnOnChampion[i] = new Tuple<string, int>(championSpellsDrawnOnChampion[i].Item1, championSpellsDrawnOnChampion[i].Item2 + 1);
 
-                        Drawing.DrawText(info.caster.Position.WorldToScreen() - new Vector2(0, 15 * spellCount), Geometry.drawColor, info.caster.BaseSkinName + " " + info.Slot + " Buff", 15);
+                        string name = info.SpellName;
+                        if (name == "")
+                            name = info.MissileName;
+
+                        Drawing.DrawText(info.caster.Position.WorldToScreen() - new Vector2(0, 15 * spellCount), Geometry.drawColor, name + " Buff", 15);
+                    }
+                    else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedPassiveSpell
+                        && MenuHandler.DrawMenu.GetCheckboxValue("Draw Passive Spell Text"))
+                    {
+                        int spellCount = championSpellsDrawnOnChampion.Where(a => a.Item1 == info.target.Name).FirstOrDefault().Item2;
+
+                        for (int i = 0; i < championSpellsDrawnOnChampion.Count; i++)
+                            if (championSpellsDrawnOnChampion[i].Item1 == info.target.Name)
+                                championSpellsDrawnOnChampion[i] = new Tuple<string, int>(championSpellsDrawnOnChampion[i].Item1, championSpellsDrawnOnChampion[i].Item2 + 1);
+
+                        string name = info.SpellName;
+                        if (name == "")
+                            name = info.MissileName;
+
+                        Drawing.DrawText(info.target.Position.WorldToScreen() - new Vector2(0, 15 * spellCount), Geometry.drawColor, name + " Buff", 15);
                     }
                 }
             }
