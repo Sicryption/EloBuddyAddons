@@ -347,7 +347,7 @@ namespace UnsignedVi
         }
         public static void CastE(List<Obj_AI_Base> enemies)
         {
-            if (!Program.E.IsReady() || hasDoneActionThisTick || !Vi.IsAutoCanceling(enemies, true))
+            if (!Program.E.IsReady() || hasDoneActionThisTick || !Vi.IsAutoCanceling(enemies))
                 return;
 
             int bestCount = 0;

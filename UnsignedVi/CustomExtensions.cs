@@ -78,9 +78,9 @@ namespace UnsignedVi
         {
             return enemies.Where(a => a.MeetsCriteria() && sector.IsInside(a)).Count();
         }
-        public static bool IsAutoCanceling(this AIHeroClient self, List<Obj_AI_Base> enemies, bool AutoReset = false)
+        public static bool IsAutoCanceling(this AIHeroClient self, List<Obj_AI_Base> enemies)
         {
-            return !Orbwalker.CanAutoAttack || (!AutoReset && enemies.Where(a => a.IsInRange(self, self.GetAutoAttackRange())).FirstOrDefault() == null);
+            return !Orbwalker.CanAutoAttack && enemies.Where(a => a.IsInRange(self, self.GetAutoAttackRange())).FirstOrDefault() != null;
         }
         public static float ComboDamage(this AIHeroClient enemy)
         {
