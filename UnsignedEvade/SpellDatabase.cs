@@ -1069,7 +1069,7 @@ turretshield
             //w
             CreateWall("IvernW", "Ivern", 1600f, 300f, 500f, 15f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None),
             //e
-            CreateTargetedActive("IvernE", "Ivern", 750f, 525f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Shield),
+            CreateTargetedActive("IvernE", "Ivern", "IvernE", 750f, 525f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Shield),
             //r
             CreatePassiveSpell("IvernR", "Ivern", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Pet),
             CreatePassiveSpell("IvernRRecast", "Ivern", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.None),
@@ -1098,7 +1098,7 @@ turretshield
             //e
             CreateCircularSpell("JarvanIVDemacianStandard", "JarvanIV", 830f, 75f, true, SpellInfo.SpellSlot.E, SpellInfo.Buff.AttackSpeedIncrease),
             //r
-            CreateTargetedActive("JarvanIVCataclysm", "JarvanIV", 650f, 210f, SpellInfo.SpellSlot.R),
+            CreateTargetedSpell("JarvanIVCataclysm", "JarvanIV", 650f, 210f, SpellInfo.SpellSlot.R),
             #endregion
             //not sure of jax R buff name
             #region Jax            
@@ -1335,7 +1335,7 @@ turretshield
             //w
             CreateCircularSpell("KindredW", "Kindred", 0f, 800f, false, SpellInfo.SpellSlot.W, SpellInfo.Buff.None),
             //e
-            CreateTargetedSpell("KindredE", "KindredE", "Kindred", 500f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
+            CreateTargetedMissile("KindredE", "KindredE", "Kindred", 500f, 1600f, 1600f, 1600f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
             CreateAutoAttack("KindredEWolfMissile", "Kindred", 1400f, 1400f, 1400f),
             /*
             SpellName = "KindredEWrapper",
@@ -1454,7 +1454,7 @@ turretshield
             //q
             CreateLinearSpell("LissandraQ", "Lissandra", 0f, 700f, 75f, SpellInfo.SpellSlot.Q),
             CreateLinearSkillshot("LissandraQMissile", "LissandraQMissile", "Lissandra", 700f, 2200f, 2200f, 2200f, 75f, false, SpellInfo.SpellSlot.Q),
-            CreateLinearMissile("LissandraQShards", "Lissandra", 700f, 2200f, 2200f, 2200f, 90f, false, SpellInfo.SpellSlot.Q),
+            CreateLinearMissile("LissandraQShards", "Lissandra", 700f, 2200f, 2200f, 2200f, 90f),
             //w
             CreateSelfActive("LissandraW", "Lissandra", 275f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Stun),
             //e
@@ -1462,9 +1462,9 @@ turretshield
             CreateLinearSkillshot("LissandraEMissile", "LissandraEMissile", "Lissandra", 1025f, 850f, 850f, 850f, 125f, false, SpellInfo.SpellSlot.E),
             //r
             //not sure if this is the same for ally or not
-            CreateTargetedSpell("LissandraR", "Lissandra", 550f, 2.5f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun, SpellInfo.Buff.Invulnerability),
+            CreateTargetedSpell("LissandraR", "Lissandra", 550f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun, SpellInfo.Buff.Invulnerability),
             CreateTargetedActive("LissandraR", "Lissandra", "LissandraR", 550f, 450f, SpellInfo.SpellSlot.R),
-            CreateTargetedSpell("LissandraREnemy", "Lissandra", 550f, 2.5f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun, SpellInfo.Buff.Invulnerability),
+            CreateTargetedSpell("LissandraREnemy", "Lissandra", 550f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun, SpellInfo.Buff.Invulnerability),
             CreateTargetedActive("LissandraREnemy", "Lissandra", "LissandraR", 550f, 450f, SpellInfo.SpellSlot.R),
             #endregion
             #region Lucian
@@ -1545,7 +1545,7 @@ turretshield
             //get malphite q missile speeds
             #region Malphite
             //q
-            CreateTargetedMissile("SeismicShard", "SeismicShard", "Malphite", 625f, 500f, 500f, 500f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Slow),
+            //CreateTargetedMissile("SeismicShard", "SeismicShard", "Malphite", 625f, 500f, 500f, 500f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Slow),
             //w
             CreatePassiveSpell("Obduracy", "Malphite", "Obduracy", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
             //e
@@ -1645,7 +1645,7 @@ turretshield
             CreateTargetedSpell("MordekaiserQAttack2", "Mordekaiser", 500f, SpellInfo.SpellSlot.Q),
             //w
             CreateTargetedActive("MordekaiserCreepingDeathCast", "Mordekaiser", "MordekaiserCreepingDeath", 1000f, 300f, SpellInfo.SpellSlot.W),
-            CreateSelfActive("MordekaiserCreepingDeathCast", "Mordekaiser", "MordekaiserCreepingDeath", 1000f, 300f, SpellInfo.SpellSlot.W),
+            CreateSelfActive("MordekaiserCreepingDeathCast", "Mordekaiser", "MordekaiserCreepingDeath", 300f, SpellInfo.SpellSlot.W),
             CreatePassiveSpell("MordekaiserCreepingDeath2", "Mordekaiser", SpellInfo.SpellSlot.W),
             //this is his w heal missile
             //CreateAutoAttack("MordekaiserWHeal", "Mordekaiser", 1000f, 1000f, 1000f),
@@ -2090,7 +2090,7 @@ turretshield
             //q
             CreateLinearDash("SejuaniArcticAssault", "Sejuani", 650f, 75f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockBack),
             //w
-            CreateSelfActive("SejuaniNorthernWinds", "Sejuani", "SejuaniNorthernWindsEnrage", SpellInfo.SpellSlot.W),
+            CreateSelfActive("SejuaniNorthernWinds", "Sejuani", "SejuaniNorthernWindsEnrage", 300f, SpellInfo.SpellSlot.W),
             //e
             CreateSelfActive("SejuaniWintersClaw", "Sejuani", 1000f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
             //r
@@ -2455,7 +2455,7 @@ turretshield
             //e
             //missile
             CreateLinearMissile("TristanaE", "Tristana", 550f, 2400f, 2400f, 2400f, 5f),
-            CreateTargetedActive("TristanaE", "Tristana", 550f, 210f, SpellInfo.SpellSlot.E),
+            CreateTargetedSpell("TristanaE", "Tristana", 550f, 210f, SpellInfo.SpellSlot.E),
             //r
             CreateTargetedMissile("TristanaR", "TristanaR", "Tristana", 550f, 2000f, 2000f, 2000f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.KnockBack),
             #endregion
@@ -2959,7 +2959,7 @@ ViktorPowerTransfer
             //q
             CreatePassiveSpell("YorickQ", "Yorick", "yorickqbuff", SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease),
             //w
-            CreateCircularWall("YorickW", "Yorick", 600f, 225f, 250f, 0f, SpellInfo.SpellSlot.W),
+            CreateCircularWall("YorickW", "Yorick", 600f, 225f, 250f, 0f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None),
             //e
             CreateLinearSkillshot("YorickE", "YorickEMissile", "Yorick", 1200f, 1800f, 1800f, 1800f, 80f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
             //r
