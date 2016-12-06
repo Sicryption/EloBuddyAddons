@@ -1547,7 +1547,7 @@ turretshield
             //q
             //CreateTargetedMissile("SeismicShard", "SeismicShard", "Malphite", 625f, 500f, 500f, 500f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Slow),
             //w
-            CreatePassiveSpell("Obduracy", "Malphite", "Obduracy", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
+            CreatePassiveSpell("Obduracy", "Malphite", "MalphiteCleave", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
             //e
             CreateSelfActive("LandSlide", "Malphite", 400f, SpellInfo.SpellSlot.E),
             //r
