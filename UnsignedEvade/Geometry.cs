@@ -121,8 +121,65 @@ namespace UnsignedEvade
         }
         public static void DrawCircularWall(Vector3 position, float radius, float radius2)
         {
-            Drawing.DrawCircle(position, radius, drawColor);
-            Drawing.DrawCircle(position, radius2, drawColor);
+            var ring = new EloBuddy.SDK.Geometry.Polygon.Ring(position, radius, radius2);
+            ring.Draw(drawColor);
+        }
+        //assuming this has a gap between -180 and 180
+        public static List<int> GetAllAnglesBetween(int angle1InDegrees, int angle2InDegrees)
+        {
+            List<int> returnList = new List<int>();
+
+            //we are crossing gap
+            if (angle1InDegrees >= 90 && angle2InDegrees <= -90)
+            {
+                for (int i = angle2InDegrees; i > -180; i--)
+                    returnList.Add(i);
+
+                for (int i = 180; i > angle1InDegrees; i--)
+                    returnList.Add(i);
+            }
+            else
+                for (int i = angle1InDegrees; i < angle2InDegrees; i++)
+                    returnList.Add(i);
+
+            return returnList;
+        }
+        public static void DrawArc(Vector3 sourcePosition, Vector3 endPosition, float width)
+        {
+            Vector3 cursorPos = new Vector3(endPosition.X, endPosition.Y, NavMesh.GetHeightForPosition(endPosition.X, endPosition.Y));
+
+            double norm = Math.Sqrt(Math.Pow(cursorPos.X - sourcePosition.X, 2) + Math.Pow(cursorPos.Y - sourcePosition.Y, 2)),
+                s = norm / 2,
+                d = s * (1 - cursorPos.LengthSquared()) / cursorPos.LengthSquared(),
+                u = (cursorPos.X - sourcePosition.X) / norm,
+                v = (cursorPos.Y - sourcePosition.Y) / norm,
+                c1 = v * d + (sourcePosition.X + cursorPos.X) / 2,
+                c2 = -u * d + (sourcePosition.Y + cursorPos.Y) / 2;
+
+            Vector3 centerPoint = new Vector3((float)c1, (float)c2, cursorPos.Z);
+            int angleOfPlayer = (int)MathUtil.RadiansToDegrees((float)Math.Atan2(sourcePosition.Y - centerPoint.Y, sourcePosition.X - centerPoint.X)),
+                angleOfCursor = (int)MathUtil.RadiansToDegrees((float)Math.Atan2(cursorPos.Y - centerPoint.Y, cursorPos.X - centerPoint.X));
+            
+            float radius = centerPoint.Distance(sourcePosition) + width;
+
+            //arc circle
+            //Drawing.DrawCircle(centerPoint, radius, drawColor);
+
+            var arc = new EloBuddy.SDK.Geometry.Polygon();
+            //arc.Add(centerPoint);
+            //arc.Add(sourcePosition);
+
+            foreach (int i in Geometry.GetAllAnglesBetween(angleOfPlayer, angleOfCursor))
+            {
+                float angleInRadians = MathUtil.DegreesToRadians(i);
+                Vector2 test = new Vector2((float)(centerPoint.X + radius * Math.Cos(angleInRadians)),
+                    (float)(centerPoint.Y + radius * Math.Sin(angleInRadians)));
+                arc.Add(centerPoint.Extend(test, radius).To3D((int)cursorPos.Z));
+                // Drawing.DrawLine(centerPoint.WorldToScreen(), centerPoint.Extend(test, radius).To3D().WorldToScreen(), 5f, Geometry.drawColor);
+            }
+
+            //arc.Add(cursorPos);
+            arc.Draw(drawColor);
         }
     }
 }

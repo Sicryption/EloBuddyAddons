@@ -105,14 +105,21 @@ namespace UnsignedEvade
                     
                     newSpellInstance.startPosition = args.Start;
                     if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range)
-                        && (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.LinearDash || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration))
+                        && (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.LinearDash || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration))
                         newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
                     else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
                         newSpellInstance.endPosition = info.target.Position;
+                    else if (info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
+                    {
+                        if (args.Start.Distance(args.End) >= info.Range)
+                            newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
+                        else
+                            newSpellInstance.endPosition = args.End.To2D().To3D((int)NavMesh.GetHeightForPosition(args.End.X, args.End.Y));
+                    }
                     else if (info.DashType == SpellInfo.Dashtype.FixedDistance)
                         newSpellInstance.endPosition = info.caster.Position.Extend(args.End, info.Range).To3D((int)info.caster.Position.Z);
                     else
-                        newSpellInstance.endPosition = args.End.To2D().To3D((int)sender.Position.Z);
+                        newSpellInstance.endPosition = args.End.To2D().To3D((int)NavMesh.GetHeightForPosition(args.End.X, args.End.Y));
 
                     if (info.SpellName == "AkaliSmokeBomb")
                         newSpellInstance.endPosition += new Vector3(0, 30f, 0);
@@ -184,16 +191,33 @@ namespace UnsignedEvade
                 if (info != null
                     && info.ShouldBeAccountedFor())
                 {
-                    //dont draw a spell if its missile was created  
-                    if (activeSpells.ContainsSpellName(info.SpellName, true))
-                        activeSpells.Remove(activeSpells.GetSpellFromSpellName(info.SpellName, true));
-
                     SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
+
+                    //dont draw a spell if its missile was created  
+                    if (activeSpells.ContainsSpellName(info.SpellName, true) && info.SpellType != SpellInfo.SpellTypeInfo.ArcSkillshot)
+                        activeSpells.Remove(activeSpells.GetSpellFromSpellName(info.SpellName, true));
+                    else if(info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
+                    {
+                        //diana Q
+                        if (info.MissileName.Contains("Diana"))
+                        {
+                            SpellInfo DianaQSpellCast = activeSpells.Where(a => a.SpellName == "DianaArc" && projectile.SpellCaster.Name == a.caster.Name).FirstOrDefault();
+                            if (DianaQSpellCast != null)
+                                newSpellInstance.endPosition = DianaQSpellCast.endPosition;
+                            if(info.MissileName.Contains("Outer"))
+                                activeSpells.Remove(activeSpells.GetSpellFromSpellName("DianaArc", true));
+                        }
+                    }
                     
-                    newSpellInstance.startPosition = projectile.StartPosition;
+                    if(info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
+                        newSpellInstance.startPosition = sender.Position;
+                    else
+                        newSpellInstance.startPosition = projectile.StartPosition;
+
                     if ((!info.CanVaryInLength || projectile.StartPosition.Distance(projectile.EndPosition) >= info.Range) && info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot)
                         newSpellInstance.endPosition = Geometry.CalculateEndPosition(projectile.StartPosition, projectile.EndPosition, info.Range);
-                    else
+                    //spells that dont hav to be extended. The only exception is Dianas Q which was taken care of above
+                    else if(info.SpellType != SpellInfo.SpellTypeInfo.ArcSkillshot)
                         newSpellInstance.endPosition = projectile.EndPosition;
 
                     newSpellInstance.target = projectile.Target;
@@ -279,7 +303,7 @@ namespace UnsignedEvade
 
             for (int i = 0; i < championSpellsDrawnOnChampion.Count; i++)
                 championSpellsDrawnOnChampion[i] = new Tuple<string, int>(championSpellsDrawnOnChampion[i].Item1, 0);
-
+            
             if (_Player.IsDead || !MenuHandler.DrawMenu.GetCheckboxValue("Draw Spells/Missiles"))
                 return;
             
@@ -357,7 +381,8 @@ namespace UnsignedEvade
                     || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell
                     || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration
                     || info.SpellType == SpellInfo.SpellTypeInfo.SelfActive
-                    || info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell)
+                    || info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell
+                    || info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
                 {
                     float timeSinceCast = Game.Time - info.TimeOfCast;
                     float timeItTakesToCast = info.Delay + info.TravelTime;
@@ -422,7 +447,7 @@ namespace UnsignedEvade
             //basic attacks are handled under HandleBasicAttacks
             try
             {
-                if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.LinearMissile || info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage)
+                if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.LinearMissile || info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage)
                 {
                     if (info.missile != null && info.missile.StartPosition != Vector3.Zero
                         && info.missile.EndPosition != Vector3.Zero && info.missile.SpellCaster != null
@@ -488,12 +513,13 @@ namespace UnsignedEvade
                             {
                                 //sivir Q and draven R return 
                                 if (info.MissileName.ToLower().Contains("return") ||
-                                    (info.MissileName == "DravenR" && info.missile.EndPosition.Distance(info.caster.Position) <= 50))
+                                    ((info.MissileName == "DravenR" || info.MissileName == "TalonWMissileTwo" || info.MissileName == "TalonRMisTwo")
+                                    && info.missile.EndPosition.Distance(info.caster.Position) <= 50))
                                     Geometry.DrawLinearSkillshot(info.missile.Position, info.missile.SpellCaster.Position, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                                 //ahri rotating w orbs
-                                else if(info.MissileName == "AhriFoxFireMissile" || info.MissileName == "AhriFoxFireMissileTwo")
+                                else if (info.MissileName == "AhriFoxFireMissile" || info.MissileName == "AhriFoxFireMissileTwo")
                                 {
-                                    if(info.missile.Position.Distance(info.caster.Position) > 200)
+                                    if (info.missile.Position.Distance(info.caster.Position) > 200)
                                         Geometry.DrawLinearSkillshot(info.missile.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                                 }
                                 else
@@ -536,6 +562,8 @@ namespace UnsignedEvade
                         Geometry.DrawCircularSkillshot(info.caster.Position, info.Radius, info.SecondRadius);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall)
                         Geometry.DrawWall(info.startPosition, info.endPosition, info.Width, info.Radius);
+                    else if (info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
+                        Geometry.DrawArc(info.startPosition, info.endPosition, info.Width);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularWall)
                         Geometry.DrawCircularWall(info.endPosition, info.Radius, info.SecondRadius);
                     else if ((info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpellWithBuff ||
@@ -546,7 +574,7 @@ namespace UnsignedEvade
                         int spellCount = championSpellsDrawnOnChampion.Where(a => a.Item1 == info.caster.Name).FirstOrDefault().Item2;
 
                         for (int i = 0; i < championSpellsDrawnOnChampion.Count; i++)
-                            if(championSpellsDrawnOnChampion[i].Item1 == info.caster.Name)
+                            if (championSpellsDrawnOnChampion[i].Item1 == info.caster.Name)
                                 championSpellsDrawnOnChampion[i] = new Tuple<string, int>(championSpellsDrawnOnChampion[i].Item1, championSpellsDrawnOnChampion[i].Item2 + 1);
 
                         string name = info.SpellName;
