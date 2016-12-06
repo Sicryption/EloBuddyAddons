@@ -85,6 +85,9 @@ namespace UnsignedEvade
 
         private static void HandleSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args, SpellInfo.SpellCreationLocation location)
         {
+            if (args.SData.Name == "BlindMonkQTwo")
+                Chat.Print(EntityManager.Enemies.Where(a => a.HasBuff("BlindMonkQOne")).FirstOrDefault().Name);
+
             if (sender.Type != GameObjectType.AIHeroClient)
                 return;
 

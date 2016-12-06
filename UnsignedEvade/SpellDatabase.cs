@@ -155,12 +155,9 @@ namespace UnsignedEvade
                 CCtype = SpellInfo.CrowdControlType.None,
             },
             //Heal
-            new SpellInfo()
-            {
-                SpellName = "SummonerHeal",
-                SpellType = SpellInfo.SpellTypeInfo.SelfActiveNoDamage,
-                CCtype = SpellInfo.CrowdControlType.None,
-            },
+            CreateSelfActiveNoDamage("SummonerHeal", "All", 600f, SpellInfo.SpellSlot.None),
+            //Clarity
+            CreateSelfActiveNoDamage("SummonerMana", "All", 600f, SpellInfo.SpellSlot.None),
             //Exhaust
             new SpellInfo()
             {
@@ -606,7 +603,8 @@ turretshield
             #region Caitlyn
             //aa
             CreateAutoAttack("CaitlynBasicAttack", "Caitlyn", 2500f, 2500f, 2500f),
-            CreateAutoAttack("CaitlynHeadshotMissile", "Caitlyn", 3000f, 2500f, 2500f),
+            CreateAutoAttack("CaitlynHeadshotMissile", "Caitlyn", 3000f, 3000f, 3000f),
+            CreateAutoAttack("CaitlynCritAttack", "Caitlyn", 2500f, 2500f, 2500f),
             //q
             CreateLinearSkillshot("CaitlynPiltoverPeacemaker", "CaitlynPiltoverPeacemaker", "Caitlyn", 1250f, 2000f, 2000f, 2000f, 60f, false, SpellInfo.SpellSlot.Q),
             CreateLinearSkillshot("CaitlynPiltoverPeacemaker", "CaitlynPiltoverPeacemaker2", "Caitlyn", 1250f, 2000f, 2000f, 2000f, 90f, false, SpellInfo.SpellSlot.Q),
@@ -977,9 +975,9 @@ turretshield
             //add graves R cone
             #region Graves
             //aa
-            CreateAutoAttack("GravesBasicAttack", "Graves", 3000f, 3000f, 3000f),
-            CreateAutoAttack("GravesCritAttack", "Graves", 3400f, 3400f, 3400f),
-            CreateAutoAttack("GravesBasicAttackSpread", "Graves", 3800f, 3800f, 3800f),
+            CreateLinearMissile("GravesBasicAttack", "Graves", 700f, 3000f, 3000f, 3000f, 25f),
+            CreateLinearMissile("GravesCritAttack", "Graves", 700f, 3400f, 3400f, 3400f, 25f),
+            CreateLinearMissile("GravesBasicAttackSpread", "Graves", 700f, 3800f, 3800f, 3800f, 25f),
             //q
             CreateLinearSkillshot("GravesQLineSpell", "GravesQLineMis", "Graves", 808f, 3000f, 3000f, 3000f, 100f, false, SpellInfo.SpellSlot.Q),
             CreateLinearSkillshot("GravesQLineSpell", "GravesQReturn", "Graves", 808f, 3000f, 3000f, 3000f, 100f, false, SpellInfo.SpellSlot.Q),
@@ -1001,6 +999,14 @@ turretshield
                 Width = 20f,
 
                 MissileName = "GravesChargeShotFxMissile2",
+                ChampionName = "Graves",
+                MissileSpeed = 2000f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Range = 700f,
+                Width = 20f,
+
+                MissileName = "GravesClusterShotSoundMissile",
                 ChampionName = "Graves",
                 MissileSpeed = 2000f,
                 MissileMinSpeed = 0f,
@@ -1514,8 +1520,8 @@ turretshield
             #endregion
             #region Lux
             //aa
-            CreateAutoAttack("LuxBasicAttack", "Jinx", 1600f, 1600f, 1600f),
-            CreateAutoAttack("LuxBasicAttack2", "Jinx", 1600f, 1600f, 1600f),
+            CreateAutoAttack("LuxBasicAttack", "Lux", 1600f, 1600f, 1600f),
+            CreateAutoAttack("LuxBasicAttack2", "Lux", 1600f, 1600f, 1600f),
             //q
             CreateLinearSkillshot("LuxLightBinding", "LuxLightBindingMis", "Lux", 1200f, 1200f, 1200f, 1200f, 70f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
             CreateLinearSkillshot("LuxLightBinding", "LuxLightBindingDummy", "Lux", 1200f, 1200f, 1200f, 1200f, 70f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
@@ -1542,10 +1548,9 @@ turretshield
             CreateLinearSpell("LuxMaliceCannon", "Lux", 0.5f, 3500f, 250f, SpellInfo.SpellSlot.R),
             CreateLinearSpell("LuxMaliceCannonMis", "Lux", 0.1f, 3500f, 250f, SpellInfo.SpellSlot.R),
             #endregion
-            //get malphite q missile speeds
             #region Malphite
             //q
-            //CreateTargetedMissile("SeismicShard", "SeismicShard", "Malphite", 625f, 500f, 500f, 500f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Slow),
+            CreateTargetedMissile("SeismicShard", "SeismicShard", "Malphite", 625f, 1200f, 1200f, 1200f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Slow),
             //w
             CreatePassiveSpell("Obduracy", "Malphite", "MalphiteCleave", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
             //e
@@ -1624,13 +1629,12 @@ turretshield
             //r
             CreatePassiveSpell("Highlander", "MasterYi", "Highlander", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp),
             #endregion
-            //add mf w buff name
             #region MissFortune
             //q
             CreateTargetedMissile("MissFortuneRicochetShot", "MissFortuneRicochetShot", "MissFortune", 550f, 1400f, 1400f, 1400f, SpellInfo.SpellSlot.Q),
             CreateTargetedMissile("MissFortuneRicochetShot", "MissFortuneRShotExtra", "MissFortune", 575f, 1400f, 1400f, 1400f, SpellInfo.SpellSlot.Q),
             //w
-            CreatePassiveSpell("MissFortuneViciousStrikes", "MissFortune", 0f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp),
+            CreatePassiveSpell("MissFortuneViciousStrikes", "MissFortune", "missfortunestrutstacks", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp),
             //e
             CreateCircularSpell("MissFortuneScattershot", "MissFortune", 2f, 1000f, 350f, true, SpellInfo.SpellSlot.E, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Slow),
             //r
