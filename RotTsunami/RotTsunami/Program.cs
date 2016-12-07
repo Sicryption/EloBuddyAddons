@@ -49,7 +49,7 @@ namespace RotTsunami
                 InventorySlot zz = Champion.InventoryItems.Where(a => a.Id == ItemId.ZzRot_Portal).FirstOrDefault();
 
                 var ActiveZZRot = ObjectManager.Get<Obj_AI_Base>().Where(a=>a.Name == "VoidGate" && a.IsInRange(rotpos, 20f)).FirstOrDefault();
-                if (ActiveZZRot == null && zz.CanUseItem() && Player.Instance.IsInRange(rotpos, 400f))
+                if ((ActiveZZRot == null || ActiveZZRot.IsDead) && zz.CanUseItem() && Player.Instance.IsInRange(rotpos, 400f))
                     zz.Cast(rotpos);
             }
         }
