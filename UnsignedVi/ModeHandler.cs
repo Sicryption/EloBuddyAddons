@@ -187,7 +187,6 @@ namespace UnsignedVi
                     ChargeQ();
                 else
                 {
-                    Chat.Print(Program.Q.TimeSinceCharge());
                     QEnemies = enemies.Where(a => a.Health <= Calculations.Q(a, Program.Q.TimeSinceCharge()) && a.IsInRange(Vi, Program.Q.Range())).ToList();
                     Spell.Skillshot.BestPosition bestPos = Program.Q.GetBestLinearCastPosition(QEnemies, 0, Vi.Position.To2D());
 
