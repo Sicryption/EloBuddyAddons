@@ -33,7 +33,15 @@ namespace UnsignedEvade
                 else if (!info.SpellName.Contains("Emp") && Game.Time - (info.TimeOfCast + info.Delay + info.TravelTime) >= 0)
                     return false;
             }
-            
+
+            if (info.ChampionName == "LeeSin" && info.GetChampionSpell() != null)
+            {
+                if (info.SpellName.Contains("One") && info.GetChampionSpell().Name.Contains("Two"))
+                    return false;
+                else
+                    return true;
+            }
+
             if (info.GetChampionSpell() != null &&
                 info.startingAmmoCount != -1)
                 return true;

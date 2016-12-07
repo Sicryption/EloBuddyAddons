@@ -31,6 +31,7 @@ namespace UnsignedEvade
 
         public static List<SpellInfo> activeSpells = new List<SpellInfo>();
         public static List<Tuple<string, int>> championSpellsDrawnOnChampion = new List<Tuple<string, int>>();
+        public static List<Tuple<AIHeroClient, Obj_AI_Base>> LeeSinQTargets = new List<Tuple<AIHeroClient, Obj_AI_Base>>();
 
         public static readonly Random Random = new Random(DateTime.Now.Millisecond);
         public static AIHeroClient _Player { get { return ObjectManager.Player; } }
@@ -54,6 +55,9 @@ namespace UnsignedEvade
 
             foreach (string playerName in EntityManager.Heroes.AllHeroes.GetNames())
                 championSpellsDrawnOnChampion.Add(new Tuple<string, int>(playerName, 0));
+
+            foreach (AIHeroClient unit in EntityManager.Heroes.AllHeroes.Where(a=>a.BaseSkinName == "LeeSin"))
+                LeeSinQTargets.Add(new Tuple<AIHeroClient, Obj_AI_Base>(unit, null));
         }
         
         private static void Obj_AI_Base_OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
@@ -66,6 +70,22 @@ namespace UnsignedEvade
         {
             if (MenuHandler.DebugMenu.GetCheckboxValue("Show Buff Gains"))
                 Console.WriteLine(args.Buff.Name);
+
+            if (args.Buff.Name == "BlindMonkQOne")
+            {
+                Tuple<AIHeroClient, Obj_AI_Base> newLeeSinQTarget = null;
+                for (int i = 0; i < LeeSinQTargets.Count; i++)
+                    if (LeeSinQTargets[i].Item1 == args.Buff.Caster)
+                    {
+                        newLeeSinQTarget = new Tuple<AIHeroClient, Obj_AI_Base>((AIHeroClient)args.Buff.Caster, sender);
+                        LeeSinQTargets.Remove(LeeSinQTargets[i]);
+                        break;
+                    }
+                if (newLeeSinQTarget != null)
+                    LeeSinQTargets.Add(newLeeSinQTarget);
+                else
+                    Chat.Print("We have a problem");
+            }
 
             foreach (SpellInfo info in activeSpells.Where(a => a.BuffName != ""))
                 if (args.Buff.Name == info.BuffName && args.Buff.Caster.Name == info.caster.Name)
@@ -85,9 +105,6 @@ namespace UnsignedEvade
 
         private static void HandleSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args, SpellInfo.SpellCreationLocation location)
         {
-            if (args.SData.Name == "BlindMonkQTwo")
-                Chat.Print(EntityManager.Enemies.Where(a => a.HasBuff("BlindMonkQOne")).FirstOrDefault().Name);
-
             if (sender.Type != GameObjectType.AIHeroClient)
                 return;
 
@@ -106,12 +123,18 @@ namespace UnsignedEvade
                 {
                     SpellInfo newSpellInstance = SpellDatabase.CreateInstancedSpellInfo(info);
                     
-                    newSpellInstance.startPosition = args.Start;
+                    newSpellInstance.startPosition = new Vector3(args.Start.X, args.Start.Y, NavMesh.GetHeightForPosition(args.Start.X, args.Start.Y));
+
+                    //this needs to be here to let Lee Q override it.
+                    newSpellInstance.target = args.Target;
+
                     if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range)
                         && (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.LinearDash || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration))
                         newSpellInstance.endPosition = Geometry.CalculateEndPosition(args.Start, args.End, info.Range);
                     else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
                         newSpellInstance.endPosition = info.target.Position;
+                    else if (info.DashType == SpellInfo.Dashtype.Targeted && info.SpellName == "BlindMonkQTwo")
+                        newSpellInstance.target = LeeSinQTargets.Where(a => a.Item1 == (AIHeroClient)sender).FirstOrDefault().Item2;
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
                     {
                         if (args.Start.Distance(args.End) >= info.Range)
@@ -129,7 +152,6 @@ namespace UnsignedEvade
 
                     newSpellInstance.MissileName = "";
                     newSpellInstance.startingDirection = sender.Direction;
-                    newSpellInstance.target = args.Target;
                     newSpellInstance.caster = sender;
                     newSpellInstance.CreationLocation = location;
                     newSpellInstance.TimeOfCast = Game.Time;

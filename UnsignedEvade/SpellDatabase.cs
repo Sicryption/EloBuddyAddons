@@ -970,14 +970,24 @@ turretshield
             //r
             CreateCircularSkillshot("GragasR", "GragasRBoom", "Gragas", 1050f, 1800f, 1800f, 1800f, 350, 0.55f, true, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.KnockBack),
             #endregion
-            //fix graves auto
             //fix graves Q return
             //add graves R cone
             #region Graves
             //aa
-            CreateLinearMissile("GravesBasicAttack", "Graves", 700f, 3000f, 3000f, 3000f, 25f),
-            CreateLinearMissile("GravesCritAttack", "Graves", 700f, 3400f, 3400f, 3400f, 25f),
-            CreateLinearMissile("GravesBasicAttackSpread", "Graves", 700f, 3800f, 3800f, 3800f, 25f),
+            CreateLinearMissile("GravesBasicAttack", "Graves", 650f, 3000f, 3000f, 3000f, 25f),
+            CreateLinearMissile("GravesCritAttack", "Graves", 650f, 3400f, 3400f, 3400f, 25f),
+            CreateLinearMissile("GravesBasicAttackSpread", "Graves", 650f, 3800f, 3800f, 3800f, 25f),
+            /*
+            SpellName = "GravesAutoAttackRecoil",
+                ChampionName = "Graves",
+                Range = 650f,
+                MissileSpeed = 1500f,
+                MissileMinSpeed = 0f,
+                MissileMaxSpeed = 0f,
+                Width = 0f,
+                Radius = 250f,
+                ConeDegrees = 45f,
+            */
             //q
             CreateLinearSkillshot("GravesQLineSpell", "GravesQLineMis", "Graves", 808f, 3000f, 3000f, 3000f, 100f, false, SpellInfo.SpellSlot.Q),
             CreateLinearSkillshot("GravesQLineSpell", "GravesQReturn", "Graves", 808f, 3000f, 3000f, 3000f, 100f, false, SpellInfo.SpellSlot.Q),
