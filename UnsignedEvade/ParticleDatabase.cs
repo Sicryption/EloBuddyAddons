@@ -1,14 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using EloBuddy;
+using EloBuddy.SDK;
+using EloBuddy.SDK.Enumerations;
+using EloBuddy.SDK.Events;
+using EloBuddy.SDK.Spells;
+using EloBuddy.SDK.Menu;
+using EloBuddy.SDK.Menu.Values;
+using SharpDX;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using EloBuddy.Sandbox;
 
 namespace UnsignedEvade
 {
     class ParticleDatabase
     {
         public static List<ParticleInfo> SingedPoisonTrails = new List<ParticleInfo>();
+        public static List<Tuple<AIHeroClient, Obj_AI_Base>> LeeSinQTargets = new List<Tuple<AIHeroClient, Obj_AI_Base>>();
+        public static List<Tuple<AIHeroClient, Vector3>> GravesQRewind = new List<Tuple<AIHeroClient, Vector3>>();
 
         private static List<ParticleInfo> particleDatabase = new List<ParticleInfo>()
         {

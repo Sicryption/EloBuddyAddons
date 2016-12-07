@@ -31,7 +31,6 @@ namespace UnsignedEvade
 
         public static List<SpellInfo> activeSpells = new List<SpellInfo>();
         public static List<Tuple<string, int>> championSpellsDrawnOnChampion = new List<Tuple<string, int>>();
-        public static List<Tuple<AIHeroClient, Obj_AI_Base>> LeeSinQTargets = new List<Tuple<AIHeroClient, Obj_AI_Base>>();
 
         public static readonly Random Random = new Random(DateTime.Now.Millisecond);
         public static AIHeroClient _Player { get { return ObjectManager.Player; } }
@@ -57,7 +56,10 @@ namespace UnsignedEvade
                 championSpellsDrawnOnChampion.Add(new Tuple<string, int>(playerName, 0));
 
             foreach (AIHeroClient unit in EntityManager.Heroes.AllHeroes.Where(a=>a.BaseSkinName == "LeeSin"))
-                LeeSinQTargets.Add(new Tuple<AIHeroClient, Obj_AI_Base>(unit, null));
+                ParticleDatabase.LeeSinQTargets.Add(new Tuple<AIHeroClient, Obj_AI_Base>(unit, null));
+
+            foreach (AIHeroClient unit in EntityManager.Heroes.AllHeroes.Where(a => a.BaseSkinName == "Graves"))
+                ParticleDatabase.GravesQRewind.Add(new Tuple<AIHeroClient, Vector3>(unit, Vector3.Zero));
         }
         
         private static void Obj_AI_Base_OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
@@ -74,15 +76,15 @@ namespace UnsignedEvade
             if (args.Buff.Name == "BlindMonkQOne")
             {
                 Tuple<AIHeroClient, Obj_AI_Base> newLeeSinQTarget = null;
-                for (int i = 0; i < LeeSinQTargets.Count; i++)
-                    if (LeeSinQTargets[i].Item1 == args.Buff.Caster)
+                for (int i = 0; i < ParticleDatabase.LeeSinQTargets.Count; i++)
+                    if (ParticleDatabase.LeeSinQTargets[i].Item1 == args.Buff.Caster)
                     {
                         newLeeSinQTarget = new Tuple<AIHeroClient, Obj_AI_Base>((AIHeroClient)args.Buff.Caster, sender);
-                        LeeSinQTargets.Remove(LeeSinQTargets[i]);
+                        ParticleDatabase.LeeSinQTargets.Remove(ParticleDatabase.LeeSinQTargets[i]);
                         break;
                     }
                 if (newLeeSinQTarget != null)
-                    LeeSinQTargets.Add(newLeeSinQTarget);
+                    ParticleDatabase.LeeSinQTargets.Add(newLeeSinQTarget);
                 else
                     Chat.Print("We have a problem");
             }
@@ -134,7 +136,7 @@ namespace UnsignedEvade
                     else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
                         newSpellInstance.endPosition = info.target.Position;
                     else if (info.DashType == SpellInfo.Dashtype.Targeted && info.SpellName == "BlindMonkQTwo")
-                        newSpellInstance.target = LeeSinQTargets.Where(a => a.Item1 == (AIHeroClient)sender).FirstOrDefault().Item2;
+                        newSpellInstance.target = ParticleDatabase.LeeSinQTargets.Where(a => a.Item1 == (AIHeroClient)sender).FirstOrDefault().Item2;
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
                     {
                         if (args.Start.Distance(args.End) >= info.Range)
@@ -146,9 +148,25 @@ namespace UnsignedEvade
                         newSpellInstance.endPosition = info.caster.Position.Extend(args.End, info.Range).To3D((int)info.caster.Position.Z);
                     else
                         newSpellInstance.endPosition = args.End.To2D().To3D((int)NavMesh.GetHeightForPosition(args.End.X, args.End.Y));
-
+                    
+                    //overrides
                     if (info.SpellName == "AkaliSmokeBomb")
                         newSpellInstance.endPosition += new Vector3(0, 30f, 0);
+                    else if (info.MissileName == "GravesQLineMis")
+                    {
+                        Tuple<AIHeroClient, Vector3> newGravesQLine = null;
+                        for (int i = 0; i < ParticleDatabase.GravesQRewind.Count; i++)
+                            if (ParticleDatabase.GravesQRewind[i].Item1 == (AIHeroClient)sender)
+                            {
+                                newGravesQLine = new Tuple<AIHeroClient, Vector3>((AIHeroClient)sender, newSpellInstance.startPosition);
+                                ParticleDatabase.GravesQRewind.Remove(ParticleDatabase.GravesQRewind[i]);
+                                break;
+                            }
+                        if (newGravesQLine != null)
+                            ParticleDatabase.GravesQRewind.Add(newGravesQLine);
+                        else
+                            Chat.Print("We have a problem");
+                    }
 
                     newSpellInstance.MissileName = "";
                     newSpellInstance.startingDirection = sender.Direction;
@@ -244,6 +262,10 @@ namespace UnsignedEvade
                     //spells that dont hav to be extended. The only exception is Dianas Q which was taken care of above
                     else if(info.SpellType != SpellInfo.SpellTypeInfo.ArcSkillshot)
                         newSpellInstance.endPosition = projectile.EndPosition;
+
+                    //overrides
+                    if (info.MissileName == "GravesQReturn")
+                        newSpellInstance.endPosition = ParticleDatabase.GravesQRewind.Where(a => a.Item1 == (AIHeroClient)projectile.SpellCaster).FirstOrDefault().Item2;
 
                     newSpellInstance.target = projectile.Target;
                     newSpellInstance.caster = projectile.SpellCaster;
@@ -537,10 +559,14 @@ namespace UnsignedEvade
                             if (info.missile != null)
                             {
                                 //sivir Q and draven R return 
-                                if (info.MissileName.ToLower().Contains("return") ||
+                                //Graves Q Does not work likes this
+                                if ((info.MissileName.ToLower().Contains("return") && info.MissileName != "GravesQReturn") ||
                                     ((info.MissileName == "DravenR" || info.MissileName == "TalonWMissileTwo" || info.MissileName == "TalonRMisTwo")
                                     && info.missile.EndPosition.Distance(info.caster.Position) <= 50))
+                                {
+                                    Chat.Print(info.MissileName + "F");
                                     Geometry.DrawLinearSkillshot(info.missile.Position, info.missile.SpellCaster.Position, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
+                                }
                                 //ahri rotating w orbs
                                 else if (info.MissileName == "AhriFoxFireMissile" || info.MissileName == "AhriFoxFireMissileTwo")
                                 {
@@ -548,7 +574,9 @@ namespace UnsignedEvade
                                         Geometry.DrawLinearSkillshot(info.missile.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
                                 }
                                 else
+                                {
                                     Geometry.DrawLinearSkillshot(info.missile.Position, info.endPosition, info.Width, info.MissileSpeed, info.Range, info.CollisionCount);
+                                }
                             }
                             //for on spell cast spells that dont have missiles
                             else if (info.MissileName == "" && info.BuffName == "")
@@ -574,7 +602,12 @@ namespace UnsignedEvade
                             Geometry.DrawTargetedSpell(info.caster.Position, info.endPosition);
                     }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot)
-                        Geometry.DrawCircularSkillshot(info.missile.EndPosition, info.Radius, info.SecondRadius);
+                    {
+                        if (info.missile != null)
+                            Geometry.DrawCircularSkillshot(info.missile.EndPosition, info.Radius, info.SecondRadius);
+                        else
+                            Geometry.DrawCircularSkillshot(info.endPosition, info.Radius, info.SecondRadius);
+                    }
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash)
                         Geometry.DrawCircularSkillshot(info.endPosition, info.Radius, info.SecondRadius);
                     else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithBuff || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration)

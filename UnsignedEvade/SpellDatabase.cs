@@ -771,16 +771,15 @@ turretshield
             #endregion
             //elise human Q particle
             //elise spider W, E and R buff names
-            //code elise spider Q as dash?
             #region Elise
             //aa
             CreateAutoAttack("EliseBasicAttack", "Elise", 1600f, 1600f, 1600f),
             CreateAutoAttack("EliseBasicAttack2", "Elise", 1600f, 1600f, 1600f),
             CreateAutoAttack("EliseBasicAttack3", "Elise", 1600f, 1600f, 1600f),
             //q
-            CreateTargetedMissile("EliseHumanQ", "null", "Elise", 625f, 2200f, 2200f, 2200f, SpellInfo.SpellSlot.Q),
+            //CreateTargetedMissile("EliseHumanQ", "null", "Elise", 625f, 2200f, 2200f, 2200f, SpellInfo.SpellSlot.Q),
             //q spider
-            CreateTargetedSpell("EliseQSpiderCast", "Elise", 475f, SpellInfo.SpellSlot.Q),
+            CreateTargetedDash("EliseQSpiderCast", "Elise", 475f, SpellInfo.SpellSlot.Q, SpellInfo.Dashtype.TargetedLinear),
             //w
             //spider speed is 5000f. Explosion Radius is 235f
             CreatePassiveSpell("EliseHumanW", "Elise", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Pet),
@@ -970,13 +969,13 @@ turretshield
             //r
             CreateCircularSkillshot("GragasR", "GragasRBoom", "Gragas", 1050f, 1800f, 1800f, 1800f, 350, 0.55f, true, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.KnockBack),
             #endregion
-            //fix graves Q return
             //add graves R cone
             #region Graves
             //aa
-            CreateLinearMissile("GravesBasicAttack", "Graves", 650f, 3000f, 3000f, 3000f, 25f),
-            CreateLinearMissile("GravesCritAttack", "Graves", 650f, 3400f, 3400f, 3400f, 25f),
-            CreateLinearMissile("GravesBasicAttackSpread", "Graves", 650f, 3800f, 3800f, 3800f, 25f),
+            //Graves Basic Attack isn't needed since the Basic Attack Spread has it included.
+            CreateLinearMissile("GravesBasicAttack", "Graves", 425f, 3000f, 3000f, 3000f, 25f),
+            CreateLinearMissile("GravesCritAttack", "Graves", 425f, 3400f, 3400f, 3400f, 25f),
+            CreateLinearMissile("GravesBasicAttackSpread", "Graves", 425f, 3800f, 3800f, 3800f, 25f),
             /*
             SpellName = "GravesAutoAttackRecoil",
                 ChampionName = "Graves",
@@ -997,7 +996,7 @@ turretshield
             CreateLinearDash("GravesMove", "Graves", 300f, 0f, SpellInfo.SpellSlot.E),
             //r
             //mis speed could be 2100f
-            CreateLinearSkillshot("GravesChargeShot", "GravesChargeShotShot", "Graves", 1000f, 1400f, 1400f, 1400f, 100f, true, SpellInfo.SpellSlot.R),
+            CreateLinearSkillshot("GravesChargeShot", "GravesChargeShotShot", "Graves", 1000f, 1400f, 1400f, 1400f, 100f, false, SpellInfo.SpellSlot.R),
             //r cone split
             /*
             MissileName = "GravesChargeShotFxMissile",
@@ -1345,6 +1344,10 @@ turretshield
             #region Kindred
             //aa
             CreateAutoAttack("KindredBasicAttack", "Kindred", 2000f, 2000f, 2000f),
+            CreateAutoAttack("KindredBasicAttackBounty1", "Kindred", 2000f, 2000f, 2000f),
+            CreateAutoAttack("KindredBasicAttackBounty2", "Kindred", 2000f, 2000f, 2000f),
+            CreateAutoAttack("KindredBasicAttackBounty3", "Kindred", 2000f, 2000f, 2000f),
+            CreateAutoAttack("KindredBasicAttackOverrideLightbombFinal", "Kindred", 2000f, 2000f, 2000f),
             //q
             CreateLinearDash("KindredQ", "Kindred", 200f, 0f, SpellInfo.SpellSlot.Q),
             CreateTargetedMissile("null", "KindredQMissile", "Kindred", 1800f, 1600f, 1600f, 1600f, SpellInfo.SpellSlot.Auto),
@@ -1435,7 +1438,6 @@ turretshield
             //re channel
             CreateLinearSkillshot("LeblancE", "LeblancRE", "Leblanc", 950f, 1750f, 1750f, 1750f, 55f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
             #endregion
-            //fix lee sin second q
             //lee sin w buff name
             #region LeeSin
             //q
@@ -1454,12 +1456,14 @@ turretshield
             CreateTargetedSpell("BlindMonkRKick", "LeeSin", 375f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.KnockBack),
             #endregion
             #region Leona
+            //aa
+            CreateTargetedSpell("LeonaShieldOfDaybreakAttack", "Leona", 200f, SpellInfo.SpellSlot.Auto, SpellInfo.CrowdControlType.Stun),
             //q
             CreatePassiveSpell("LeonaShieldOfDaybreak", "Leona", "LeonaShieldOfDaybreak", SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
             //w
             CreateSelfActive("LeonaSolarBarrier", "Leona", "LeonaSolarBarrier", 500f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
             //e
-            CreateLinearMissile("LeonaZenithBlade", "LeonaZenithBladeMissile", 900f, 2000f, 2000f, 2000f, 70f, SpellInfo.CrowdControlType.Root),
+            CreateLinearSkillshot("LeonaZenithBlade", "LeonaZenithBladeMissile", "Leona", 900f, 2000f, 2000f, 2000f, 70f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Stun),
             //r
             CreateCircularSpell("LeonaSolarFlare", "Leona", 1200f, 120f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Stun),
             #endregion
