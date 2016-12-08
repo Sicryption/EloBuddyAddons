@@ -192,7 +192,7 @@ namespace UnsignedEvade
                     //overrides
                     if (info.MissileName == "GravesQReturn")
                         newSpellInstance.endPosition = ParticleDatabase.GravesQRewind.Where(a => a.Item1 == (AIHeroClient)projectile.SpellCaster).FirstOrDefault().Item2;
-
+                    
                     newSpellInstance.target = projectile.Target;
                     newSpellInstance.caster = projectile.SpellCaster;
                     newSpellInstance.missile = projectile;

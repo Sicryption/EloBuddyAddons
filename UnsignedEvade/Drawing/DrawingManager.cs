@@ -25,7 +25,7 @@ namespace UnsignedEvade
 
             //passive spells should be refreshing even when dead
             Utilities.ResetPassiveSpellCounter();
-
+            
             if (_Player.IsDead || !MenuHandler.DrawMenu.GetCheckboxValue("Draw Spells/Missiles"))
                 return;
 
@@ -102,7 +102,10 @@ namespace UnsignedEvade
                     }
                     //for on spell cast spells that dont have their missiles created yet.
                     else if (info.MissileName == "" && info.BuffName == "")
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.caster.Position, info.endPosition, info.Width));
+                    {
+                        //the start position was set to info.caster.position. I changed it to info.startPosition to fix JannaQ. This might affect other spells
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.startPosition, info.endPosition, info.Width));
+                    }
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile || info.SpellType == SpellInfo.SpellTypeInfo.AutoAttack)
                 {

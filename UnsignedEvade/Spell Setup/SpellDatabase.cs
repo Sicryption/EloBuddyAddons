@@ -1690,9 +1690,12 @@ turretshield
             #endregion
             //nami w on enemy
             #region Nami
+            //aa
+            CreateAutoAttack("NamiBasicAttack", "Nami", 1500f, 1500f, 1500f),
+            CreateAutoAttack("NamiBasicAttack2", "Nami", 1500f, 1500f, 1500f),
             //q
             CreateCircularSkillshot("NamiQMissile", "NamiQMissile", "Nami", 850f, 2500f, 2500f, 2500f, 175f, true, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp),
-            //CreateCircularSpell("NamiQ", "Nami", 0.75f, 850f, 175f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None, SpellInfo.CrowdControlType.KnockUp),
+            CreateCircularSpell("NamiQ", "Nami", 0.75f, 850f, 175f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None, SpellInfo.CrowdControlType.KnockUp),
             //w
             CreateTargetedMissile("NamiW", "NamiWEnemy", "Nami", 725f, 2500f, 2500f, 2500f, SpellInfo.SpellSlot.W),
             CreateTargetedMissile("NamiW", "NamiWAlly", "Nami", 725f, 2500f, 2500f, 2500f, SpellInfo.SpellSlot.W),

@@ -135,6 +135,19 @@ namespace UnsignedEvade
                 return false;
             return true;
         }
+        public static bool IsSafe(this Vector3 pos)
+        {
+            if (SpellDatabase.Polygons.Any(a => a.polygon.IsInside(pos)))
+                return false;
+            return true;
+        }
+        public static float DistanceFromClosestEnemy(this Vector3 pos)
+        {
+            AIHeroClient enemy = EntityManager.Heroes.Enemies.OrderBy(a => a.Distance(pos)).FirstOrDefault();
+            if (enemy != null)
+                return enemy.Distance(pos);
+            return int.MaxValue;
+        }
         public static CustomPolygon FindSpellInfoWithClosestTime(this AIHeroClient champ)
         {
             List<CustomPolygon> polys = SpellDatabase.Polygons.Where(a => a.polygon.IsInside(champ)).ToList();
