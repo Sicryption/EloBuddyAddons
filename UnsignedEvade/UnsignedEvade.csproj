@@ -73,19 +73,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DodgeManager.cs" />
-    <Compile Include="EvadeController.cs" />
-    <Compile Include="CustomExtensions.cs" />
-    <Compile Include="Geometry.cs" />
-    <Compile Include="MenuHandler.cs" />
-    <Compile Include="ParticleDatabase.cs" />
-    <Compile Include="ParticleInfo.cs" />
+    <Compile Include="Drawing\DrawingManager.cs" />
+    <Compile Include="Evading\DodgeManager.cs" />
+    <Compile Include="Evading\EvadeController.cs" />
+    <Compile Include="Misc\CustomExtensions.cs" />
+    <Compile Include="Misc\Utilities.cs" />
+    <Compile Include="Misc\ExtraSpellOverides.cs" />
+    <Compile Include="Spell Setup\PolygonCreater.cs" />
+    <Compile Include="Menu\MenuHandler.cs" />
+    <Compile Include="Spell Setup\ParticleDatabase.cs" />
+    <Compile Include="Spell Setup\ParticleInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SpellDatabase.cs" />
-    <Compile Include="SpellInfo.cs" />
-    <Compile Include="Trap.cs" />
-    <Compile Include="TrapDatabase.cs" />
+    <Compile Include="Spell Setup\SpellCreation.cs" />
+    <Compile Include="Spell Setup\SpellDatabase.cs" />
+    <Compile Include="Spell Setup\SpellInfo.cs" />
+    <Compile Include="Spell Setup\Trap.cs" />
+    <Compile Include="Spell Setup\TrapDatabase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

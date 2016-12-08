@@ -10,7 +10,11 @@ namespace UnsignedEvade
 {
     static class SpellDatabase
     {
-        public static List<SpellInfo> SpellList = new List<SpellInfo>();
+        public static List<string> SpellsNotInDatabase = new List<string>();
+        public static List<SpellInfo> activeSpells = new List<SpellInfo>(),
+            SpellList = new List<SpellInfo>();
+        public static List<Tuple<string, int>> championSpellsDrawnOnChampion = new List<Tuple<string, int>>();
+        public static List<EloBuddy.SDK.Geometry.Polygon> Polygons = new List<EloBuddy.SDK.Geometry.Polygon>();
 
         #region Existing Spell List
         static List<SpellInfo> SpellInfoList = new List<SpellInfo>()
@@ -331,6 +335,7 @@ namespace UnsignedEvade
             CreatePassiveSpell("MoltenShield", "Annie", "MoltenShield", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
             //r
             CreateCircularSpell("InfernalGuardian", "Annie", 600f, 250f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.Pet, SpellInfo.CrowdControlType.Stun),
+            CreatePassiveSpell("InfernalGuardianGuide", "Annie", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Pet),
             #endregion
             #region Ashe
             //aa
@@ -1652,7 +1657,7 @@ turretshield
             //e
             CreateCircularSpell("MissFortuneScattershot", "MissFortune", 2f, 1000f, 350f, true, SpellInfo.SpellSlot.E, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Slow),
             //r
-            CreateConeSpell("MissFortuneBulletTime", "MissFortune", "missfortunebulletsound", 1000, 17f, SpellInfo.SpellSlot.R),
+            CreateConeSpell("MissFortuneBulletTime", "MissFortune", "missfortunebulletsound", 1300, 17f, SpellInfo.SpellSlot.R),
             //missile name "MissFortuneBullets", and speeds  MissileSpeed = 2000f, MissileMinSpeed = 2000f, MissileMaxSpeed = 2000f, Width = 40f
             #endregion
             #region Mordekaiser
@@ -1703,7 +1708,7 @@ turretshield
             //w
             CreateTargetedSpell("NasusW", "Nasus", 600f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.HeavySlow),
             //e
-            CreateCircularSpell("NasusE", "Nasus", 5f, 650f, 380f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None),
+            CreateCircularSpell("NasusE", "Nasus", 3.5f, 650f, 380f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None),
             //r
             CreateSelfActive("NasusR", "Nasus", "NasusR", 175f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
             #endregion

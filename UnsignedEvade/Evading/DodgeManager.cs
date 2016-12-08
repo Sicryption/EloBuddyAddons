@@ -20,7 +20,7 @@ namespace UnsignedEvade
 
         public static void HandleDodging()
         {
-            foreach(SpellInfo spell in Program.activeSpells)
+            foreach(SpellInfo spell in SpellDatabase.activeSpells)
             {
 
             }
