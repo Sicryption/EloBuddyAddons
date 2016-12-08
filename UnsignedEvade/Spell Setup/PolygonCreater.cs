@@ -138,7 +138,6 @@ namespace UnsignedEvade
         }
         public static Geometry.Polygon CreateTargetedSpell(Vector3 startPosition, GameObject target)
         {
-            Chat.Print(startPosition.Z);
             Geometry.Polygon line = new Geometry.Polygon();
             line.Add(startPosition);
             line.Add(target.Position);
