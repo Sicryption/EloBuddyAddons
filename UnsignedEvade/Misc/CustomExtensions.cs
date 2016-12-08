@@ -129,5 +129,16 @@ namespace UnsignedEvade
                 name = info.MissileName;
             return menu.GetCheckboxValue("Dodge " + name);
         }
+        public static bool IsSafe(this AIHeroClient champ)
+        {
+            if (SpellDatabase.Polygons.Any(a => a.polygon.IsInside(champ)))
+                return false;
+            return true;
+        }
+        public static CustomPolygon FindSpellInfoWithClosestTime(this AIHeroClient champ)
+        {
+            List<CustomPolygon> polys = SpellDatabase.Polygons.Where(a => a.polygon.IsInside(champ)).ToList();
+            return polys.OrderBy(a => a.TimeUntilHitsChampion(champ)).FirstOrDefault();
+        }
     }
 }

@@ -73,6 +73,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Drawing\CustomPolygon.cs" />
     <Compile Include="Drawing\DrawingManager.cs" />
     <Compile Include="Evading\DodgeManager.cs" />
     <Compile Include="Evading\EvadeController.cs" />

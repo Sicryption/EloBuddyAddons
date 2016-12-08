@@ -52,7 +52,7 @@ namespace UnsignedEvade
         private static void CreatePolygons()
         {
             //reset polygon list to have no entities
-            SpellDatabase.Polygons = new List<EloBuddy.SDK.Geometry.Polygon>();
+            SpellDatabase.Polygons = new List<CustomPolygon>();
 
             #region Spells
             foreach(SpellInfo info in SpellDatabase.activeSpells)
@@ -64,19 +64,19 @@ namespace UnsignedEvade
                     || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash)
                 {
                     if (info.missile != null)
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(info.missile.EndPosition, info.Radius));
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(info, info.missile.EndPosition, info.Radius));
                     else
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(info.endPosition, info.Radius));
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(info, info.endPosition, info.Radius));
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveWithBuff)
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(info.caster.Position, info.Radius));
+                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(info, info.caster.Position, info.Radius));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularWall)
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularWall(info.endPosition, info.Radius, info.SecondRadius));
+                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularWall(info, info.endPosition, info.Radius, info.SecondRadius));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff
                     || info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration)
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.Width));
+                    SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.Width));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearDash)
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info.caster.Position, info.endPosition, info.Width));
+                    SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.caster.Position, info.endPosition, info.Width));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot
                     || info.SpellType == SpellInfo.SpellTypeInfo.LinearMissile
                     || info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage)
@@ -89,43 +89,43 @@ namespace UnsignedEvade
                             ((info.MissileName == "DravenR" || info.MissileName == "TalonWMissileTwo" || info.MissileName == "TalonRMisTwo")
                             && info.missile.EndPosition.Distance(info.caster.Position) <= 50))
                         {
-                            SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info.missile.Position, info.missile.SpellCaster.Position, info.Width));
+                            SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.missile.Position, info.missile.SpellCaster.Position, info.Width));
                         }
                         //ahri rotating w orbs
                         else if (info.MissileName == "AhriFoxFireMissile" || info.MissileName == "AhriFoxFireMissileTwo")
                         {
                             if (info.missile.Position.Distance(info.caster.Position) > 200)
-                                SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info.missile.Position, info.endPosition, info.Width));
+                                SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.missile.Position, info.endPosition, info.Width));
                         }
                         else
-                            SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info.missile.Position, info.endPosition, info.Width));
+                            SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.missile.Position, info.endPosition, info.Width));
                     }
                     //for on spell cast spells that dont have their missiles created yet.
                     else if (info.MissileName == "" && info.BuffName == "")
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info.caster.Position, info.endPosition, info.Width));
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.caster.Position, info.endPosition, info.Width));
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile || info.SpellType == SpellInfo.SpellTypeInfo.AutoAttack)
                 {
                     if (info.missile != null)
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateTargetedSpell(info.missile.Position, info.target));
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateTargetedSpell(info, info.missile.Position, info.target));
                     else
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateTargetedSpell(info.caster.Position, info.target));
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateTargetedSpell(info, info.caster.Position, info.target));
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedDash)
                 {
                     if (info.DashType == SpellInfo.Dashtype.Targeted && info.target != null)
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateTargetedSpell(info.caster.Position, info.target));
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateTargetedSpell(info, info.caster.Position, info.target));
                     else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateTargetedSpell(info.caster.Position, info.endPosition));
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateTargetedSpell(info, info.caster.Position, info.endPosition));
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell)
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCone(info.startPosition, info.endPosition, info.ConeDegrees, info.Range));
+                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCone(info, info.startPosition, info.endPosition, info.ConeDegrees, info.Range));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpellWithBuff)
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCone(info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.ConeDegrees, info.Range));
+                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCone(info, info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.ConeDegrees, info.Range));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall)
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateWall(info.startPosition, info.endPosition, info.Width, info.Radius));
+                    SpellDatabase.Polygons.Add(PolygonCreater.CreateWall(info, info.startPosition, info.endPosition, info.Width, info.Radius));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateArc(info.startPosition, info.endPosition, info.Width));
+                    SpellDatabase.Polygons.Add(PolygonCreater.CreateArc(info, info.startPosition, info.endPosition, info.Width));
             }
             #endregion
 
@@ -142,7 +142,7 @@ namespace UnsignedEvade
                     if (info.SpellType == ParticleInfo.SpellTypeInfo.Wall)
                         SpellDatabase.Polygons.Add(PolygonCreater.CreateRectangleAroundPoint(info.Length, info.Width, particle.Position, info.XOffset, info.YOffset));
                     else if (info.SpellType == ParticleInfo.SpellTypeInfo.CircularSkillshot)
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(particle.Position, info.Radius));
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(null, particle.Position, info.Radius));
                     else if (info.SpellType == ParticleInfo.SpellTypeInfo.LinearSkillshot)
                     {
                         if (info.ParticleName == "Illaoi_Base_Q_IndicatorBLU.troy")
@@ -150,7 +150,7 @@ namespace UnsignedEvade
                             Obj_AI_Base tentacle = ObjectManager.Get<Obj_AI_Base>().Where(a => a.Name == "God" && a.Position.Distance(particle.Position) <= 10).OrderBy(a => a.Distance(particle)).FirstOrDefault();
 
                             if (tentacle != null && (tentacle.BaseSkinName == "Illaoi" || info.CanDraw()))
-                                SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(tentacle.Position, tentacle.Position.Extend(tentacle.Position + tentacle.Direction, info.Length).To3D((int)tentacle.Position.Z), info.Width));
+                                SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(null, tentacle.Position, tentacle.Position.Extend(tentacle.Position + tentacle.Direction, info.Length).To3D((int)tentacle.Position.Z), info.Width));
                         }
                         else
                             SpellDatabase.Polygons.Add(PolygonCreater.CreateRectangleAroundPoint(info.Length, info.Width, particle.Position, info.XOffset, info.YOffset));
@@ -161,7 +161,7 @@ namespace UnsignedEvade
 
             #region Traps
             foreach (Obj_AI_Minion trap in ObjectManager.Get<Obj_AI_Minion>().Where(a => a != null && (a.IsEnemy || MenuHandler.DrawMenu.GetCheckboxValue("Draw Friendly Spells/Missiles")) && !a.IsDead && TrapDatabase.AllTrapNames().Contains(a.Name)))
-                SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(trap.Position, TrapDatabase.getTrap(trap.Name).Radius));
+                SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(null, trap.Position, TrapDatabase.getTrap(trap.Name).Radius));
             #endregion
 
             #region Singed Poisons
@@ -170,7 +170,7 @@ namespace UnsignedEvade
             {
                 if (Game.Time - (info.CreationTime + info.Delay) <= 0)
                 {
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(info.Position, info.Radius));
+                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(null, info.Position, info.Radius));
                     replacementPoisonList.Add(info);
                 }
             }
@@ -227,7 +227,7 @@ namespace UnsignedEvade
                     || info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
                 {
                     float timeSinceCast = Game.Time - info.TimeOfCast;
-                    float timeItTakesToCast = info.Delay + info.TravelTime;
+                    float timeItTakesToCast = info.Delay + info.Duration + info.TravelTime;
 
                     if (info.SpellName.Contains("RekSaiQAttack"))
                     {
@@ -240,7 +240,7 @@ namespace UnsignedEvade
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration
                     || info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpellWithDuration)
                 {
-                    if ((Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown()) && info.caster.IsFacing(info.endPosition))
+                    if ((Game.Time - info.TimeOfCast <= info.Delay + info.Duration || info.IsOffCooldown()) && info.caster.IsFacing(info.endPosition))
                         KeepList.Add(info);
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile
@@ -249,14 +249,14 @@ namespace UnsignedEvade
                 {
                     //targeted spells dont have missiles if they are cast on themseleves. IE: nami w
                     if (info.target != null && info.target != info.caster)
-                        if (Game.Time - info.TimeOfCast <= info.Delay || info.IsOffCooldown())
+                        if (Game.Time - info.TimeOfCast <= info.Delay + info.Duration || info.IsOffCooldown())
                             KeepList.Add(info);
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.LinearDash
                     || info.SpellType == SpellInfo.SpellTypeInfo.TargetedDash
                     || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash)
                 {
-                    if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay)
+                    if (info.caster.IsDashing() || Game.Time - info.TimeOfCast <= info.Delay + info.Duration)
                         KeepList.Add(info);
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpellWithBuff
@@ -265,7 +265,7 @@ namespace UnsignedEvade
                     || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveWithBuff
                     || info.SpellType == SpellInfo.SpellTypeInfo.TargetedPassiveSpell)
                 {
-                    float timeItTakesToCast = info.Delay + info.TravelTime;
+                    float timeItTakesToCast = info.Delay + info.Duration + info.TravelTime;
                     float timeSinceCast = Game.Time - info.TimeOfCast;
                     if (info.caster.HasBuff(info.BuffName)
                         || timeSinceCast <= timeItTakesToCast
@@ -384,8 +384,8 @@ namespace UnsignedEvade
                 }
             }
 
-            foreach (Geometry.Polygon polygon in SpellDatabase.Polygons)
-                polygon.Draw(drawColor, 5);
+            foreach (CustomPolygon polygon in SpellDatabase.Polygons)
+                polygon.polygon.Draw(drawColor, 5);
         }
         
         private static void DrawPassiveSpell(Obj_AI_Base playerBeingDrawnOn, SpellInfo info)

@@ -14,7 +14,7 @@ namespace UnsignedEvade
         public static List<SpellInfo> activeSpells = new List<SpellInfo>(),
             SpellList = new List<SpellInfo>();
         public static List<Tuple<string, int>> championSpellsDrawnOnChampion = new List<Tuple<string, int>>();
-        public static List<EloBuddy.SDK.Geometry.Polygon> Polygons = new List<EloBuddy.SDK.Geometry.Polygon>();
+        public static List<CustomPolygon> Polygons = new List<CustomPolygon>();
 
         #region Existing Spell List
         static List<SpellInfo> SpellInfoList = new List<SpellInfo>()
@@ -1691,10 +1691,15 @@ turretshield
             //nami w on enemy
             #region Nami
             //q
-            CreateLinearSkillshotNoDamage("NamiQMissile", "NamiQMissile", "Nami", 850f, 2500f, 2500f, 2500f, 175f, true, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp),
-            CreateCircularSpell("NamiQ", "Nami", 0.75f, 850f, 175f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None, SpellInfo.CrowdControlType.KnockUp),
+            CreateCircularSkillshot("NamiQMissile", "NamiQMissile", "Nami", 850f, 2500f, 2500f, 2500f, 175f, true, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp),
+            //CreateCircularSpell("NamiQ", "Nami", 0.75f, 850f, 175f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None, SpellInfo.CrowdControlType.KnockUp),
             //w
             CreateTargetedMissile("NamiW", "NamiWEnemy", "Nami", 725f, 2500f, 2500f, 2500f, SpellInfo.SpellSlot.W),
+            CreateTargetedMissile("NamiW", "NamiWAlly", "Nami", 725f, 2500f, 2500f, 2500f, SpellInfo.SpellSlot.W),
+            //used on self and bounced to enemy
+            CreateTargetedMissile("NamiW", "NamiWMissileEnemy", "Nami", 725f, 1500f, 1500f, 1500f, SpellInfo.SpellSlot.W),
+            //used on enemy and bounced to self
+            CreateTargetedMissile("NamiW", "NamiWMissileAlly", "Nami", 725f, 1500f, 1500f, 1500f, SpellInfo.SpellSlot.W),
             CreateTargetedMissile("NamiW", "NamiWAlly", "Nami", 725f, 2500f, 2500f, 2500f, SpellInfo.SpellSlot.W),
             //e
             CreateTargetedSpell("NamiE", "Nami", 800f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease),
@@ -2100,7 +2105,7 @@ turretshield
             //q
             CreateLinearSkillshot("RyzeQ", "RyzeQ", "Ryze", 1000f, 1700f, 1700f, 1700f, 55f, false, SpellInfo.SpellSlot.Q),
             //w
-            CreateTargetedSpell("RyzeW", "Ryze", 550f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
+            CreateTargetedSpell("RyzeW", "Ryze", 550f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Stun),
             //e
             CreateTargetedMissile("RyzeE", "RyzeE", "Ryze", 550f, 3500f, 3500f, 3500f, SpellInfo.SpellSlot.E),
             CreateTargetedMissile("RyzeE", "RyzeEBounce", "Ryze", 550f, 3500f, 3500f, 3500f, SpellInfo.SpellSlot.E),
@@ -3103,7 +3108,7 @@ ViktorPowerTransfer
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
                 Delay = 2f,
-                Width = width * 2,
+                Width = width,
                 SpellType = SpellInfo.SpellTypeInfo.ArcSkillshot,
                 CCtype = ccType,
                 Slot = slot,
@@ -3123,7 +3128,7 @@ ViktorPowerTransfer
                 MissileSpeed = missileSpeed,
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
-                Width = width * 2,
+                Width = width,
                 CanVaryInLength = canVaryInLength,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = ccType,
@@ -3144,7 +3149,7 @@ ViktorPowerTransfer
                 MissileSpeed = missileSpeed,
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
-                Width = width * 2,
+                Width = width,
                 CanVaryInLength = canVaryInLength,
                 BuffType = buffType,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshotNoDamage,
@@ -3165,7 +3170,7 @@ ViktorPowerTransfer
                 MissileSpeed = missileSpeed,
                 MissileMinSpeed = missileMinSpeed,
                 MissileMaxSpeed = missileMaxSpeed,
-                Width = width * 2,
+                Width = width,
                 SpellType = SpellInfo.SpellTypeInfo.LinearMissile,
                 CCtype = ccType,
             };
@@ -3179,8 +3184,9 @@ ViktorPowerTransfer
                 SpellName = spellName,
                 ChampionName = championName,
                 Range = range,
-                Delay = duration + 0.25f,
-                Width = width * 2,
+                Delay = 0.25f,
+                Duration = duration,
+                Width = width,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSpellWithDuration,
                 CCtype = ccType,
                 Slot = slot,
@@ -3196,7 +3202,7 @@ ViktorPowerTransfer
                 ChampionName = championName,
                 Range = range,
                 BuffName = buffName,
-                Width = width * 2,
+                Width = width,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSpellWithBuff,
                 CCtype = ccType,
                 Slot = slot,
@@ -3211,7 +3217,7 @@ ViktorPowerTransfer
                 SpellName = spellName,
                 ChampionName = championName,
                 Range = range,
-                Width = width * 2,
+                Width = width,
                 SpellType = SpellInfo.SpellTypeInfo.LinearDash,
                 DashType = SpellInfo.Dashtype.Linear,
                 BuffType = buffType,
@@ -3227,7 +3233,7 @@ ViktorPowerTransfer
                 SpellName = spellName,
                 ChampionName = championName,
                 Range = range,
-                Width = width * 2,
+                Width = width,
                 Delay = delay,
                 SpellType = SpellInfo.SpellTypeInfo.LinearDash,
                 DashType = SpellInfo.Dashtype.Linear,
@@ -3403,7 +3409,8 @@ ViktorPowerTransfer
                 ChampionName = championName,
                 Range = range,
                 Radius = radius,
-                Delay = duration + 0.25f,
+                Delay = 0.25f,
+                Duration = duration,
                 CanVaryInLength = canVaryInLength,
                 BuffType = buffType,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSpellWithDuration,
@@ -3634,6 +3641,7 @@ ViktorPowerTransfer
                 ChampionName = championName,
                 Range = range,
                 Width = width,
+                Duration = duration,
                 SpellType = SpellInfo.SpellTypeInfo.Wall,
                 CCtype = ccType,
                 Slot = slot,
@@ -3650,7 +3658,8 @@ ViktorPowerTransfer
                 Range = range,
                 Radius = innerRadius,
                 SecondRadius = outerRadius,
-                Delay = 0.25f + duration,
+                Delay = 0.25f,
+                Duration = duration,
                 SpellType = SpellInfo.SpellTypeInfo.CircularWall,
                 CCtype = ccType,
                 Slot = slot,

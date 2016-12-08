@@ -37,7 +37,9 @@ namespace UnsignedEvade
         private static void Loading_OnLoadingComplete(EventArgs args)
         {
             SpellDatabase.Initialize();
-            Game.OnTick += Game_OnTick;
+            //game on tick too slow for dodging.
+            //Game.OnTick += Game_OnTick;
+            Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += DrawingManager.Drawing_OnDraw;
             GameObject.OnCreate += SpellCreation.GameObject_OnCreate;
             Obj_AI_Base.OnSpellCast += SpellCreation.AIHeroClient_OnSpellCast;
@@ -46,7 +48,15 @@ namespace UnsignedEvade
             Obj_AI_Base.OnBuffLose += Obj_AI_Base_OnBuffLose;
             ExtraSpellOverides.OnGameLoad();
         }
-        
+
+        private static void Game_OnUpdate(EventArgs args)
+        {
+            if (_Player.IsDead)
+                return;
+
+            DodgeManager.HandleDodging();
+        }
+
         private static void Obj_AI_Base_OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
         {
             if (MenuHandler.DebugMenu.GetCheckboxValue("Show Buff Losses"))
@@ -57,14 +67,6 @@ namespace UnsignedEvade
         {
             if (MenuHandler.DebugMenu.GetCheckboxValue("Show Buff Gains"))
                 Console.WriteLine(args.Buff.Name);
-        }
-        
-        private static void Game_OnTick(EventArgs args)
-        {
-            if (_Player.IsDead)
-                return;
-
-            DodgeManager.HandleDodging();
         }
     }
 }

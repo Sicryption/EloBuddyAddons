@@ -10,6 +10,7 @@ namespace UnsignedEvade
     class SpellInfo
     {
         public float Delay = 0.25f,
+            Duration = 0f,
             MissileMaxSpeed,
             MissileMinSpeed,
             MissileSpeed,

@@ -20,10 +20,23 @@ namespace UnsignedEvade
 
         public static void HandleDodging()
         {
-            foreach(SpellInfo spell in SpellDatabase.activeSpells)
+            if(!Player.Instance.IsSafe())
             {
-
+                if(!TryToMoveToSafePosition())
+                {
+                    //use spells to evade
+                }
             }
+        }
+
+        public static bool TryToMoveToSafePosition()
+        {
+            //timeUntilHit in form of MS
+            float timeUntilHit = Player.Instance.FindSpellInfoWithClosestTime().TimeUntilHitsChampion(Player.Instance);
+
+            //Console.WriteLine(timeUntilHit + Player.Instance.FindSpellInfoWithClosestTime().info.SpellName);
+
+            return false;
         }
     }
 }

@@ -17,15 +17,15 @@ namespace UnsignedEvade
         public static System.Drawing.Color drawColor = System.Drawing.Color.Blue;
         
         #region Create Spell Polygons
-        public static Geometry.Polygon CreateCone(Vector3 startPosition, Vector3 endPosition, float coneAngle, float range)
+        public static CustomPolygon CreateCone(SpellInfo info, Vector3 startPosition, Vector3 endPosition, float coneAngle, float range)
         {
             Geometry.Polygon cone = new Geometry.Polygon.Arc(startPosition, endPosition, MathUtil.DegreesToRadians(coneAngle*2), range);
             cone.Add(startPosition);
-            //Geometry.Polygon cone = new Geometry.Polygon.Sector(startPosition, endPosition, MathUtil.DegreesToRadians(coneAngle * 2), range);
+            //CustomPolygon cone = new CustomPolygon.Sector(startPosition, endPosition, MathUtil.DegreesToRadians(coneAngle * 2), range);
 
-            return cone;
+            return new CustomPolygon(cone, info);
         }
-        public static Geometry.Polygon CreateWall(Vector3 startPosition, Vector3 endPosition, float width, float radius)
+        public static CustomPolygon CreateWall(SpellInfo info, Vector3 startPosition, Vector3 endPosition, float width, float radius)
         {
             Vector2 startPos = startPosition.To2D(),
                 endPos = endPosition.To2D(),
@@ -39,9 +39,9 @@ namespace UnsignedEvade
             Vector3 leftPoint = (PerpendicularPos2 + temp).To3D() + new Vector3(0, 0, startPosition.Z),
                 rightPoint = (PerpendicularPos4 + temp2).To3D() + new Vector3(0, 0, startPosition.Z);
 
-            return CreateLinearSkillshot(leftPoint, rightPoint, width);
+            return CreateLinearSkillshot(info, leftPoint, rightPoint, width);
         }
-        public static Geometry.Polygon CreateArc(Vector3 sourcePosition, Vector3 endPosition, float width)
+        public static CustomPolygon CreateArc(SpellInfo info, Vector3 sourcePosition, Vector3 endPosition, float width)
         {
             Vector3 cursorPos = new Vector3(endPosition.X, endPosition.Y, NavMesh.GetHeightForPosition(endPosition.X, endPosition.Y));
 
@@ -75,15 +75,15 @@ namespace UnsignedEvade
                 // Drawing.DrawLine(centerPoint.WorldToScreen(), centerPoint.Extend(test, radius).To3D().WorldToScreen(), 5f, Geometry.drawColor);
             }
 
-            return arc;
+            return new CustomPolygon(arc, info);
         }
-        public static Geometry.Polygon CreateCircularSkillshot(Vector3 position, float radius)
+        public static CustomPolygon CreateCircularSkillshot(SpellInfo info, Vector3 position, float radius)
         {
             Geometry.Polygon circle = new Geometry.Polygon.Circle(position, radius);
-
-            return circle;
+            
+            return new CustomPolygon(circle, info);
         }
-        public static Geometry.Polygon CreateRectangleAroundPoint(int length, int width, Vector3 position, int xoffset = 0, int yoffset = 0)
+        public static CustomPolygon CreateRectangleAroundPoint(int length, int width, Vector3 position, int xoffset = 0, int yoffset = 0)
         {
             Geometry.Polygon rect = new Geometry.Polygon();
 
@@ -91,16 +91,16 @@ namespace UnsignedEvade
             rect.Add(new Vector3(position.X + (length / 2) + xoffset, position.Y - (width / 2) + yoffset, position.Z));
             rect.Add(new Vector3(position.X - (length / 2) + xoffset, position.Y + (width / 2) + yoffset, position.Z));
             rect.Add(new Vector3(position.X + (length / 2) + xoffset, position.Y + (width / 2) + yoffset, position.Z));
-
-            return rect;
+            
+            return new CustomPolygon(rect, null);
         }
-        public static Geometry.Polygon CreateCircularWall(Vector3 position, float radius, float secondRadius)
+        public static CustomPolygon CreateCircularWall(SpellInfo info, Vector3 position, float radius, float secondRadius)
         {
             Geometry.Polygon ring = new Geometry.Polygon.Ring(position, radius, secondRadius);
-
-            return ring;
+            
+            return new CustomPolygon(ring, info);
         }
-        public static Geometry.Polygon CreateLinearSkillshot(Vector3 startPosition, Vector3 endPosition, float width)
+        public static CustomPolygon CreateLinearSkillshot(SpellInfo info, Vector3 startPosition, Vector3 endPosition, float width)
         {
             /*
             if (collisionCount != 0 && collisionCount != int.MaxValue)
@@ -118,30 +118,30 @@ namespace UnsignedEvade
 
             Geometry.Polygon rectangle = new Geometry.Polygon.Rectangle(startPosition, endPosition, width);
 
-            return rectangle;
+            return new CustomPolygon(rectangle, info);
         }
-        public static Geometry.Polygon CreateTargetedSpell(Vector3 startPosition, Vector3 endPosition)
+        public static CustomPolygon CreateTargetedSpell(SpellInfo info, Vector3 startPosition, Vector3 endPosition)
         {
             //these posistions could have to be put as worldtoscreen
             Geometry.Polygon line = new Geometry.Polygon();
             line.Add(startPosition);
             line.Add(endPosition);
 
-            return line;
+            return new CustomPolygon(line, info);
         }
-        public static Geometry.Polygon CreateTargetedSpell(Vector3 startPosition, Obj_AI_Base target)
+        public static CustomPolygon CreateTargetedSpell(SpellInfo info, Vector3 startPosition, Obj_AI_Base target)
         {
             Geometry.Polygon line = new Geometry.Polygon();
             line.Add(startPosition);
             line.Add(target.Position);
-            return line;
+            return new CustomPolygon(line, info);
         }
-        public static Geometry.Polygon CreateTargetedSpell(Vector3 startPosition, GameObject target)
+        public static CustomPolygon CreateTargetedSpell(SpellInfo info, Vector3 startPosition, GameObject target)
         {
             Geometry.Polygon line = new Geometry.Polygon();
             line.Add(startPosition);
             line.Add(target.Position);
-            return line;
+            return new CustomPolygon(line, info);
         }
         #endregion
 
