@@ -131,14 +131,24 @@ namespace UnsignedEvade
         }
         public static bool IsSafe(this AIHeroClient champ)
         {
-            if (SpellDatabase.Polygons.Any(a => a.polygon.IsInside(champ)))
+            if (SpellDatabase.Polygons.Any(a => a.polygon.IsInside(champ.Position)))
                 return false;
-            return true;
+
+            //make sure the champions hitbox isnt inside the unsafe area
+            List<Vector3> hitboxPositions = new List<Vector3>();
+            for (int i = 0; i < 360; i++)
+            {
+                Vector3 position = champ.Position.Extend((champ.Position + new Vector3(0, champ.BoundingRadius, 0)).To2D().RotateAroundPoint(champ.Position.To2D(), MathUtil.DegreesToRadians(i)), champ.BoundingRadius).To3D(0);
+                position = new Vector3(position.X, position.Y, NavMesh.GetHeightForPosition(position.X, position.Y));
+                hitboxPositions.Add(position);
+            }
+            return !SpellDatabase.Polygons.Any(a => hitboxPositions.Any(b => a.polygon.IsInside(b)));
         }
         public static bool IsSafe(this Vector3 pos)
         {
             if (SpellDatabase.Polygons.Any(a => a.polygon.IsInside(pos)))
                 return false;
+
             return true;
         }
         public static float DistanceFromClosestEnemy(this Vector3 pos)
@@ -150,7 +160,16 @@ namespace UnsignedEvade
         }
         public static CustomPolygon FindSpellInfoWithClosestTime(this AIHeroClient champ)
         {
-            List<CustomPolygon> polys = SpellDatabase.Polygons.Where(a => a.polygon.IsInside(champ)).ToList();
+            //make sure the champions hitbox isnt inside the unsafe area
+            List<Vector3> hitboxPositions = new List<Vector3>();
+            for (int i = 0; i < 360; i++)
+            {
+                Vector3 position = champ.Position.Extend((champ.Position + new Vector3(0, champ.BoundingRadius, 0)).To2D().RotateAroundPoint(champ.Position.To2D(), MathUtil.DegreesToRadians(i)), champ.BoundingRadius).To3D(0);
+                position = new Vector3(position.X, position.Y, NavMesh.GetHeightForPosition(position.X, position.Y));
+                hitboxPositions.Add(position);
+            }
+            List<CustomPolygon> polys = SpellDatabase.Polygons.Where(a => hitboxPositions.Any(b => a.polygon.IsInside(b))).ToList();
+            
             return polys.OrderBy(a => a.TimeUntilHitsChampion(champ)).FirstOrDefault();
         }
     }

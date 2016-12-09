@@ -814,6 +814,7 @@ turretshield
             //q
             CreateLinearSkillshot("EzrealMysticShot", "EzrealMysticShotMissile", "Ezreal", 1200f, 2000f, 2000f, 2000f, 80f, false, SpellInfo.SpellSlot.Q),
             //w
+            CreateLinearSpell("EzrealEssenceFlux", "Ezreal", 0f, 1050f, 80f, SpellInfo.SpellSlot.W),
             CreateLinearSkillshot("EzrealEssenceFluxMissile", "EzrealEssenceFluxMissile", "Ezreal", 1050f, 1600f, 1600f, 1600f, 80f, false, SpellInfo.SpellSlot.W),
             //e
             CreateBlinkDash("EzrealArcaneShift", "Ezreal", 475f, SpellInfo.SpellSlot.E),
@@ -1097,7 +1098,6 @@ turretshield
             CreateLinearMissile("IvernRMissile", "Ivern", 800f, 1400f, 1600f, 1600f, 80f, SpellInfo.CrowdControlType.KnockUp),
             #endregion
             //add janna scaling range
-            //janna q is going off herself and not the projectile
             #region Janna
             //q
             CreateLinearSkillshot("HowlingGale", "HowlingGaleSpell", "Janna", 1000f, 900f, 900f, 900f, 120f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp),
@@ -3087,8 +3087,10 @@ ViktorPowerTransfer
             //q
             CreateWall("ZyraQ", "Zyra", 800f, 85f, 140f, 0.625f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.None),
             //w
-            CreateCircularSpell("ZyraW", "Zyra", 850f, 45f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.None),
+            //handled as trap
+            //CreateCircularSpell("ZyraW", "Zyra", 850f, 45f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.None),
             //e
+            //width is 70
             CreateLinearSkillshot("ZyraE", "ZyraE", "Zyra", 1150f, 1150f, 1150f, 1150f, 70f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Root),
             //r
             CreateCircularSpell("ZyraR", "Zyra", 2f, 700f, 500f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.None, SpellInfo.CrowdControlType.KnockUp),

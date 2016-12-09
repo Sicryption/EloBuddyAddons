@@ -25,7 +25,7 @@ namespace UnsignedEvade
 
             //passive spells should be refreshing even when dead
             Utilities.ResetPassiveSpellCounter();
-            
+
             if (_Player.IsDead || !MenuHandler.DrawMenu.GetCheckboxValue("Draw Spells/Missiles"))
                 return;
 
@@ -42,12 +42,16 @@ namespace UnsignedEvade
 
                 //method that calls drawing method for each polygon
                 DrawSpells();
+
+                //draws safe walking distance around play
+                DrawSafeWalkingDistance();
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
             }
         }
+
 
         private static void CreatePolygons()
         {
@@ -104,7 +108,7 @@ namespace UnsignedEvade
                     else if (info.MissileName == "" && info.BuffName == "")
                     {
                         //the start position was set to info.caster.position. I changed it to info.startPosition to fix JannaQ. This might affect other spells
-                        SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.startPosition, info.endPosition, info.Width));
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateLinearSkillshot(info, info.caster.Position, info.endPosition, info.Width));
                     }
                 }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.TargetedMissile || info.SpellType == SpellInfo.SpellTypeInfo.AutoAttack)
@@ -416,6 +420,24 @@ namespace UnsignedEvade
                     Drawing.DrawText(ob.Position.WorldToScreen() + (new Vector2(0, -15f) * index), drawColor, ob.Name, 15);
                     index++; ;
                 }
+            }
+        }
+
+        private static void DrawSafeWalkingDistance()
+        {
+            if (MenuHandler.DrawMenu.GetCheckboxValue("Draw Safe Position Radius"))
+            {
+                CustomPolygon closestTimePolygon = Player.Instance.FindSpellInfoWithClosestTime();
+
+                if (closestTimePolygon == null)
+                    return;
+
+                float timeUntilHit = closestTimePolygon.TimeUntilHitsChampion(Player.Instance);
+                float movementSpeed = Player.Instance.MoveSpeed;
+                //d = ts/1000
+                float DistancePlayerCanWalkToBeforeBeingHit = timeUntilHit * movementSpeed / 1000;
+
+                Drawing.DrawCircle(Player.Instance.Position, DistancePlayerCanWalkToBeforeBeingHit, drawColor);
             }
         }
 

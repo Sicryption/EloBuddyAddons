@@ -37,6 +37,13 @@ namespace UnsignedEvade
                 Name = "Jack In The Box",
                 Radius = 300f,
             },
+
+            //Zyra plants
+            new Trap()
+            {
+                Name = "Seed",
+                Radius = 75f,
+            },
         };
 
         public static string[] AllTrapNames()
