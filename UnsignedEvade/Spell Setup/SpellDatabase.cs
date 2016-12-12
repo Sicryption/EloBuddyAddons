@@ -21,35 +21,36 @@ namespace UnsignedEvade
         {
             #region AllChampions
             //Ludens Echo
-            CreateTargetedMissile("none", "ItemMagicShankMis", "All", 725f, 1400f, 1400f, 1400f, SpellInfo.SpellSlot.None),
+            CreateTargetedMissile("none", "ItemMagicShankMis", "All", 725f, 1400f, 1400f, 1400f, SpellInfo.SpellSlot.None).FriendlyName("Luden's Echo").DangerValue(3),
             //recall
-            CreatePassiveSpell("recall", "All", "recall", 1f, SpellInfo.SpellSlot.None),
+            CreatePassiveSpell("recall", "All", "recall", 1f, SpellInfo.SpellSlot.None).FriendlyName("Recall"),
             //Teleport
-            CreatePassiveSpell("SummonerTeleport", "All", "SummonerTeleport", 2f, SpellInfo.SpellSlot.None),
+            CreatePassiveSpell("SummonerTeleport", "All", "SummonerTeleport", 2f, SpellInfo.SpellSlot.None).FriendlyName("Teleport"),
             //Tiamat
-            CreateSelfActive("ItemTiamatCleave", "All", 325f, SpellInfo.SpellSlot.None),
+            CreateSelfActive("ItemTiamatCleave", "All", 325f, SpellInfo.SpellSlot.None).FriendlyName("Tiamat").DangerValue(3),
             //Health Potion
-            CreatePassiveSpell("RegenerationPotion", "All", "RegenerationPotion", SpellInfo.SpellSlot.None),
-            //trinket
-            CreateCircularSpell("TrinketTotemLvl1", "All", 625f, 5f, true, SpellInfo.SpellSlot.None, SpellInfo.Buff.None),
-            //blue trinket
-            CreateCircularSpell("TrinketOrbLvl3", "All", 4000f, 5f, true, SpellInfo.SpellSlot.None, SpellInfo.Buff.None),
-            //Regen Potion
-            CreatePassiveSpell("ItemCrystalFlask", "All", "ItemCrystalFlask", SpellInfo.SpellSlot.None),
-            //Corruption Potion
-            CreatePassiveSpell("ItemDarkCrystalFlask", "All", "ItemDarkCrystalFlask", SpellInfo.SpellSlot.None),
-            //Bisket
-            CreatePassiveSpell("ItemMiniRegenPotion", "All", "ItemMiniRegenPotion", SpellInfo.SpellSlot.None),
-            //Shurelyas
-            CreateSelfActiveNoDamage("ShurelyasCrest", "All", 700f, SpellInfo.SpellSlot.None, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp),
-            //Runaans
-            CreateAutoAttack("ItemHurricaneAttack", "All", 2000f, 2000f, 2000f),
-            //ZZRot
-            CreateCircularWall("ItemVoidGate", "All", 400f, 0f, 150f, 0f, SpellInfo.SpellSlot.None, SpellInfo.CrowdControlType.None),
-            //Protobelt
+            CreatePassiveSpell("RegenerationPotion", "All", "RegenerationPotion", SpellInfo.SpellSlot.None).FriendlyName("Health Potion"),
+            //Warding Totem
+            CreateCircularSpell("TrinketTotemLvl1", "All", 625f, 5f, true, SpellInfo.SpellSlot.None, SpellInfo.Buff.None).FriendlyName("Warding Totem"),
+            //Farsight Alteration
+            CreateCircularSpell("TrinketOrbLvl3", "All", 4000f, 5f, true, SpellInfo.SpellSlot.None, SpellInfo.Buff.None).FriendlyName("Farsight Alteration"),
+            //Refillable Potion
+            CreatePassiveSpell("ItemCrystalFlask", "All", "ItemCrystalFlask", SpellInfo.SpellSlot.None).FriendlyName("Refillable Potion"),
+            //Corrupting Potion
+            CreatePassiveSpell("ItemDarkCrystalFlask", "All", "ItemDarkCrystalFlask", SpellInfo.SpellSlot.None).FriendlyName("Corrupting Potion").DangerValue(1),
+            //Total Biscuit of Rejuvenation
+            CreatePassiveSpell("ItemMiniRegenPotion", "All", "ItemMiniRegenPotion", SpellInfo.SpellSlot.None).FriendlyName("Total Biscuit of Rejuvenation"),
+            //Talisman of Ascension
+            CreateSelfActiveNoDamage("ShurelyasCrest", "All", 700f, SpellInfo.SpellSlot.None, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp).FriendlyName("Talisman of Ascension"),
+            //Runaan's Hurricane
+            CreateAutoAttack("ItemHurricaneAttack", "All", 2000f, 2000f, 2000f).FriendlyName("Runaan's Hurricane").DangerValue(1),
+            //Zz'Rot Portal
+            CreateCircularWall("ItemVoidGate", "All", 400f, 0f, 150f, 0f, SpellInfo.SpellSlot.None, SpellInfo.CrowdControlType.None).FriendlyName("Zz'Rot Portal"),
+            //Hextech Protobelt-01
             new SpellInfo()
             {
                 SpellName = "ItemSoFBoltSpellBase",
+                FriendlyName = "Hextech Protobelt-01",
                 MissileName = "ItemSoFBoltSpellMissile",
                 Range = 850f,
                 MissileSpeed = 1600f,
@@ -59,11 +60,13 @@ namespace UnsignedEvade
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 DashType = SpellInfo.Dashtype.Linear,
                 CCtype = SpellInfo.CrowdControlType.None,
+                DangerValue = 5,
             },
             //Edge of Night
             new SpellInfo()
             {
                 SpellName = "ItemVeilChannel",
+                FriendlyName = "Edge of Night",
                 Range = 500f,
                 MissileSpeed = 828.5f,
                 MissileMinSpeed = 2.079758E-34f,
@@ -74,37 +77,28 @@ namespace UnsignedEvade
                 SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
-            //BOTRK
-            new SpellInfo()
-            {
-                SpellName = "ItemSwordOfFeastAndFamine",
-                MissileName = "ItemSwordOfFeastAndFamineTransfuse",
-                MissileSpeed = 1200f,
-                MissileMinSpeed = 1200f,
-                MissileMaxSpeed = 1200f,
-                Range = 550f,
-                SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
-                CCtype = SpellInfo.CrowdControlType.Slow,
-            },
-            //Seraphs Embrace Shield
+            //Seraph's Embrace
             new SpellInfo()
             {
                 SpellName = "ItemSeraphsEmbrace",
+                FriendlyName = "Seraph's Embrace",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
-            //Pink Vision Item to give enemies of invis traps on acensions
+            //Oracle's Extract
             new SpellInfo()
             {
                 SpellName = "OracleExtractSight",
+                FriendlyName = "Oracle's Extract",
                 Range = 400f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
-            //Zhonyas 
+            //Zhonya's Hourglass
             new SpellInfo()
             {
                 SpellName = "ZhonyasHourglass",
+                FriendlyName = "Zhonya's Hourglass",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
@@ -112,14 +106,31 @@ namespace UnsignedEvade
             new SpellInfo()
             {
                 SpellName = "BilgewaterCutlass",
+                FriendlyName = "Bilgewater Cutlass",
                 Range = 550f,
                 SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
                 CCtype = SpellInfo.CrowdControlType.Slow,
+                DangerValue = 5,
             },
-            //Randuins Omen
+            //Blade of the Ruined King
+            new SpellInfo()
+            {
+                SpellName = "ItemSwordOfFeastAndFamine",
+                FriendlyName = "Blade of the Ruined King",
+                MissileName = "ItemSwordOfFeastAndFamineTransfuse",
+                MissileSpeed = 1200f,
+                MissileMinSpeed = 1200f,
+                MissileMaxSpeed = 1200f,
+                Range = 550f,
+                SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
+                CCtype = SpellInfo.CrowdControlType.Slow,
+                DangerValue = 5,
+            },
+            //Randuin's Omen
             new SpellInfo()
             {
                 SpellName = "RanduinsOmen",
+                FriendlyName = "Randuin's Omen",
                 Range = 500f,
                 SpellType = SpellInfo.SpellTypeInfo.SelfActive,
                 CCtype = SpellInfo.CrowdControlType.Slow,
@@ -128,15 +139,18 @@ namespace UnsignedEvade
             new SpellInfo()
             {
                 SpellName = "ItemRedemption",
+                FriendlyName = "Redemption",
                 Range = 5500f,//not sure on this. have to actually use the item to test
                 Radius = 550f,
                 SpellType = SpellInfo.SpellTypeInfo.CircularSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
+                DangerValue = 5,
             },
             //Smite
             new SpellInfo()
             {
                 SpellName = "SummonerSmite",
+                FriendlyName = "Smite",
                 Range = 500f,
                 SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
@@ -145,6 +159,7 @@ namespace UnsignedEvade
             new SpellInfo()
             {
                 SpellName = "SummonerFlash",
+                FriendlyName = "Flash",
                 Range = 425,
                 SpellType = SpellInfo.SpellTypeInfo.LinearDash,
                 DashType = SpellInfo.Dashtype.Blink,
@@ -154,18 +169,21 @@ namespace UnsignedEvade
             new SpellInfo()
             {
                 SpellName = "SummonerDot",
+                FriendlyName = "Ignite",
                 Range = 600,
                 SpellType = SpellInfo.SpellTypeInfo.TargetedSpellWithDuration,
                 CCtype = SpellInfo.CrowdControlType.None,
+                DangerValue = 1,
             },
             //Heal
-            CreateSelfActiveNoDamage("SummonerHeal", "All", 600f, SpellInfo.SpellSlot.None),
+            CreateSelfActiveNoDamage("SummonerHeal", "All", 600f, SpellInfo.SpellSlot.None).FriendlyName("Heal"),
             //Clarity
-            CreateSelfActiveNoDamage("SummonerMana", "All", 600f, SpellInfo.SpellSlot.None),
+            CreateSelfActiveNoDamage("SummonerMana", "All", 600f, SpellInfo.SpellSlot.None).FriendlyName("Clarity"),
             //Exhaust
             new SpellInfo()
             {
                 SpellName = "SummonerExhaust",
+                FriendlyName = "Exhaust",
                 Range = 650f,
                 SpellType = SpellInfo.SpellTypeInfo.TargetedSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
@@ -174,13 +192,15 @@ namespace UnsignedEvade
             new SpellInfo()
             {
                 SpellName = "SummonerBoost",
+                FriendlyName = "Heal - Speed Buff",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
-            //Youmuus
+            //Youmuu's Ghostblade
             new SpellInfo()
             {
                 SpellName = "YoumusBlade",
+                FriendlyName = "Youmuu's Ghostblade",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
@@ -188,6 +208,7 @@ namespace UnsignedEvade
             new SpellInfo()
             {
                 SpellName = "SummonerHaste",
+                FriendlyName = "Ghost",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
@@ -195,13 +216,15 @@ namespace UnsignedEvade
             new SpellInfo()
             {
                 SpellName = "SummonerBarrier",
+                FriendlyName = "Barrier",
                 SpellType = SpellInfo.SpellTypeInfo.PassiveSpellWithBuff,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
-            //Blue Buff something?
+            //Blue missile
             new SpellInfo()
             {
                 MissileName = "CrestOfTheAncientGolemLines",
+                FriendlyName = "Blue Lines",
                 MissileSpeed = 2200f,
                 MissileMinSpeed = 1600f,
                 MissileMaxSpeed = 1600f,
@@ -209,10 +232,11 @@ namespace UnsignedEvade
                 SpellType = SpellInfo.SpellTypeInfo.PassiveSpell,
                 CCtype = SpellInfo.CrowdControlType.None,
             },
-            //Hextech GLP
+            //Hextech GLP-800
             new SpellInfo()
             {
                 MissileName = "ItemWillBoltSpellMissile",
+                FriendlyName = "Hextech GLP-800",
                 MissileSpeed = 4000f,
                 MissileMinSpeed = 1500f,
                 MissileMaxSpeed = 4000f,
@@ -220,20 +244,21 @@ namespace UnsignedEvade
                 Width = 60f,
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
+                DangerValue = 5,
             },
             #endregion
             //fix aatrox e and give W buff name
             #region Aatrox
             //q
-            CreateCircularSkillshotDash("AatroxQ", "Aatrox", 650f, 285f, SpellInfo.SpellSlot.Q, SpellInfo.Dashtype.Linear, SpellInfo.CrowdControlType.KnockUp),
+            CreateCircularSkillshotDash("AatroxQ", "Aatrox", 650f, 285f, SpellInfo.SpellSlot.Q, SpellInfo.Dashtype.Linear, SpellInfo.CrowdControlType.KnockUp).FriendlyName("Q").DangerValue(7),
             //w
-            CreatePassiveSpell("AatroxW", "Aatrox", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease),
-            CreatePassiveSpell("AatroxW2", "Aatrox", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease),
+            CreatePassiveSpell("AatroxW", "Aatrox", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease).FriendlyName("W - On").DangerValue(0),
+            CreatePassiveSpell("AatroxW2", "Aatrox", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease).FriendlyName("W - Off").DangerValue(0),
             //e
             
-            new SpellInfo()
+            /*new SpellInfo()
             {
-                /*ChampionName = "Aatrox",
+                ChampionName = "Aatrox",
                 Range = 1050f,
                 MissileSpeed = 1200f,
                 MissileMinSpeed = 1200f,
@@ -243,63 +268,63 @@ namespace UnsignedEvade
                 OtherMissileNames = new string[] { "AatroxEConeMissile", "AatroxEConeMissile2" },
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.Slow,
-                Slot = SpellInfo.SpellSlot.E,*/
-            },
+                Slot = SpellInfo.SpellSlot.E,
+            },*/
             //r
-            CreateSelfActive("AatroxR", "Aatrox", 550f, SpellInfo.SpellSlot.R),
-            CreatePassiveSpell("AatroxR", "Aatrox", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackSpeedIncrease),
-            CreatePassiveSpell("AatroxR", "Aatrox", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AutoAttackRangeIncrease),
+            CreateSelfActive("AatroxR", "Aatrox", 550f, SpellInfo.SpellSlot.R).FriendlyName("R").DangerValue(5),
+            CreatePassiveSpell("AatroxR", "Aatrox", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackSpeedIncrease).FriendlyName("R - AS Buff").DangerValue(0),
+            CreatePassiveSpell("AatroxR", "Aatrox", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AutoAttackRangeIncrease).FriendlyName("R - Range Increase").DangerValue(0),
             #endregion
             #region Ahri
             //q
-            CreateLinearSkillshot("AhriOrbofDeception", "AhriOrbMissile", "Ahri", 1000f, 1100f, 1100f, 1100f, 100f, false, SpellInfo.SpellSlot.Q),
-            CreateLinearSkillshot("AhriOrbofDeception", "AhriOrbReturn", "Ahri", 1000f, 1100f, 1100f, 1100f, 100f, false, SpellInfo.SpellSlot.Q),
+            CreateLinearSkillshot("AhriOrbofDeception", "AhriOrbMissile", "Ahri", 1000f, 1100f, 1100f, 1100f, 100f, false, SpellInfo.SpellSlot.Q).FriendlyName("Q - Throw").DangerValue(99),
+            CreateLinearSkillshot("AhriOrbofDeception", "AhriOrbReturn", "Ahri", 1000f, 1100f, 1100f, 1100f, 100f, false, SpellInfo.SpellSlot.Q).FriendlyName("Q - Return").DangerValue(99),
             //w
-            CreateSelfActive("AhriFoxFire", "Ahri", "AhriFoxFire", 700, SpellInfo.SpellSlot.W),
-            CreateTargetedMissile("null", "AhriFoxFireMissile", "Ahri", 600f, 1800f, 1800f, 1800f, SpellInfo.SpellSlot.W),
-            CreateTargetedMissile("null", "AhriFoxFireMissileTwo", "Ahri", 600f, 1800f, 1800f, 1800f, SpellInfo.SpellSlot.W),
+            CreateSelfActive("AhriFoxFire", "Ahri", "AhriFoxFire", 700, SpellInfo.SpellSlot.W).FriendlyName("W").DangerValue(99),
+            CreateTargetedMissile("null", "AhriFoxFireMissile", "Ahri", 600f, 1800f, 1800f, 1800f, SpellInfo.SpellSlot.W).FriendlyName("W - Orbs").DangerValue(99),
+            CreateTargetedMissile("null", "AhriFoxFireMissileTwo", "Ahri", 600f, 1800f, 1800f, 1800f, SpellInfo.SpellSlot.W).FriendlyName("W - Orbs2").DangerValue(99),
             //e
-            CreateLinearSkillshot("AhriSeduce", "AhriSeduceMissile", "Ahri", 1000f, 1550f, 1550f, 1550f, 60f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Charm),
+            CreateLinearSkillshot("AhriSeduce", "AhriSeduceMissile", "Ahri", 1000f, 1550f, 1550f, 1550f, 60f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Charm).FriendlyName("E").DangerValue(99),
             //r (bolts, not he dash itself)
-            CreateLinearDash("AhriTumble", "Ahri", 400f, 0f, SpellInfo.SpellSlot.R),
-            CreateLinearMissile("AhriTumbleMissile", "Ahri", 800f, 1400f, 1400f, 1400f, 0f),
+            CreateLinearDash("AhriTumble", "Ahri", 400f, 0f, SpellInfo.SpellSlot.R).FriendlyName("R").DangerValue(99),
+            CreateLinearMissile("AhriTumbleMissile", "Ahri", 800f, 1400f, 1400f, 1400f, 0f).FriendlyName("R - Energy Bolts").DangerValue(99),
             #endregion
             #region Akali
             //q
-            CreateTargetedMissile("AkaliMota", "AkaliMota", "Akali", 600f, 1000f, 1000f, 1000f, SpellInfo.SpellSlot.Q),
+            CreateTargetedMissile("AkaliMota", "AkaliMota", "Akali", 600f, 1000f, 1000f, 1000f, SpellInfo.SpellSlot.Q).FriendlyName("Q").DangerValue(99),
             //w
-            //CreateCircularSpell("AkaliSmokeBomb", "Akali", 8f, 250f, 475f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.SpeedUp, SpellInfo.CrowdControlType.Slow),
-            CreateCircularSpell("AkaliSmokeBomb", "Akali", 8f, 0f, 400f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.SpeedUp, SpellInfo.CrowdControlType.Slow),
+            //CreateCircularSpell("AkaliSmokeBomb", "Akali", 8f, 250f, 475f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.SpeedUp, SpellInfo.CrowdControlType.Slow).FriendlyName("none").DangerValue(99),
+            CreateCircularSpell("AkaliSmokeBomb", "Akali", 8f, 0f, 400f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.SpeedUp, SpellInfo.CrowdControlType.Slow).FriendlyName("W").DangerValue(99),
             //e
-            CreateSelfActive("AkaliShadowSwipe", "Akali", 325f, SpellInfo.SpellSlot.E),
+            CreateSelfActive("AkaliShadowSwipe", "Akali", 325f, SpellInfo.SpellSlot.E).FriendlyName("E").DangerValue(99),
             //r
-            CreateTargetedDash("AkaliShadowDance", "Akali", 400f, SpellInfo.SpellSlot.R, SpellInfo.Dashtype.TargetedLinear),
+            CreateTargetedDash("AkaliShadowDance", "Akali", 400f, SpellInfo.SpellSlot.R, SpellInfo.Dashtype.TargetedLinear).FriendlyName("R").DangerValue(99),
             #endregion
             #region Alistar
             //q
-            CreateSelfActive("Pulverize", "Alistar", 365f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp),
+            CreateSelfActive("Pulverize", "Alistar", 365f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.KnockUp).FriendlyName("Q").DangerValue(99),
             //w
-            CreateTargetedDash("Headbutt", "Alistar", 650f, SpellInfo.SpellSlot.W, SpellInfo.Dashtype.TargetedLinear, SpellInfo.CrowdControlType.KnockBack),
+            CreateTargetedDash("Headbutt", "Alistar", 650f, SpellInfo.SpellSlot.W, SpellInfo.Dashtype.TargetedLinear, SpellInfo.CrowdControlType.KnockBack).FriendlyName("W").DangerValue(99),
             //e
-            CreateSelfActiveNoDamage("AlistarE", "Alistar", 350f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Heal),
+            CreateSelfActiveNoDamage("AlistarE", "Alistar", 350f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Heal).FriendlyName("E").DangerValue(99),
             //r
-            CreatePassiveSpell("FerociousHowl", "Alistar", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.CCRemoval),
-            CreatePassiveSpell("FerociousHowl", "Alistar", 7, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
+            CreatePassiveSpell("FerociousHowl", "Alistar", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.CCRemoval).FriendlyName("R - CC Remove").DangerValue(99),
+            CreatePassiveSpell("FerociousHowl", "Alistar", 7, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction).FriendlyName("R - Reduction").DangerValue(99),
             #endregion
             #region Amumu
             //q
-            CreateLinearSkillshot("BandageToss", "SadMummyBandageToss", "Amumu", 1100f, 2000f, 2000f, 2000f, 80f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
+            CreateLinearSkillshot("BandageToss", "SadMummyBandageToss", "Amumu", 1100f, 2000f, 2000f, 2000f, 80f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun).FriendlyName("Q").DangerValue(99),
             //w
-            CreateToggleableSelfActive("AuraofDespair", "Amumu", "AuraofDespair", 300f, SpellInfo.SpellSlot.W),
+            CreateToggleableSelfActive("AuraofDespair", "Amumu", "AuraofDespair", 300f, SpellInfo.SpellSlot.W).FriendlyName("W").DangerValue(99),
             //e
-            CreateSelfActive("Tantrum", "Amumu", 350f, SpellInfo.SpellSlot.E),
+            CreateSelfActive("Tantrum", "Amumu", 350f, SpellInfo.SpellSlot.E).FriendlyName("E").DangerValue(99),
             //r
-            CreateSelfActive("CurseoftheSadMummy", "Amumu", 550f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Entangle),
+            CreateSelfActive("CurseoftheSadMummy", "Amumu", 550f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Entangle).FriendlyName("R").DangerValue(99),
             #endregion
             //anivia r scaling size (needs buff name and to be removed from particle database
             #region Anivia
             //q
-            CreateLinearSkillshot("FlashFrost", "FlashFrostSpell", "Anivia", 1100f, 850f, 850f, 850f, 110f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
+            CreateLinearSkillshot("FlashFrost", "FlashFrostSpell", "Anivia", 1100f, 850f, 850f, 850f, 110f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun).FriendlyName("Q").DangerValue(99),
             //w Handled Under Particle Database
             /*new SpellInfo()
             {
@@ -317,52 +342,53 @@ namespace UnsignedEvade
                 Slot = SpellInfo.SpellSlot.W,
             },*/
             //e
-            CreateTargetedMissile("Frostbite", "Frostbite", "Anivia", 600f, 1600f, 1600f, 1600f, SpellInfo.SpellSlot.E),
+            CreateTargetedMissile("Frostbite", "Frostbite", "Anivia", 600f, 1600f, 1600f, 1600f, SpellInfo.SpellSlot.E).FriendlyName("E").DangerValue(99),
             //r Handled under Particle Darabase
             //should be handled with buff
-            CreateCircularSpell("GlacialStorm", "Anivia", "null", 750f, 200f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Slow),
+            CreateCircularSpell("GlacialStorm", "Anivia", "null", 750f, 200f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Slow).FriendlyName("R").DangerValue(99),
             #endregion
             //do annie Q/W/R stun with buff
             #region Annie
             //aa
-            CreateAutoAttack("AnnieBasicAttack", "Annie", 1200f, 1200f, 1200f),
-            CreateAutoAttack("AnnieBasicAttack2", "Annie", 1200f, 1200f, 1200f),
+            CreateAutoAttack("AnnieBasicAttack", "Annie", 1200f, 1200f, 1200f).FriendlyName("Auto Attack").DangerValue(99),
+            CreateAutoAttack("AnnieBasicAttack2", "Annie", 1200f, 1200f, 1200f).FriendlyName("Auto Attack2").DangerValue(99),
             //q
-            CreateTargetedMissile("Disintegrate", "Disintegrate", "Annie", 625f, 1400f, 1400f, 1400f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
+            CreateTargetedMissile("Disintegrate", "Disintegrate", "Annie", 625f, 1400f, 1400f, 1400f, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun).FriendlyName("Q").DangerValue(99),
             //w
-            CreateConeSpell("Incinerate", "Annie", 600f, 24.76f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Stun),
+            CreateConeSpell("Incinerate", "Annie", 600f, 24.76f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Stun).FriendlyName("W").DangerValue(99),
             //e
-            CreatePassiveSpell("MoltenShield", "Annie", "MoltenShield", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
+            CreatePassiveSpell("MoltenShield", "Annie", "MoltenShield", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction).FriendlyName("E").DangerValue(99),
             //r
-            CreateCircularSpell("InfernalGuardian", "Annie", 600f, 250f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.Pet, SpellInfo.CrowdControlType.Stun),
-            CreatePassiveSpell("InfernalGuardianGuide", "Annie", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Pet),
+            CreateCircularSpell("InfernalGuardian", "Annie", 600f, 250f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.Pet, SpellInfo.CrowdControlType.Stun).FriendlyName("R").DangerValue(99),
+            CreatePassiveSpell("InfernalGuardianGuide", "Annie", SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.None, SpellInfo.Buff.Pet).FriendlyName("R - Move").DangerValue(99),
             #endregion
             #region Ashe
             //aa
-            CreateAutoAttack("AsheBasicAttack", "Ashe", 2500f, 2500f, 2500f),
-            CreateAutoAttack("AsheBasicAttack2", "Ashe", 2500f, 2500f, 2500f),
-            CreateAutoAttack("AsheCritAttack", "Ashe", 2500f, 2500f, 2500f),
-            CreateAutoAttack("AsheQAttack", "Ashe", 2500f, 2500f, 2500f, SpellInfo.CrowdControlType.Slow),
-            CreateAutoAttack("AsheQAttackNoOnHit", "Ashe", 2500f, 2500f, 2500f, SpellInfo.CrowdControlType.Slow),
-            CreateAutoAttack("ItemHurricaneAsheAttack", "Ashe", 2500f, 2500f, 2500f, SpellInfo.CrowdControlType.Slow),
-            CreateAutoAttack("ItemHurricaneAsheAttackNoOnHit", "Ashe", 2500f, 2500f, 2500f, SpellInfo.CrowdControlType.Slow),
+            CreateAutoAttack("AsheBasicAttack", "Ashe", 2500f, 2500f, 2500f).FriendlyName("Auto Attack").DangerValue(99),
+            CreateAutoAttack("AsheBasicAttack2", "Ashe", 2500f, 2500f, 2500f).FriendlyName("Auto Attack2").DangerValue(99),
+            CreateAutoAttack("AsheCritAttack", "Ashe", 2500f, 2500f, 2500f).FriendlyName("Critical Attack").DangerValue(99),
+            CreateAutoAttack("AsheQAttack", "Ashe", 2500f, 2500f, 2500f, SpellInfo.CrowdControlType.Slow).FriendlyName("Auto Attack - Q").DangerValue(99),
+            CreateAutoAttack("AsheQAttackNoOnHit", "Ashe", 2500f, 2500f, 2500f, SpellInfo.CrowdControlType.Slow).FriendlyName("Auto Attack - Q No Hit").DangerValue(99),
+            CreateAutoAttack("ItemHurricaneAsheAttack", "Ashe", 2500f, 2500f, 2500f, SpellInfo.CrowdControlType.Slow).FriendlyName("Runnan's Hurricane - Q").DangerValue(99),
+            CreateAutoAttack("ItemHurricaneAsheAttackNoOnHit", "Ashe", 2500f, 2500f, 2500f, SpellInfo.CrowdControlType.Slow).FriendlyName("Runnan's Hurricane - Q No Hit").DangerValue(99),
             //q
-            CreatePassiveSpell("AsheQ", "Ashe", SpellInfo.SpellSlot.Q),
+            CreatePassiveSpell("AsheQ", "Ashe", SpellInfo.SpellSlot.Q).FriendlyName("Q").DangerValue(99),
             //w
-            CreateLinearSkillshot("Volley", "VolleyAttack", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
-            CreateLinearSkillshot("Volley", "VolleyCenterAttack", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
-            CreateLinearSkillshot("Volley", "VolleyRightAttack", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
-            CreateLinearSkillshot("Volley", "VolleyAttackWithSound", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
+            CreateLinearSkillshot("Volley", "VolleyAttack", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow).FriendlyName("W").DangerValue(99),
+            CreateLinearSkillshot("Volley", "VolleyCenterAttack", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow).FriendlyName("W - Center").DangerValue(99),
+            CreateLinearSkillshot("Volley", "VolleyRightAttack", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow).FriendlyName("W - Right").DangerValue(99),
+            CreateLinearSkillshot("Volley", "VolleyAttackWithSound", "Ashe", 1150f, 1500f, 1500f, 1500f, 20f, false, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow).FriendlyName("W - Sound").DangerValue(99),
             //e
-            CreateLinearSkillshotNoDamage("AsheSpiritOfTheHawk", "AsheSpiritOfTheHawk", "Ashe", int.MaxValue, 1400f, 1400f, 1400f, 5f, true, SpellInfo.SpellSlot.E),            //r
+            CreateLinearSkillshotNoDamage("AsheSpiritOfTheHawk", "AsheSpiritOfTheHawk", "Ashe", int.MaxValue, 1400f, 1400f, 1400f, 5f, true, SpellInfo.SpellSlot.E).FriendlyName("E").DangerValue(99),
             //r
-            CreateLinearSkillshot("EnchantedCrystalArrow", "EnchantedCrystalArrow", "Ashe", int.MaxValue, 1600f, 1600f, 1600f, 130f, false, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun),
+            CreateLinearSkillshot("EnchantedCrystalArrow", "EnchantedCrystalArrow", "Ashe", int.MaxValue, 1600f, 1600f, 1600f, 130f, false, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun).FriendlyName("R").DangerValue(99),
             #endregion
             //Do Sol
             #region Aurelion Sol
             //passive
             /*
                 MissileName = "AurelionSolStarMissile",
+                FriendlyName = "Passive",
                 ChampionName = "AurelionSol",
                 MissileSpeed = 500f,
                 MissileMinSpeed = 0f,
@@ -372,6 +398,7 @@ namespace UnsignedEvade
             //q
             /*
                 MissileName = "AurelionSolBasicAttack",
+                FriendlyName = "Auto Attack",
                 ChampionName = "AurelionSol",
                 MissileSpeed = 4000f,
                 MissileMinSpeed = 0f,
@@ -379,6 +406,7 @@ namespace UnsignedEvade
                 Range = 650f,
 
                 SpellName = "AurelionSolQ",
+                FriendlyName = "Q",
                 ChampionName = "AurelionSol",
                 Range = 2000f,
                 MissileSpeed = 850f,
@@ -388,8 +416,8 @@ namespace UnsignedEvade
                 Radius = 210f,
                 ConeDegrees = 45f,
 
-aurelionsolqhaste
                 MissileName = "AurelionSolQMissile",
+                FriendlyName = "Q Missile",
                 ChampionName = "AurelionSol",
                 MissileSpeed = 850f,
                 MissileMinSpeed = 0f,
@@ -398,6 +426,7 @@ aurelionsolqhaste
                 Width = 110f,
 
                 SpellName = "AurelionSolQCancelButton",
+                FriendlyName = "Q - Cancel",
                 ChampionName = "AurelionSol",
                 Range = 25000f,
                 MissileSpeed = 850f,
@@ -410,6 +439,7 @@ aurelionsolqhaste
             //w
             /*
                 SpellName = "AurelionSolW",
+                FriendlyName = "W - On",
                 ChampionName = "AurelionSol",
                 Range = 600f,
                 MissileSpeed = 300f,
@@ -419,9 +449,8 @@ aurelionsolqhaste
                 Radius = 0f,
                 ConeDegrees = 45f,
 
-aurelionsolwactive
-turretshield
                 SpellName = "AurelionSolWToggleOff",
+                FriendlyName = "W - Off",
                 ChampionName = "AurelionSol",
                 Range = 660f,
                 MissileSpeed = 500f,
@@ -434,6 +463,7 @@ turretshield
             //e
             /*
                 SpellName = "AurelionSolE",
+                FriendlyName = "E",
                 ChampionName = "AurelionSol",
                 Range = 3000f,
                 MissileSpeed = 20f,
@@ -455,6 +485,7 @@ turretshield
             //r
             /*
                 SpellName = "AurelionSolR",
+                FriendlyName = "R",
                 ChampionName = "AurelionSol",
                 Range = 1500f,
                 MissileSpeed = 20f,
@@ -465,6 +496,7 @@ turretshield
                 ConeDegrees = 45f,
 
                 MissileName = "AurelionSolRBeamMissile",
+                FriendlyName = "R Missile",
                 ChampionName = "AurelionSol",
                 MissileSpeed = 4500f,
                 MissileMinSpeed = 0f,
@@ -480,6 +512,7 @@ turretshield
             {
                 SpellName = "AzirQ",
                 ChampionName = "Azir",
+                FriendlyName = "Q",
                 Range = 875f,
                 MissileSpeed = 500f,
                 MissileMinSpeed = 2.305022E-38f,
@@ -496,6 +529,7 @@ turretshield
             {
                 SpellName = "AzirW",
                 ChampionName = "Azir",
+                FriendlyName = "W",
                 Range = 450f,
                 MissileSpeed = 500f,
                 MissileMinSpeed = 500f,
@@ -509,6 +543,7 @@ turretshield
             {
                 SpellName = "AzirE",
                 ChampionName = "Azir",
+                FriendlyName = "E",
                 Range = 1100f,
                 MissileSpeed = 500f,
                 DashType = SpellInfo.Dashtype.Linear,
@@ -521,6 +556,7 @@ turretshield
             {
                 SpellName = "AzirR",
                 ChampionName = "Azir",
+                FriendlyName = "R",
                 Range = 250f,
                 MissileSpeed = 500f,
                 MissileMinSpeed = 500f,
@@ -532,12 +568,13 @@ turretshield
             //bard Q stun conditions, treat W as projectile, and E escape, and R land time
             #region Bard
             //q
-            CreateLinearSkillshot("BardQ", "BardQ", "Bard", 950f, 1500f, 1500f, 1500f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
-            CreateLinearSkillshot("BardQ", "BardQMissile2", "Bard", 950f, 1500f, 1500f, 1500f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
+            CreateLinearSkillshot("BardQ", "BardQ", "Bard", 950f, 1500f, 1500f, 1500f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun).FriendlyName("Q").DangerValue(99),
+            CreateLinearSkillshot("BardQ", "BardQMissile2", "Bard", 950f, 1500f, 1500f, 1500f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun).FriendlyName("Q Missile").DangerValue(99),
             //w on champion
             new SpellInfo()
             {
                 SpellName = "BardWDirectHeal",
+                FriendlyName = "W Heal",
                 ChampionName = "Bard",
                 Range = 800f,
                 SpellType = SpellInfo.SpellTypeInfo.TargetedMissile,
@@ -548,6 +585,7 @@ turretshield
             new SpellInfo()
             {
                 SpellName = "BardW",
+                FriendlyName = "W Floor",
                 ChampionName = "Bard",
                 Range = 800f,
                 Radius = 100f,
@@ -565,54 +603,55 @@ turretshield
                 SpellType = SpellInfo.SpellTypeInfo.LinearSkillshot,
                 CCtype = SpellInfo.CrowdControlType.None,
                 Slot = SpellInfo.SpellSlot.E,
+                FriendlyName = "E",
             },
             //r
-            CreateCircularSpell("BardR", "Bard", 3400f, 350f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Statis),
+            CreateCircularSpell("BardR", "Bard", 3400f, 350f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.None, SpellInfo.CrowdControlType.Statis).FriendlyName("R").DangerValue(99),
             #endregion
             #region Blitzcrank
             //q
-            CreateLinearSkillshot("RocketGrab", "RocketGrabMissile", "Blitzcrank", 1050f, 1800f, 1800f, 1800f, 70f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Pull),
+            CreateLinearSkillshot("RocketGrab", "RocketGrabMissile", "Blitzcrank", 1050f, 1800f, 1800f, 1800f, 70f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Pull).FriendlyName("Q").DangerValue(99),
             //w
-            CreatePassiveSpell("Overdrive", "Blitzcrank", "Overdrive", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp),
+            CreatePassiveSpell("Overdrive", "Blitzcrank", "Overdrive", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.SpeedUp).FriendlyName("W").DangerValue(99),
             //e
-            CreatePassiveSpell("PowerFist", "Blitzcrank", "PowerFist", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.KnockUp),
+            CreatePassiveSpell("PowerFist", "Blitzcrank", "PowerFist", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.KnockUp).FriendlyName("E").DangerValue(99),
             //r
-            CreateSelfActive("StaticField", "Blitzcrank", 600f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Silence),
+            CreateSelfActive("StaticField", "Blitzcrank", 600f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Silence).FriendlyName("R").DangerValue(99),
             #endregion
             //add brand passive. Brand Q stun calculations
             #region Brand
             //q
-            CreateLinearSkillshot("BrandQ", "BrandQMissile", "Brand", 1100f, 1600f, 2000f, 2000f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
+            CreateLinearSkillshot("BrandQ", "BrandQMissile", "Brand", 1100f, 1600f, 2000f, 2000f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun).FriendlyName("Q").DangerValue(99),
             //w
-            CreateCircularSpell("BrandW", "Brand", 0.625f, 900f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.None),
+            CreateCircularSpell("BrandW", "Brand", 0.625f, 900f, true, SpellInfo.SpellSlot.W, SpellInfo.Buff.None).FriendlyName("W").DangerValue(99),
             //e
-            CreateTargetedSpell("BrandE", "Brand", 675f, SpellInfo.SpellSlot.E),
+            CreateTargetedSpell("BrandE", "Brand", 675f, SpellInfo.SpellSlot.E).FriendlyName("E").DangerValue(99),
             //r
-            CreateTargetedMissile("BrandR", "BrandRMissile", "Brand", 750f, 750f, 250f, 3000f, SpellInfo.SpellSlot.R),
-            CreateTargetedMissile("BrandR", "BrandR", "Brand", 750f, 750f, 250f, 3000f, SpellInfo.SpellSlot.R),
+            CreateTargetedMissile("BrandR", "BrandRMissile", "Brand", 750f, 750f, 250f, 3000f, SpellInfo.SpellSlot.R).FriendlyName("R Missile").DangerValue(99),
+            CreateTargetedMissile("BrandR", "BrandR", "Brand", 750f, 750f, 250f, 3000f, SpellInfo.SpellSlot.R).FriendlyName("R").DangerValue(99),
             #endregion
             //add braum aa passive stun
             //q stun on 4 stacks
             #region Braum
             //q
-            CreateLinearSkillshot("BraumQ", "BraumQMissile", "Braum", 1050f, 1700f, 1700f, 1700f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Slow),
-            CreateLinearSkillshot("BraumQMissile", "BraumQMissile", "Braum", 1050f, 1700f, 1700f, 1700f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun),
+            CreateLinearSkillshot("BraumQ", "BraumQMissile", "Braum", 1050f, 1700f, 1700f, 1700f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Slow).FriendlyName("Q").DangerValue(99),
+            CreateLinearSkillshot("BraumQMissile", "BraumQMissile", "Braum", 1050f, 1700f, 1700f, 1700f, 60f, false, SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.Stun).FriendlyName("Q Missile").DangerValue(99),
             //w
-            CreateLinearDash("BraumW", "Braum", 650f, 0f, SpellInfo.SpellSlot.W),
+            CreateLinearDash("BraumW", "Braum", 650f, 0f, SpellInfo.SpellSlot.W).FriendlyName("W").DangerValue(99),
             //e
-            CreatePassiveSpell("BraumE", "Braum", "braumeshieldbuff", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
+            CreatePassiveSpell("BraumE", "Braum", "braumeshieldbuff", SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction).FriendlyName("E").DangerValue(99),
             //r
-            CreateLinearSkillshot("BraumRWrapper", "BraumRMissile", "Braum", 1200f, 1400f, 1400f, 1400f, 115f, false, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.KnockUp),
+            CreateLinearSkillshot("BraumRWrapper", "BraumRMissile", "Braum", 1200f, 1400f, 1400f, 1400f, 115f, false, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.KnockUp).FriendlyName("R").DangerValue(99),
             #endregion
             //fix caitlyn's Q's end, not all cait traps being deleted when dead (might have fixed traps), R has scaling range 2000/2500/3000
             #region Caitlyn
             //aa
-            CreateAutoAttack("CaitlynBasicAttack", "Caitlyn", 2500f, 2500f, 2500f),
-            CreateAutoAttack("CaitlynHeadshotMissile", "Caitlyn", 3000f, 3000f, 3000f),
-            CreateAutoAttack("CaitlynCritAttack", "Caitlyn", 2500f, 2500f, 2500f),
+            CreateAutoAttack("CaitlynBasicAttack", "Caitlyn", 2500f, 2500f, 2500f).FriendlyName("Auto Attack").DangerValue(99),
+            CreateAutoAttack("CaitlynHeadshotMissile", "Caitlyn", 3000f, 3000f, 3000f).FriendlyName("Headshot").DangerValue(99),
+            CreateAutoAttack("CaitlynCritAttack", "Caitlyn", 2500f, 2500f, 2500f).FriendlyName("Critical Attack").DangerValue(99),
             //q
-            CreateLinearSkillshot("CaitlynPiltoverPeacemaker", "CaitlynPiltoverPeacemaker", "Caitlyn", 1250f, 2000f, 2000f, 2000f, 60f, false, SpellInfo.SpellSlot.Q),
-            CreateLinearSkillshot("CaitlynPiltoverPeacemaker", "CaitlynPiltoverPeacemaker2", "Caitlyn", 1250f, 2000f, 2000f, 2000f, 90f, false, SpellInfo.SpellSlot.Q),
+            CreateLinearSkillshot("CaitlynPiltoverPeacemaker", "CaitlynPiltoverPeacemaker", "Caitlyn", 1250f, 2000f, 2000f, 2000f, 60f, false, SpellInfo.SpellSlot.Q).FriendlyName("Q").DangerValue(99),
+            CreateLinearSkillshot("CaitlynPiltoverPeacemaker", "CaitlynPiltoverPeacemaker2", "Caitlyn", 1250f, 2000f, 2000f, 2000f, 90f, false, SpellInfo.SpellSlot.Q).FriendlyName("Q2").DangerValue(99),
             //w handled as trap
             /*new SpellInfo()
             {
@@ -630,9 +669,9 @@ turretshield
                 Slot = SpellInfo.SpellSlot.W,
             },*/
             //e
-            CreateLinearSkillshot("CaitlynEntrapment", "CaitlynEntrapmentMissile", "Caitlyn", 800f, 1600f, 2000f, 2000f, 70f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
+            CreateLinearSkillshot("CaitlynEntrapment", "CaitlynEntrapmentMissile", "Caitlyn", 800f, 1600f, 2000f, 2000f, 70f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow).FriendlyName("E").DangerValue(99),
             //r
-            CreateTargetedMissile("CaitlynAceintheHole", "CaitlynAceintheHoleMissile", "Caitlyn", 2000f, 3200f, 2200f, 2200f, SpellInfo.SpellSlot.R),
+            CreateTargetedMissile("CaitlynAceintheHole", "CaitlynAceintheHoleMissile", "Caitlyn", 2000f, 3200f, 2200f, 2200f, SpellInfo.SpellSlot.R).FriendlyName("R").DangerValue(99),
             #endregion
             //code camille
             #region Camille
@@ -642,7 +681,7 @@ turretshield
             //cassiopeia w? data below
             #region Cassiopeia
             //q
-            CreateCircularSpell("CassiopeiaQ", "Cassiopeia", 850f, 160f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None),
+            CreateCircularSpell("CassiopeiaQ", "Cassiopeia", 850f, 160f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None).FriendlyName("Q").DangerValue(99),
             //w
             /*
             SpellName = "CassiopeiaW",
@@ -664,45 +703,45 @@ turretshield
                 Width = 25f,
                 */
             //e
-            CreateTargetedMissile("CassiopeiaE", "CassiopeiaE", "Cassiopeia", 700f, 2500f, 2500f, 2500f, SpellInfo.SpellSlot.E),
+            CreateTargetedMissile("CassiopeiaE", "CassiopeiaE", "Cassiopeia", 700f, 2500f, 2500f, 2500f, SpellInfo.SpellSlot.E).FriendlyName("E").DangerValue(99),
             //r
-            CreateConeSpell("CassiopeiaR", "Cassiopeia", 825f, 40f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun),
+            CreateConeSpell("CassiopeiaR", "Cassiopeia", 825f, 40f, SpellInfo.SpellSlot.R, SpellInfo.CrowdControlType.Stun).FriendlyName("R").DangerValue(99),
             #endregion
             //chogath scaling R range
             #region ChoGath
             //q
-            CreateCircularSpell("Rupture", "Chogath", 0.625f, 950f, 250f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None, SpellInfo.CrowdControlType.KnockUp),
+            CreateCircularSpell("Rupture", "Chogath", 0.625f, 950f, 250f, true, SpellInfo.SpellSlot.Q, SpellInfo.Buff.None, SpellInfo.CrowdControlType.KnockUp).FriendlyName("Q").DangerValue(99),
             //w
-            CreateConeSpell("FeralScream", "Chogath", 300f, 28f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Silence),
+            CreateConeSpell("FeralScream", "Chogath", 300f, 28f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Silence).FriendlyName("W").DangerValue(99),
             //e
-            CreateAutoAttack("VorpalSpikesMissle", "Chogath", 1475f, 1475f, 1475f),
-            CreateAutoAttack("VorpalSpikesMissle2", "Chogath", 1475f, 1475f, 1475f),
-            CreateAutoAttack("VorpalSpikesMissle3", "Chogath", 1475f, 1475f, 1475f),
-            CreateAutoAttack("VorpalSpikesMissle4", "Chogath", 1475f, 1475f, 1475f),
-            CreateAutoAttack("VorpalSpikesMissle5", "Chogath", 1475f, 1475f, 1475f),
-            CreateAutoAttack("VorpalSpikesMissle6", "Chogath", 1475f, 1475f, 1475f),
-            CreateAutoAttack("VorpalSpikesMissle7", "Chogath", 1475f, 1475f, 1475f),
-            CreateAutoAttack("VorpalSpikesMissle8", "Chogath", 1475f, 1475f, 1475f),
+            CreateAutoAttack("VorpalSpikesMissle", "Chogath", 1475f, 1475f, 1475f).FriendlyName("E").DangerValue(99),
+            CreateAutoAttack("VorpalSpikesMissle2", "Chogath", 1475f, 1475f, 1475f).FriendlyName("E Missile2").DangerValue(99),
+            CreateAutoAttack("VorpalSpikesMissle3", "Chogath", 1475f, 1475f, 1475f).FriendlyName("E Missile3").DangerValue(99),
+            CreateAutoAttack("VorpalSpikesMissle4", "Chogath", 1475f, 1475f, 1475f).FriendlyName("E Missile4").DangerValue(99),
+            CreateAutoAttack("VorpalSpikesMissle5", "Chogath", 1475f, 1475f, 1475f).FriendlyName("E Missile5").DangerValue(99),
+            CreateAutoAttack("VorpalSpikesMissle6", "Chogath", 1475f, 1475f, 1475f).FriendlyName("E Missile6").DangerValue(99),
+            CreateAutoAttack("VorpalSpikesMissle7", "Chogath", 1475f, 1475f, 1475f).FriendlyName("E Missile7").DangerValue(99),
+            CreateAutoAttack("VorpalSpikesMissle8", "Chogath", 1475f, 1475f, 1475f).FriendlyName("E Missile8").DangerValue(99),
             //r
-            CreateTargetedSpell("Feast", "Chogath", 175f, SpellInfo.SpellSlot.R),
+            CreateTargetedSpell("Feast", "Chogath", 175f, SpellInfo.SpellSlot.R).FriendlyName("R").DangerValue(99),
             #endregion
             #region Corki
             //aa
-            CreateAutoAttack("CorkiBasicAttack", "Corki", 2000f, 2000f, 2000f),
-            CreateAutoAttack("CorkiBasicAttack2", "Corki", 2000f, 2000f, 2000f),
+            CreateAutoAttack("CorkiBasicAttack", "Corki", 2000f, 2000f, 2000f).FriendlyName("Auto Attack").DangerValue(99),
+            CreateAutoAttack("CorkiBasicAttack2", "Corki", 2000f, 2000f, 2000f).FriendlyName("Auto Attack2").DangerValue(99),
             //q
-            CreateCircularSkillshot("PhosphorusBomb", "PhosphorusBombMissile", "Corki", 825f, 1000f, 1000f, 1000f, 250f, true, SpellInfo.SpellSlot.Q),
-            CreateCircularSkillshot("PhosphorusBomb", "PhosphorusBombMissileMin", "Corki", 825f, 1000f, 1000f, 1000f, 250f, true, SpellInfo.SpellSlot.Q),
+            CreateCircularSkillshot("PhosphorusBomb", "PhosphorusBombMissile", "Corki", 825f, 1000f, 1000f, 1000f, 250f, true, SpellInfo.SpellSlot.Q).FriendlyName("Q").DangerValue(99),
+            CreateCircularSkillshot("PhosphorusBomb", "PhosphorusBombMissileMin", "Corki", 825f, 1000f, 1000f, 1000f, 250f, true, SpellInfo.SpellSlot.Q).FriendlyName("Q Min").DangerValue(99),
             //w,  burn handled by particle database
-            CreateLinearDash("CarpetBomb", "Corki", 600f, 200f, SpellInfo.SpellSlot.W),
-            CreateLinearDash("CarpetBombMega", "Corki", 600f, 200f, SpellInfo.SpellSlot.W),
-            CreateLinearDash("CarpetBomb2", "Corki", 600f, 200f, SpellInfo.SpellSlot.W),
-            CreateLinearDash("CarpetBombMega2", "Corki", 600f, 200f, SpellInfo.SpellSlot.W),
+            CreateLinearDash("CarpetBomb", "Corki", 600f, 200f, SpellInfo.SpellSlot.W).FriendlyName("W Bomb").DangerValue(99),
+            CreateLinearDash("CarpetBombMega", "Corki", 600f, 200f, SpellInfo.SpellSlot.W).FriendlyName("W Bomb Upgrade").DangerValue(99),
+            CreateLinearDash("CarpetBomb2", "Corki", 600f, 200f, SpellInfo.SpellSlot.W).FriendlyName("W Bomb2").DangerValue(99),
+            CreateLinearDash("CarpetBombMega2", "Corki", 600f, 200f, SpellInfo.SpellSlot.W).FriendlyName("W Bomb Upgrad2").DangerValue(99),
             //e
-            CreateConeSpell("GGun", "Corki", "GGun", 600f, 28f, SpellInfo.SpellSlot.E),
+            CreateConeSpell("GGun", "Corki", "GGun", 600f, 28f, SpellInfo.SpellSlot.E).FriendlyName("E").DangerValue(99),
             //r
-            CreateLinearSkillshot("MissileBarrageMissile", "MissileBarrageMissile", "Corki", 1300f, 2000f, 2000f, 2000f, 40f, false, SpellInfo.SpellSlot.R),
-            CreateLinearSkillshot("MissileBarrageMissile2", "MissileBarrageMissile2", "Corki", 1500f, 2000f, 2000f, 2000f, 40f, false, SpellInfo.SpellSlot.R),
+            CreateLinearSkillshot("MissileBarrageMissile", "MissileBarrageMissile", "Corki", 1300f, 2000f, 2000f, 2000f, 40f, false, SpellInfo.SpellSlot.R).FriendlyName("R").DangerValue(99),
+            CreateLinearSkillshot("MissileBarrageMissile2", "MissileBarrageMissile2", "Corki", 1500f, 2000f, 2000f, 2000f, 40f, false, SpellInfo.SpellSlot.R).FriendlyName("R2").DangerValue(99),
             #endregion
             //add darius Q inner range dodging
             #region Darius

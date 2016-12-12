@@ -124,10 +124,7 @@ namespace UnsignedEvade
             if (menu == null)
                 return true;
 
-            string name = info.SpellName;
-            if (name == "")
-                name = info.MissileName;
-            return menu.GetCheckboxValue("Dodge " + name);
+            return menu.GetCheckboxValue("Dodge " + info.Name());
         }
         public static bool IsSafe(this AIHeroClient champ)
         {
@@ -168,6 +165,20 @@ namespace UnsignedEvade
         public static Vector3 To3DFromNavMesh(this Vector2 pos)
         {
             return new Vector3(pos.X, pos.Y, NavMesh.GetHeightForPosition(pos.X, pos.Y));
+        }
+        public static List<CustomPolygon> GetPolygonsThatHitMe(this AIHeroClient me)
+        {
+            return SpellDatabase.Polygons.Where(a => a.polygon.IsInside(me.Position.To2D())).ToList();
+        }
+        public static SpellInfo FriendlyName(this SpellInfo info, string name)
+        {
+            info.FriendlyName = name;
+            return info;
+        }
+        public static SpellInfo DangerValue(this SpellInfo info, float value)
+        {
+            info.DangerValue = value;
+            return info;
         }
     }
 }

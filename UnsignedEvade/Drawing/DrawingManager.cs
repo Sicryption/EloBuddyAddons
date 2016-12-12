@@ -404,12 +404,8 @@ namespace UnsignedEvade
             for (int i = 0; i < SpellDatabase.championSpellsDrawnOnChampion.Count; i++)
                 if (SpellDatabase.championSpellsDrawnOnChampion[i].Item1 == playerBeingDrawnOn.Name)
                     SpellDatabase.championSpellsDrawnOnChampion[i] = new Tuple<string, int>(SpellDatabase.championSpellsDrawnOnChampion[i].Item1, SpellDatabase.championSpellsDrawnOnChampion[i].Item2 + 1);
-
-            string name = info.SpellName;
-            if (name == "")
-                name = info.MissileName;
-
-            Drawing.DrawText(info.target.Position.WorldToScreen() - new Vector2(0, 15 * spellCount), drawColor, name + " Buff", 15);
+            
+            Drawing.DrawText(info.target.Position.WorldToScreen() - new Vector2(0, 15 * spellCount), drawColor, info.Name() + " Buff", 15);
         }
         
         private static void DrawObjectNames()

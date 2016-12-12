@@ -10,7 +10,7 @@ namespace UnsignedEvade
     class SpellInfo
     {
         public float Delay = 0.25f,
-            Duration = 0,
+            Duration,
             MissileMaxSpeed,
             MissileMinSpeed,
             MissileSpeed,
@@ -21,9 +21,11 @@ namespace UnsignedEvade
             CollisionCount = 0,
             ConeDegrees,
             TimeOfCast,
+            DangerValue,
             startingAmmoCount = -1f;
         private float travelTime = 0;
         public string ChampionName = "All",
+            FriendlyName = "",
             MissileName = "",
             SpellName = "",
             BuffName = "";
@@ -42,14 +44,14 @@ namespace UnsignedEvade
         public GameObject target = null;
         public Obj_AI_Base caster = null;
         public MissileClient missile = null;
-        
+
         public float TravelTime
         {
             get
             {
                 if (travelTime == -1f || MissileSpeed == 0)
                     return 0f;
-                else if(travelTime == 0)
+                else if (travelTime == 0)
                     travelTime = startPosition.Distance(endPosition) / MissileSpeed;
                 return travelTime;
             }
@@ -58,7 +60,7 @@ namespace UnsignedEvade
                 travelTime = value;
             }
         }
-        
+
         public enum SpellCreationLocation
         {
             OnObjectCreate,
@@ -75,11 +77,10 @@ namespace UnsignedEvade
             LinearSpellWithDuration,
             LinearSpellWithBuff,
             LinearDash,
-            TargetedActive,
             TargetedMissile,
+            TargetedPassiveSpell,
             TargetedSpell,
             TargetedSpellWithDuration,
-            TargetedPassiveSpell,
             TargetedChannel,
             TargetedDash,
             CircularSkillshot,
@@ -98,17 +99,19 @@ namespace UnsignedEvade
             SelfActiveNoDamageWithBuff,
             SelfActiveWithBuff,
             SelfActiveToggleable,
+            TargetedActive,
             Wall,
             CircularWall,
             PentaWall,
             AutoAttack,
             AutoAttackWithSplashDamage,
         }
+
         public enum Dashtype
         {
             Linear,//lucian e, gragas e
             Blink,//ez e, flash
-            FixedDistance,//nidalee w
+            FixedDistance,//Nid W
             TargetedLinear,//akali r, lee sin w
             Targeted,//lee sin q2, vi r
             None
@@ -136,7 +139,8 @@ namespace UnsignedEvade
             Suspension,//Yasuo R
             Suppression,//Malzahar R, Warwick R
             None
-        }  
+        }
+
         public enum SpellSlot
         {
             Q,
@@ -145,7 +149,8 @@ namespace UnsignedEvade
             R,
             Auto,
             None
-        } 
+        }
+
         public enum Buff
         {
             AttackDamageIncrease,
@@ -168,6 +173,17 @@ namespace UnsignedEvade
             None
         }
 
+        public string Name()
+        {
+            string name = FriendlyName;
+
+            if (name == "")
+                name = SpellName;
+            if (name == "")
+                name = MissileName;
+            return name;
+        }
+
         public EloBuddy.SpellSlot GetEBSpellSlot()
         {
             if (Slot == SpellSlot.Q)
@@ -184,8 +200,10 @@ namespace UnsignedEvade
         public SpellDataInst GetChampionSpell()
         {
             EloBuddy.SpellSlot slot = GetEBSpellSlot();
-            if(slot != EloBuddy.SpellSlot.Unknown)
+            if (slot != EloBuddy.SpellSlot.Unknown)
                 return caster.Spellbook.GetSpell(slot);
+
+            Console.WriteLine("Champion Spell was null: " + SpellName);
             return null;
         }
     }

@@ -29,17 +29,17 @@ namespace UnsignedEvade
                 "Show only Enemy Spells/Missiles", "Show Particles_false", "Show All Object Names_false", 
                 "Show Buff Gains_false", "Show Buff Losses_false", "Draw Player Direction_false");
 
+            AddSlider(mainChampionEvadeMenu, "Flash Danger Level", 8, 0, 10);
+
             foreach(string s in EntityManager.Heroes.AllHeroes.GetChampionNames())
             {
                 Menu champMenu = AddSubMenu(mainChampionEvadeMenu, s);
 
                 foreach(SpellInfo info in SpellDatabase.SpellList.Where(a=>a.ChampionName == s))
                 {
-                    string name = info.SpellName;
-                    if (name == "")
-                        name = info.MissileName;
-
-                    CheckBox cb = AddCheckbox(ref champMenu, "Dodge " + name);
+                    champMenu.AddGroupLabel(info.Name());
+                    CheckBox cb = AddCheckbox(ref champMenu, "Dodge " + info.Name());
+                    Slider dangerValue = AddSlider(champMenu, info.Name() + " Danger Value", (int)info.DangerValue, 0, 10);
                 }
 
                 championMenus.Add(champMenu);

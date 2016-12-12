@@ -26,16 +26,18 @@ namespace UnsignedEvade
             {
                 if(!TryToMoveToSafePosition())
                 {
-                    /*//use spells to evade
-                    Chat.Print("No safe position to walk to");
+                    List<CustomPolygon> polysThatHitMe = Player.Instance.GetPolygonsThatHitMe();
 
-                    Spell.Skillshot flash = new Spell.Skillshot(Player.Instance.GetSpellSlotFromName("SummonerFlash"), 400, SkillShotType.Linear, 0, 0, 0);
-
-                    if(flash.IsReady())
+                    if (polysThatHitMe.OrderByDescending(a => a.GetDangerValue()).FirstOrDefault().GetDangerValue() >= MenuHandler.mainChampionEvadeMenu.GetSliderValue("Flash Danger Level"))
                     {
-                        flash.Cast(GetSafePositions(Player.Instance, flash.Range)[0]);
+                        Spell.Skillshot flash = new Spell.Skillshot(Player.Instance.GetSpellSlotFromName("SummonerFlash"), 425, SkillShotType.Linear, 0, 0, 0);
+
+                        if (flash.IsReady())
+                        {
+                            Vector3 flashPos = GetSafePositions(Player.Instance, flash.Range - 5).OrderByDescending(a => a.DistanceFromClosestEnemy()).FirstOrDefault();
+                             flash.Cast(flashPos);
+                        }
                     }
-                    */
                 }
             }
             else

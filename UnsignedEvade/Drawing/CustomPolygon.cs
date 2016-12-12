@@ -8,6 +8,7 @@ using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using SharpDX;
+using System.Linq;
 
 namespace UnsignedEvade
 {
@@ -66,6 +67,16 @@ namespace UnsignedEvade
                 float distance = time * info.MissileSpeed / 1000;
                 return pos.Extend(direction, distance).To3DFromNavMesh();
             }
+        }
+        public float GetDangerValue()
+        {
+            Menu menu = MenuHandler.championMenus.Where(a => a.UniqueMenuId.Contains(info.ChampionName)).FirstOrDefault();
+
+            //spells like recall/tp/items
+            if (menu == null)
+                return -1;
+
+            return menu.GetSliderValue(info.Name() + " Danger Value");
         }
     }
 }
