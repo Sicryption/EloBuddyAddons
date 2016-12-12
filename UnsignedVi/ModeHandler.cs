@@ -148,7 +148,7 @@ namespace UnsignedVi
             if (menu.GetCheckboxValue("Use Smite"))
                 UseSmite(enemies, false);
         }
-        
+
         public static void LaneClear()
         {
             Menu menu = MenuHandler.LaneClear;
