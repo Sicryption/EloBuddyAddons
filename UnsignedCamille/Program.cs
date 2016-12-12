@@ -31,16 +31,16 @@ namespace UnsignedCamille
 
             Q = new Spell.Active(SpellSlot.Q);
             Q2 = new Spell.Active(SpellSlot.Q);
-            W = new Spell.Skillshot(SpellSlot.W, 650, EloBuddy.SDK.Enumerations.SkillShotType.Cone, 250, null, 50, DamageType.Physical)
+            W = new Spell.Skillshot(SpellSlot.W, 640, EloBuddy.SDK.Enumerations.SkillShotType.Cone, 250, int.MaxValue, 50, DamageType.Physical)
             {
-                ConeAngleDegrees = 55,
+                ConeAngleDegrees = 45,
             };
-            W2 = new Spell.Skillshot(SpellSlot.W, 350, EloBuddy.SDK.Enumerations.SkillShotType.Cone, 250, null, 50, DamageType.Physical)
+            W2 = new Spell.Skillshot(SpellSlot.W, 325, EloBuddy.SDK.Enumerations.SkillShotType.Cone, 250, int.MaxValue, 50, DamageType.Physical)
             {
-                ConeAngleDegrees = 55,
+                ConeAngleDegrees = 45,
             };
-            E = new Spell.Skillshot(SpellSlot.E, 1000, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 250, 1000, 80);
-            R = new Spell.Targeted(SpellSlot.R, 750);
+            E = new Spell.Skillshot(SpellSlot.E, 1100, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 250, 1000, 80);
+            R = new Spell.Targeted(SpellSlot.R, 475);
 
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;

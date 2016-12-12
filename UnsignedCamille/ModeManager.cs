@@ -22,10 +22,10 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.Combo;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
             
-            if (menu.GetCheckboxValue("Use Q1") && !Camille.HasBuff("CAMILLEQ2NAME"))
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
                 CastQ(enemies, false);
 
-            if (menu.GetCheckboxValue("Use Q2") && Camille.HasBuff("CAMILLEQ2NAME"))
+            if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
@@ -55,10 +55,10 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.Harass;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && !Camille.HasBuff("CAMILLEQ2NAME"))
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
                 CastQ(enemies, false);
 
-            if (menu.GetCheckboxValue("Use Q2") && Camille.HasBuff("CAMILLEQ2NAME"))
+            if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
@@ -85,10 +85,10 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.JungleClear;
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.Monsters.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && !Camille.HasBuff("CAMILLEQ2NAME"))
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
                 CastQ(enemies, false);
 
-            if (menu.GetCheckboxValue("Use Q2") && Camille.HasBuff("CAMILLEQ2NAME"))
+            if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
@@ -112,11 +112,11 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.Killsteal;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && !Camille.HasBuff("CAMILLEQ2NAME"))
-                CastQ(enemies, true);
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
+                CastQ(enemies, false);
 
-            if (menu.GetCheckboxValue("Use Q2") && Camille.HasBuff("CAMILLEQ2NAME"))
-                CastQ(enemies, true);
+            if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
+                CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, true);
@@ -149,10 +149,10 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.LaneClear;
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && !Camille.HasBuff("CAMILLEQ2NAME"))
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
                 CastQ(enemies, false);
 
-            if (menu.GetCheckboxValue("Use Q2") && Camille.HasBuff("CAMILLEQ2NAME"))
+            if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
@@ -176,11 +176,11 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.LastHit;
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && !Camille.HasBuff("CAMILLEQ2NAME"))
-                CastQ(enemies, true);
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
+                CastQ(enemies, false);
 
-            if (menu.GetCheckboxValue("Use Q2") && Camille.HasBuff("CAMILLEQ2NAME"))
-                CastQ(enemies, true);
+            if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
+                CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, true);
@@ -338,9 +338,9 @@ namespace UnsignedCamille
         //add camille q2 buff name
         public static void CastQ(List<Obj_AI_Base> enemies, bool ks)
         {
-            if (Camille.HasBuff("CAMILLEQ2NAME") && ks)
+            if (Camille.HasBuff("CamilleQ2") && ks)
                 enemies = enemies.Where(a => a.Health <= Calculations.Q2(a, qTime)).ToList();
-            if (!Camille.HasBuff("CAMILLEQ2NAME") && ks)
+            if (!Camille.HasBuff("CamilleQ2") && ks)
                 enemies = enemies.Where(a => a.Health <= Calculations.Q1(a)).ToList();
 
             if(enemies.Count > 0)
@@ -356,11 +356,19 @@ namespace UnsignedCamille
                     Orbwalker.ForcedTarget = enemy;
             }
         }
-        //w logic
         public static void CastW(List<Obj_AI_Base> enemies, bool ks)
         {
             if (Program.W.IsReady() && !hasDoneActionThisTick && enemies.Count > 0)
-                hasDoneActionThisTick = Program.W.CastAtBestConePosition(enemies, ks);
+            {
+                if (ks)
+                    enemies = enemies.Where(a => a.Health <= Calculations.W(a)).ToList();
+
+                int numHit = 0;
+                Vector3 bestPos = Program.W.GetBestConeCastPosition(enemies, out numHit);
+
+                if (numHit > 0 && bestPos != Vector3.Zero)
+                    hasDoneActionThisTick = Program.W.Cast(bestPos);
+            }
         }
         //no idea for e logic
         public static void CastE(List<Obj_AI_Base> enemies, bool ks)

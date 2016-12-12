@@ -109,9 +109,47 @@ namespace UnsignedCamille
                 return unit.Position;
             }
         }
-        public static bool CastAtBestConePosition(this Spell.Skillshot self, List<Obj_AI_Base> enemies, bool ks)
+        public static Vector3 GetBestConeCastPosition(this Spell.Skillshot cone, List<Obj_AI_Base> enemies, out int bestHitNumber)
         {
-            return true;
+            int radius = (int)cone.Range;
+
+            enemies = enemies.Where(a => a.MeetsCriteria() && a.Position(cone.CastDelay).IsInRange(Player.Instance.Position, radius)).ToList();
+
+            bestHitNumber = 0;
+            Vector3 castPosition = Vector3.Zero;
+
+            //if there is nothing that meets the criteria
+            if (enemies.Count() == 0)
+                return castPosition;
+
+            List<Tuple<Geometry.Polygon.Sector, Vector3>> conePositions = new List<Tuple<Geometry.Polygon.Sector, Vector3>>();
+
+            Vector3 extendingPosition = Player.Instance.Position + new Vector3(0, radius, 0);
+
+            //checks every 15 degrees
+            for (int i = 0; i < 24; i++)
+            {
+                Vector3 endPosition = extendingPosition.To2D().RotateAroundPoint(Player.Instance.Position.To2D(), (float)((i * 15) * Math.PI / 180)).To3D((int)Player.Instance.Position.Z);
+                Geometry.Polygon.Sector sector = new Geometry.Polygon.Sector(Player.Instance.Position,
+                     endPosition, (float)(cone.ConeAngleDegrees * Math.PI / 180), radius);
+
+                conePositions.Add(Tuple.Create(sector, endPosition));
+            }
+
+            //from the ones with the most sector/line enemies hit AND the most line enemies hit, find the ones with the most sector area
+            conePositions = conePositions.OrderByDescending(a => a.Item1.EnemiesHitInSector(enemies, cone.CastDelay)).ToList();
+
+            Tuple<Geometry.Polygon.Sector, Vector3> bestCone = conePositions.First();
+            
+            return Player.Instance.Position.Extend(bestCone.Item2, radius - 1).To3D((int)Player.Instance.Position.Z);
         }
-     }
+        public static int EnemiesHitInSector(this Geometry.Polygon.Sector sector, List<Obj_AI_Base> enemies, int delay)
+        {
+            return enemies.Where(a => a.MeetsCriteria() && sector.IsInside(a.Position(delay))).Count();
+        }
+        public static List<Obj_AI_Base> GetEnemiesHitInSector(this Geometry.Polygon.Sector sector, List<Obj_AI_Base> enemies, int delay)
+        {
+            return enemies.Where(a => a.MeetsCriteria() && sector.IsInside(a.Position(delay))).ToList();
+        }
+    }
 }
