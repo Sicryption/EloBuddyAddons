@@ -68,7 +68,7 @@ namespace UnsignedEvade
             if(walkingPositions.Count > 0)
             {
                 Console.WriteLine("PossibleSafePositions: " + walkingPositions.Count);
-                Vector3 safePos = walkingPositions.Where(a => a != null && a != Vector3.Zero && !a.IsWall() && IsSafer(Player.Instance.GetPath(a), timeUntilHit)).OrderBy(a=>a.Distance(Player.Instance)).FirstOrDefault();
+                Vector3 safePos = walkingPositions.Where(a => a != null && a != Vector3.Zero && Player.Instance.GetPath(a).All(b=>!b.IsWall())&& IsSafer(Player.Instance.GetPath(a), timeUntilHit)).OrderBy(a=>a.Distance(Player.Instance)).FirstOrDefault();
                 if (safePos != null)
                 {
                     Console.WriteLine("Set");
