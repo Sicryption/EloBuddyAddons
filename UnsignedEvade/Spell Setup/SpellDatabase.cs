@@ -811,6 +811,9 @@ turretshield
             CreateCircularSpell("MaliceandSpite", "Evelynn", 650f, 250f, true, SpellInfo.SpellSlot.R, SpellInfo.Buff.Shield, SpellInfo.CrowdControlType.HeavySlow),
             #endregion
             #region Ezreal
+            //aa
+            CreateAutoAttack("EzrealBasicAttack", "Ezreal", 2000f, 2000f, 2000f),
+            CreateAutoAttack("EzrealBasicAttack2", "Ezreal", 2000f, 2000f, 2000f),
             //q
             CreateLinearSkillshot("EzrealMysticShot", "EzrealMysticShotMissile", "Ezreal", 1200f, 2000f, 2000f, 2000f, 80f, false, SpellInfo.SpellSlot.Q),
             //w

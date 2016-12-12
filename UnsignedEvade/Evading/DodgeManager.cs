@@ -54,10 +54,10 @@ namespace UnsignedEvade
 
             if (safePosition != Vector3.Zero)
             {
-                Orbwalker.MoveTo(safePosition);
+                Orbwalker.MoveTo(safePosition.Extend(Player.Instance.Position, -100).To3DFromNavMesh());
                 return true;
             }
-            
+
             float timeUntilHit = closestTimePolygon.TimeUntilHitsChampion(Player.Instance);
             float movementSpeed = Player.Instance.MoveSpeed;
             //d = ts/1000
@@ -67,34 +67,44 @@ namespace UnsignedEvade
 
             if(walkingPositions.Count > 0)
             {
-                Vector3 safePos = walkingPositions.Where(a => a != null).OrderByDescending(a => a.DistanceFromClosestEnemy()).FirstOrDefault();
+                Console.WriteLine("PossibleSafePositions: " + walkingPositions.Count);
+                Vector3 safePos = walkingPositions.Where(a => a != null && a != Vector3.Zero && !a.IsWall() && IsSafer(Player.Instance.GetPath(a), timeUntilHit)).OrderBy(a=>a.Distance(Player.Instance)).FirstOrDefault();
                 if (safePos != null)
                 {
-                    Orbwalker.MoveTo(safePos);
+                    Console.WriteLine("Set");
+                    //move past the position so that the player isn't hit by the skillshot
+                    Orbwalker.MoveTo(safePos.Extend(Player.Instance.Position, -Player.Instance.BoundingRadius).To3DFromNavMesh());
                     safePosition = safePos;
                     return true;
                 }
             }
-
+            else
+                Console.WriteLine("No Safe Positions");
             return false;
         }
 
         public static List<Vector3> GetSafePositions(Obj_AI_Base unit, float range)
         {
-            Vector3 topLeftPos = Player.Instance.Position - new Vector3(range / 2, -range / 2, 0f);
-
             List<Vector3> walkingPositions = new List<Vector3>();
 
-            for (float xoffset = 0; xoffset < range; xoffset = xoffset + range / 10)
-                for (float yoffset = 0; yoffset < range; yoffset = yoffset + range / 10)
+            Vector3 extendingPos = unit.Position + new Vector3(0, range, 0);
+
+            for (int i = 0; i < 360; i++)
+            {
+                for (int b = 1; b < 5; b++)
                 {
-                    Vector3 tempPos = topLeftPos + new Vector3(xoffset, -yoffset, 0);
-                    if (tempPos.IsSafe())
-                    {
-                        walkingPositions.Add(tempPos);
-                    }
+                    Vector3 position = unit.Position.Extend(extendingPos.To2D().RotateAroundPoint(unit.Position.To2D(), MathUtil.DegreesToRadians(i)), range / b).To3DFromNavMesh();
+
+                    if (position.IsSafe(unit as AIHeroClient))
+                        walkingPositions.Add(position);
                 }
+            }
             return walkingPositions;
+        }
+
+        public static bool IsSafer(Vector3[] path, float timeUntilHit)
+        {
+            return path.All(a => a.GetSpellInfoWithClosestTime() >= timeUntilHit);
         }
     }
 }

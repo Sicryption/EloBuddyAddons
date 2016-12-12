@@ -23,6 +23,8 @@ namespace UnsignedEvade
             //Spells should be refreshing even when dead
             RefreshSpellList();
 
+            Drawing.DrawText(Player.Instance.Position.WorldToScreen(), drawColor, Player.Instance.IsSafe().ToString(), 5);
+
             //passive spells should be refreshing even when dead
             Utilities.ResetPassiveSpellCounter();
 

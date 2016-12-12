@@ -24,23 +24,47 @@ namespace UnsignedEvade
 
         public float TimeUntilHitsChampion(AIHeroClient champion)
         {
+            return TimeUntilHitsPosition(champion.Position);
+        }
+        public float TimeUntilHitsPosition(Vector3 pos)
+        {
             if (SpellDatabase.GetSpellInfo(info.SpellName).MissileName == "")
                 return Math.Max((info.TimeOfCast + info.Delay) - Game.Time, 0);
             else
             {
-
                 float distance = 0;
                 if (info.missile == null)
-                    distance = info.startPosition.Distance(champion);
+                    distance = info.startPosition.Distance(pos);
                 else
-                    distance = info.missile.Distance(champion);
-                
+                    distance = info.missile.Distance(pos);
+
                 float time = 1000 * distance / info.MissileSpeed;
                 //Spell.Delay + 1000 * (StartPosition.Distance(EndPosition) / Spell.Speed)
                 if (info.missile == null)
                     time += Math.Max((info.TimeOfCast + info.Delay) - Game.Time, 0) * 1000;
 
                 return time;// divide by 1000 to make it in miliseconds
+            }
+        }
+        public bool ShouldBeEvaded()
+        {
+            return info.ShouldBeAccountedFor();
+        }
+        public Vector3 PositionInTime(float time)
+        {
+            if (SpellDatabase.GetSpellInfo(info.SpellName).MissileName == "")
+            {
+                //if time of spell is after the spell delay, then the position is the end
+                //this needs to be done
+                return info.endPosition;
+            }
+            else
+            {
+                Vector3 pos = info.missile.Position;
+                Vector3 direction = info.endPosition;
+
+                float distance = time * info.MissileSpeed / 1000;
+                return pos.Extend(direction, distance).To3DFromNavMesh();
             }
         }
     }
