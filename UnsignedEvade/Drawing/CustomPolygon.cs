@@ -29,7 +29,7 @@ namespace UnsignedEvade
         public float TimeUntilHitsPosition(Vector3 pos)
         {
             if (SpellDatabase.GetSpellInfo(info.SpellName).MissileName == "")
-                return Math.Max((info.TimeOfCast + info.Delay) - Game.Time, 0);
+                return Math.Max((info.TimeOfCast + info.Delay) - Game.Time, 0) * 1000;
             else
             {
                 float distance = 0;
