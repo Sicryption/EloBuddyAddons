@@ -36,21 +36,21 @@ namespace UnsignedCamille
             mainMenu.Add("Creator", new Label("This script is apart of the Unsigned Series made by Chaos"));
             AddComboBox(mainMenu, "Prediction Type:", 0, "EloBuddy", "Current Position");
 
-            AddCheckboxes(ref Combo, "Use Q1", "Use Q2", "Use W", "Force Follow in W Range", "Use E1", "Use E2", "Use R", "Use Items", "Use Ignite");
-            AddCheckboxes(ref Harass, "Use Q1", "Use Q2", "Use W", "Force Follow in W Range", "Use E1", "Use E2", "Use R_false", "Use Items");
+            AddCheckboxes(ref Combo, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use R", "Use Items", "Use Ignite");
+            AddCheckboxes(ref Harass, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use R_false", "Use Items");
 
-            AddCheckboxes(ref JungleClear, "Use Q1", "Use Q2", "Use W", "Force Follow in W Range", "Use E1", "Use E2", "Use Items");
-            AddCheckboxes(ref LaneClear, "Use Q1", "Use Q2", "Use W", "Force Follow in W Range", "Use E1", "Use E2", "Use Items_false");
-            AddCheckboxes(ref LastHit, "Use Q1", "Use Q2", "Use W", "Force Follow in W Range", "Use E1", "Use E2", "Use Items");
+            AddCheckboxes(ref JungleClear, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1_false", "Use E2_false", "Use Items");
+            AddCheckboxes(ref LaneClear, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1_false", "Use E2_false", "Use Items_false");
+            AddCheckboxes(ref LastHit, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1_false", "Use E2_false", "Use Items");
 
-            AddCheckboxes(ref Killsteal, "Killsteal", "Use Q1", "Use Q2", "Use W", "Force Follow in W Range", "Use E1", "Use E2", "Use Items", "Use Ignite");
+            AddCheckboxes(ref Killsteal, "Killsteal", "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use Items", "Use Ignite");
             AddCheckboxes(ref Flee, "Use Q1", "Use Q2", "Use W", "Use E1", "Use E2");
 
             AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
             AddSlider(Items, "Minions to use Tiamat/Ravenous Hydra On", 2, 1, 10);
             AddSlider(Items, "Champions to use Tiamat/Ravenous Hydra on", 1, 1, 10);
 
-            AddCheckboxes(ref Drawing, "Draw W Inner Range", "Draw W Outer Range", "Draw E Range", "Draw R Range", "Draw Combo Damage");
+            AddCheckboxes(ref Drawing, "Draw W Inner Range", "Draw W Outer Range", "Draw E Range", "Draw R Range", "Draw Combo Damage", "Draw Walls for E_false");
             AddSlider(Drawing, "Autos in Combo", 2, 0, 5);
             #endregion
         }

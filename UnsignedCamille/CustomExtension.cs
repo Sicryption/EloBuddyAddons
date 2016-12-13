@@ -79,12 +79,12 @@ namespace UnsignedCamille
         }
         public static bool IsAutoCanceling(this AIHeroClient self, List<Obj_AI_Base> enemies)
         {
-            return !Orbwalker.CanAutoAttack || enemies.Where(a => a.IsInRange(self, self.GetAutoAttackRange())).FirstOrDefault() == null;
+            return Orbwalker.IsAutoAttacking || enemies.Where(a => a.IsInRange(self, self.GetAutoAttackRange())).FirstOrDefault() == null;
         }
         public static float ComboDamage(this AIHeroClient enemy)
         {
             float q1dmg = Program.Q.IsReady() ? Calculations.Q1(enemy) : 0;
-            float q2dmg = Program.Q.IsReady() ? Calculations.Q2(enemy, Game.Time - 1.5f) : 0;
+            float q2dmg = Program.Q.IsReady() ? Calculations.Q2(enemy, true) : 0;
             float wdmg = Program.W.IsReady() ? Calculations.W(enemy) : 0;
             float edmg = Program.E.IsReady() ? Calculations.E2(enemy) : 0;
             float rdmg = Program.R.IsReady() ? Calculations.RBasicAttack(enemy) * MenuHandler.Drawing.GetSliderValue("Autos in Combo") : 0;
@@ -140,7 +140,9 @@ namespace UnsignedCamille
             conePositions = conePositions.OrderByDescending(a => a.Item1.EnemiesHitInSector(enemies, cone.CastDelay)).ToList();
 
             Tuple<Geometry.Polygon.Sector, Vector3> bestCone = conePositions.First();
-            
+
+            bestHitNumber = bestCone.Item1.EnemiesHitInSector(enemies, cone.CastDelay);
+
             return Player.Instance.Position.Extend(bestCone.Item2, radius - 1).To3D((int)Player.Instance.Position.Z);
         }
         public static int EnemiesHitInSector(this Geometry.Polygon.Sector sector, List<Obj_AI_Base> enemies, int delay)

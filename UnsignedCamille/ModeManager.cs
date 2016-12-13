@@ -14,7 +14,8 @@ namespace UnsignedCamille
     {
         public static AIHeroClient Camille => Player.Instance;
         public static bool hasDoneActionThisTick = false;
-        public static float qTime;
+        public static float LastAutoTime = 0,
+            LastECheckTime = 0;
 
         //camileqbuffname
         public static void Combo()
@@ -22,7 +23,7 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.Combo;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
             
-            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ")
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
@@ -31,13 +32,13 @@ namespace UnsignedCamille
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, false);
 
-            if (menu.GetCheckboxValue("Force Follow in W Range"))
-                WFollow();
+            //if (menu.GetCheckboxValue("Force Follow in W Range"))
+                //WFollow();
             
-            if (menu.GetCheckboxValue("Use E1"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleE")
                 CastE(enemies, false);
 
-            if (menu.GetCheckboxValue("Use E2"))
+            if (menu.GetCheckboxValue("Use E2") && Program.E.Name == "CamilleEDash2")
                 CastE(enemies, false);
 
             if (menu.GetCheckboxValue("Use R"))
@@ -55,7 +56,7 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.Harass;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ")
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
@@ -64,13 +65,13 @@ namespace UnsignedCamille
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, false);
 
-            if (menu.GetCheckboxValue("Force Follow in W Range"))
-                WFollow();
+            //if (menu.GetCheckboxValue("Force Follow in W Range"))
+                //WFollow();
 
-            if (menu.GetCheckboxValue("Use E1"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleE")
                 CastE(enemies, false);
 
-            if (menu.GetCheckboxValue("Use E2"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleEDash2")
                 CastE(enemies, false);
 
             if (menu.GetCheckboxValue("Use R"))
@@ -85,7 +86,7 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.JungleClear;
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.Monsters.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ")
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
@@ -94,13 +95,13 @@ namespace UnsignedCamille
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, false);
 
-            if (menu.GetCheckboxValue("Force Follow in W Range"))
-                WFollow();
+            //if (menu.GetCheckboxValue("Force Follow in W Range"))
+                //WFollow();
 
-            if (menu.GetCheckboxValue("Use E1"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleE")
                 CastE(enemies, false);
 
-            if (menu.GetCheckboxValue("Use E2"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleEDash2")
                 CastE(enemies, false);
 
             if (menu.GetCheckboxValue("Use Items"))
@@ -112,7 +113,7 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.Killsteal;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ")
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
@@ -121,13 +122,13 @@ namespace UnsignedCamille
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, true);
 
-            if (menu.GetCheckboxValue("Force Follow in W Range"))
-                WFollow();
+            //if (menu.GetCheckboxValue("Force Follow in W Range"))
+                //WFollow();
 
-            if (menu.GetCheckboxValue("Use E1"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleE")
                 CastE(enemies, true);
 
-            if (menu.GetCheckboxValue("Use E2"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleEDash2")
                 CastE(enemies, true);
 
             if (menu.GetCheckboxValue("Use Items"))
@@ -142,6 +143,48 @@ namespace UnsignedCamille
         {
             Menu menu = MenuHandler.Flee;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
+            
+            if (Program.E.IsReady() && Program.E.Name == "CamilleE" && Game.Time - LastECheckTime > 0.25f)
+            {
+                List<Vector2> wallPositions = Program.GetWallPositions(Camille.Position);
+                Vector2 closestToCursorPos = Vector2.Zero;
+                //this is to reduce the amount of times .Distance is used
+                float closestToCursorPosDistance = float.MaxValue;
+                foreach (Vector2 wallPos in wallPositions)
+                {
+                    List<Vector2> dashPoses = Program.GetDashablePositions(wallPos.To3D());
+                    foreach (Vector2 dashPos in dashPoses)
+                    {
+                        if (dashPos.Distance(Game.CursorPos) <= closestToCursorPosDistance)
+                        {
+                            closestToCursorPos = wallPos;
+                            closestToCursorPosDistance = dashPos.Distance(Game.CursorPos);
+                        }
+                    }
+                }
+
+                LastECheckTime = Game.Time;
+                if(closestToCursorPos != Vector2.Zero)
+                    CastE(closestToCursorPos.To3D());
+            }
+            else if (Program.E.IsReady() && Program.E.Name == "CamilleEDash2" && Game.Time - LastECheckTime > 0.1)
+            {
+                Vector2 closestToCursorPos = Vector2.Zero;
+                float closestToCursorPosDistance = float.MaxValue;
+                List<Vector2> dashPoses = Program.GetDashablePositions(Camille.Position);
+                foreach (Vector2 dashPos in dashPoses)
+                {
+                    if (dashPos.Distance(Game.CursorPos) <= closestToCursorPosDistance)
+                    {
+                        closestToCursorPos = dashPos;
+                        closestToCursorPosDistance = dashPos.Distance(Game.CursorPos);
+                    }
+                }
+
+                LastECheckTime = Game.Time;
+                if (closestToCursorPos != Vector2.Zero)
+                    Orbwalker.MoveTo(closestToCursorPos.To3D());
+            }
         }
 
         public static void LaneClear()
@@ -149,7 +192,7 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.LaneClear;
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ")
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
@@ -158,13 +201,13 @@ namespace UnsignedCamille
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, false);
 
-            if (menu.GetCheckboxValue("Force Follow in W Range"))
-                WFollow();
+            //if (menu.GetCheckboxValue("Force Follow in W Range"))
+                //WFollow();
 
-            if (menu.GetCheckboxValue("Use E1"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleE")
                 CastE(enemies, false);
 
-            if (menu.GetCheckboxValue("Use E2"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleEDash2")
                 CastE(enemies, false);
 
             if (menu.GetCheckboxValue("Use Items"))
@@ -176,8 +219,8 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.LastHit;
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList();
 
-            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ1")
-                CastQ(enemies, false);
+            if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ")
+                CastQ(enemies, true);
 
             if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
                 CastQ(enemies, false);
@@ -185,13 +228,13 @@ namespace UnsignedCamille
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, true);
 
-            if (menu.GetCheckboxValue("Force Follow in W Range"))
-                WFollow();
+            //if (menu.GetCheckboxValue("Force Follow in W Range"))
+                //WFollow();
 
-            if (menu.GetCheckboxValue("Use E1"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleE")
                 CastE(enemies, true);
 
-            if (menu.GetCheckboxValue("Use E2"))
+            if (menu.GetCheckboxValue("Use E1") && Program.E.Name == "CamilleEDash2")
                 CastE(enemies, true);
 
             if (menu.GetCheckboxValue("Use Items"))
@@ -334,26 +377,28 @@ namespace UnsignedCamille
             if (unit != null)
                 hasDoneActionThisTick = ignite.Cast(unit);
         }
-
-        //add camille q2 buff name
+        
         public static void CastQ(List<Obj_AI_Base> enemies, bool ks)
         {
             if (Camille.HasBuff("CamilleQ2") && ks)
-                enemies = enemies.Where(a => a.Health <= Calculations.Q2(a, qTime)).ToList();
-            if (!Camille.HasBuff("CamilleQ2") && ks)
+                enemies = enemies.Where(a => a.Health <= Calculations.Q2(a, Camille.HasBuff("camilleqprimingcomplete"))).ToList();
+            else if (!Camille.HasBuff("CamilleQ2") && ks)
                 enemies = enemies.Where(a => a.Health <= Calculations.Q1(a)).ToList();
+            else if (!ks && (Program.Q.Name != "CamilleQ" && !Camille.HasBuff("camilleqprimingcomplete")))
+                return;
 
             if(enemies.Count > 0)
                 CastQ(enemies.First());
         }
         public static void CastQ(Obj_AI_Base enemy)
         {
-            if (Program.Q.IsReady() && !hasDoneActionThisTick && Camille.IsAutoCanceling(new List<Obj_AI_Base> { enemy }))
+            if (Program.Q.IsReady() && !hasDoneActionThisTick && Game.Time - LastAutoTime <= 0.25f)
             {
+                Orbwalker.ResetAutoAttack();
                 hasDoneActionThisTick = Program.Q.Cast();
 
                 if (hasDoneActionThisTick)
-                    Orbwalker.ForcedTarget = enemy;
+                    Player.IssueOrder(GameObjectOrder.AutoAttack, enemy);
             }
         }
         public static void CastW(List<Obj_AI_Base> enemies, bool ks)
@@ -366,24 +411,80 @@ namespace UnsignedCamille
                 int numHit = 0;
                 Vector3 bestPos = Program.W.GetBestConeCastPosition(enemies, out numHit);
 
+                Chat.Print(numHit);
+                
                 if (numHit > 0 && bestPos != Vector3.Zero)
                     hasDoneActionThisTick = Program.W.Cast(bestPos);
             }
         }
-        //no idea for e logic
         public static void CastE(List<Obj_AI_Base> enemies, bool ks)
         {
             if (Program.E.IsReady() && !hasDoneActionThisTick && enemies.Count > 0)
-                hasDoneActionThisTick = Program.E.Cast();
+            {
+                Obj_AI_Base closestEnemy = enemies.OrderBy(a => a.Distance(Camille)).FirstOrDefault();
+                if (closestEnemy != null)
+                {
+                    Vector3 closestPos = closestEnemy.Position;
+
+                    if (Program.E.IsReady() && Program.E.Name == "CamilleE" && Game.Time - LastECheckTime > 0.25f)
+                    {
+                        List<Vector2> wallPositions = Program.GetWallPositions(Camille.Position);
+                        Vector2 closestToEnemyPos = Vector2.Zero;
+                        //this is to reduce the amount of times .Distance is used
+                        float closestToEnemyPosDistance = float.MaxValue;
+                        foreach (Vector2 wallPos in wallPositions)
+                        {
+                            List<Vector2> dashPoses = Program.GetDashablePositions(wallPos.To3D());
+                            foreach (Vector2 dashPos in dashPoses)
+                            {
+                                if (dashPos.Distance(Game.CursorPos) <= closestToEnemyPosDistance)
+                                {
+                                    closestToEnemyPos = wallPos;
+                                    closestToEnemyPosDistance = dashPos.Distance(closestPos);
+                                }
+                            }
+                        }
+
+                        LastECheckTime = Game.Time;
+                        if (closestToEnemyPos != Vector2.Zero)
+                            CastE(closestToEnemyPos.To3D());
+                    }
+                    else if (Program.E.IsReady() && Program.E.Name == "CamilleEDash2" && Game.Time - LastECheckTime > 0.1)
+                    {
+                        Vector2 closestToEnemyPos = Vector2.Zero;
+                        float closestToEnemyPosDistance = float.MaxValue;
+                        List<Vector2> dashPoses = Program.GetDashablePositions(Camille.Position);
+                        foreach (Vector2 dashPos in dashPoses)
+                        {
+                            if (dashPos.Distance(closestPos) <= closestToEnemyPosDistance)
+                            {
+                                closestToEnemyPos = dashPos;
+                                closestToEnemyPosDistance = dashPos.Distance(closestPos);
+                            }
+                        }
+
+                        LastECheckTime = Game.Time;
+                        if (closestToEnemyPos != Vector2.Zero)
+                        {
+                            if (closestEnemy.IsInRange(closestEnemy, 300))
+                                Player.IssueOrder(GameObjectOrder.AutoAttack, closestEnemy);
+                            else
+                                Orbwalker.MoveTo(closestToEnemyPos.To3D());
+                        }
+                    }
+                }   
+            }
         }
         public static void CastE(Vector3 pos)
         {
-
+            if (Program.E.IsReady() && !hasDoneActionThisTick)
+                hasDoneActionThisTick = Program.E.Cast(pos);
         }
         //most enemies trapped in box?
         public static void CastR(List<Obj_AI_Base> enemies)
         {
-
+            if (Program.R.IsReady() && enemies.Any(a => a.IsInRange(Camille, Program.R.Range)))
+                hasDoneActionThisTick = Program.R.Cast(enemies.First(a => a.IsInRange(Camille, Program.R.Range)));
         }
 
         public static void WFollow()

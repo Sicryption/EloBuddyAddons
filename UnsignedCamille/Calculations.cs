@@ -15,20 +15,20 @@ namespace UnsignedCamille
         public static float Q1(Obj_AI_Base target)
         {
             float damage = Camille.TotalAttackDamage * (0.15f + (0.05f * Program.Q.Level));
+            damage += Camille.GetAutoAttackDamage(target);
 
             return Camille.CalculateDamageOnUnit(target, DamageType.Physical, damage);
         }
-        public static float Q2(Obj_AI_Base target, float timeOfFirstCast)
+        public static float Q2(Obj_AI_Base target, bool chargedQ)
         {
             float percentOfDamageAsTrueDamage = 0.55f + (0.03f * Program.W.Level),
                 percentOfDamageAsRegularDamage = 1 - percentOfDamageAsTrueDamage,
                 damage = Camille.TotalAttackDamage * 0.2f;
 
-            if (Game.Time - timeOfFirstCast >= 1.5f)
+            if (chargedQ)
                 damage *= 2;
 
-
-            float regularDamage = Camille.CalculateDamageOnUnit(target, DamageType.Physical, damage * percentOfDamageAsRegularDamage),
+            float regularDamage = Camille.CalculateDamageOnUnit(target, DamageType.Physical, Camille.GetAutoAttackDamage(target) + damage * percentOfDamageAsRegularDamage),
                 trueDamage = Camille.CalculateDamageOnUnit(target, DamageType.True, damage * percentOfDamageAsTrueDamage);
 
             return regularDamage + trueDamage;
