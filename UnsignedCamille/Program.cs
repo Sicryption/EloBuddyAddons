@@ -8,6 +8,9 @@ using System.Collections.Generic;
 using SharpDX;
 using System.Linq;
 
+//dont cast w during e
+//lasthit x with e
+
 namespace UnsignedCamille
 {
     internal class Program

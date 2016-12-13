@@ -16,8 +16,7 @@ namespace UnsignedCamille
         public static bool hasDoneActionThisTick = false;
         public static float LastAutoTime = 0,
             LastECheckTime = 0;
-
-        //camileqbuffname
+        
         public static void Combo()
         {
             Menu menu = MenuHandler.Combo;
@@ -114,10 +113,10 @@ namespace UnsignedCamille
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
             if (menu.GetCheckboxValue("Use Q1") && Program.Q.Name == "CamilleQ")
-                CastQ(enemies, false);
+                CastQ(enemies, true);
 
             if (menu.GetCheckboxValue("Use Q2") && Program.Q.Name == "CamilleQ2")
-                CastQ(enemies, false);
+                CastQ(enemies, true);
 
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, true);
@@ -149,7 +148,7 @@ namespace UnsignedCamille
                 List<Vector2> wallPositions = Program.GetWallPositions(Camille.Position);
                 Vector2 closestToCursorPos = Vector2.Zero;
                 //this is to reduce the amount of times .Distance is used
-                float closestToCursorPosDistance = float.MaxValue;
+                float closestToCursorPosDistance = Camille.Distance(Game.CursorPos);
                 foreach (Vector2 wallPos in wallPositions)
                 {
                     List<Vector2> dashPoses = Program.GetDashablePositions(wallPos.To3D());
@@ -170,7 +169,7 @@ namespace UnsignedCamille
             else if (Program.E.IsReady() && Program.E.Name == "CamilleEDash2" && Game.Time - LastECheckTime > 0.1)
             {
                 Vector2 closestToCursorPos = Vector2.Zero;
-                float closestToCursorPosDistance = float.MaxValue;
+                float closestToCursorPosDistance = Camille.Distance(Game.CursorPos);
                 List<Vector2> dashPoses = Program.GetDashablePositions(Camille.Position);
                 foreach (Vector2 dashPos in dashPoses)
                 {
@@ -403,15 +402,14 @@ namespace UnsignedCamille
         }
         public static void CastW(List<Obj_AI_Base> enemies, bool ks)
         {
-            if (Program.W.IsReady() && !hasDoneActionThisTick && enemies.Count > 0)
+            if (Program.W.IsReady() && !hasDoneActionThisTick && enemies.Count > 0 
+                && !Camille.HasBuff("camilleedash1") && !Camille.HasBuff("CamilleEDash2") && !Camille.HasBuff("camilleedashtoggle") && !Camille.HasBuff("camilleeonwall"))
             {
                 if (ks)
                     enemies = enemies.Where(a => a.Health <= Calculations.W(a)).ToList();
 
                 int numHit = 0;
                 Vector3 bestPos = Program.W.GetBestConeCastPosition(enemies, out numHit);
-
-                Chat.Print(numHit);
                 
                 if (numHit > 0 && bestPos != Vector3.Zero)
                     hasDoneActionThisTick = Program.W.Cast(bestPos);
@@ -431,7 +429,7 @@ namespace UnsignedCamille
                         List<Vector2> wallPositions = Program.GetWallPositions(Camille.Position);
                         Vector2 closestToEnemyPos = Vector2.Zero;
                         //this is to reduce the amount of times .Distance is used
-                        float closestToEnemyPosDistance = float.MaxValue;
+                        float closestToEnemyPosDistance = Camille.Distance(closestEnemy);
                         foreach (Vector2 wallPos in wallPositions)
                         {
                             List<Vector2> dashPoses = Program.GetDashablePositions(wallPos.To3D());
@@ -452,7 +450,7 @@ namespace UnsignedCamille
                     else if (Program.E.IsReady() && Program.E.Name == "CamilleEDash2" && Game.Time - LastECheckTime > 0.1)
                     {
                         Vector2 closestToEnemyPos = Vector2.Zero;
-                        float closestToEnemyPosDistance = float.MaxValue;
+                        float closestToEnemyPosDistance = Camille.Distance(closestEnemy);
                         List<Vector2> dashPoses = Program.GetDashablePositions(Camille.Position);
                         foreach (Vector2 dashPos in dashPoses)
                         {
