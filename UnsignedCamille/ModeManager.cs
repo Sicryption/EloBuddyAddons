@@ -29,7 +29,7 @@ namespace UnsignedCamille
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, menu);
 
             //if (menu.GetCheckboxValue("Force Follow in W Range"))
                 //WFollow();
@@ -48,6 +48,9 @@ namespace UnsignedCamille
 
             if (menu.GetCheckboxValue("Use Ignite"))
                 UseIgnite(enemies, true);
+
+            if (menu.GetCheckboxValue("Use Smite"))
+                UseSmite(enemies, false);
         }
 
         public static void Harass()
@@ -62,7 +65,7 @@ namespace UnsignedCamille
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, menu);
 
             //if (menu.GetCheckboxValue("Force Follow in W Range"))
                 //WFollow();
@@ -78,6 +81,9 @@ namespace UnsignedCamille
 
             if (menu.GetCheckboxValue("Use Items"))
                 UseItems(enemies, false);
+
+            if (menu.GetCheckboxValue("Use Smite"))
+                UseSmite(enemies, false);
         }
 
         public static void JungleClear()
@@ -92,7 +98,7 @@ namespace UnsignedCamille
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, menu);
 
             //if (menu.GetCheckboxValue("Force Follow in W Range"))
                 //WFollow();
@@ -105,6 +111,9 @@ namespace UnsignedCamille
 
             if (menu.GetCheckboxValue("Use Items"))
                 UseItems(enemies, false);
+
+            if (menu.GetCheckboxValue("Use Smite"))
+                UseSmite(enemies, true, menu.GetCheckboxValue("Use Smite for HP"));
         }
 
         public static void Killsteal()
@@ -119,7 +128,7 @@ namespace UnsignedCamille
                 CastQ(enemies, true);
 
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, true);
+                CastW(enemies, true, menu);
 
             //if (menu.GetCheckboxValue("Force Follow in W Range"))
                 //WFollow();
@@ -135,6 +144,9 @@ namespace UnsignedCamille
 
             if (menu.GetCheckboxValue("Use Ignite"))
                 UseIgnite(enemies, true);
+
+            if (menu.GetCheckboxValue("Use Smite"))
+                UseSmite(enemies, true);
         }
 
         //add logic
@@ -143,7 +155,7 @@ namespace UnsignedCamille
             Menu menu = MenuHandler.Flee;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
             
-            if (Program.E.IsReady() && Program.E.Name == "CamilleE" && Game.Time - LastECheckTime > 0.25f)
+            if (menu.GetCheckboxValue("Use E1") && Program.E.IsReady() && Program.E.Name == "CamilleE" && Game.Time - LastECheckTime > 0.25f)
             {
                 List<Vector2> wallPositions = Program.GetWallPositions(Camille.Position);
                 Vector2 closestToCursorPos = Vector2.Zero;
@@ -166,7 +178,7 @@ namespace UnsignedCamille
                 if(closestToCursorPos != Vector2.Zero)
                     CastE(closestToCursorPos.To3D());
             }
-            else if (Program.E.IsReady() && Program.E.Name == "CamilleEDash2" && Game.Time - LastECheckTime > 0.1)
+            else if (menu.GetCheckboxValue("Use E2") && Program.E.IsReady() && Program.E.Name == "CamilleEDash2" && Game.Time - LastECheckTime > 0.1)
             {
                 Vector2 closestToCursorPos = Vector2.Zero;
                 float closestToCursorPosDistance = Camille.Distance(Game.CursorPos);
@@ -198,7 +210,7 @@ namespace UnsignedCamille
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, menu);
 
             //if (menu.GetCheckboxValue("Force Follow in W Range"))
                 //WFollow();
@@ -225,7 +237,7 @@ namespace UnsignedCamille
                 CastQ(enemies, false);
 
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, true);
+                CastW(enemies, true, menu);
 
             //if (menu.GetCheckboxValue("Force Follow in W Range"))
                 //WFollow();
@@ -400,7 +412,7 @@ namespace UnsignedCamille
                     Player.IssueOrder(GameObjectOrder.AutoAttack, enemy);
             }
         }
-        public static void CastW(List<Obj_AI_Base> enemies, bool ks)
+        public static void CastW(List<Obj_AI_Base> enemies, bool ks, Menu menu)
         {
             if (Program.W.IsReady() && !hasDoneActionThisTick && enemies.Count > 0 
                 && !Camille.HasBuff("camilleedash1") && !Camille.HasBuff("CamilleEDash2") && !Camille.HasBuff("camilleedashtoggle") && !Camille.HasBuff("camilleeonwall"))
@@ -411,7 +423,7 @@ namespace UnsignedCamille
                 int numHit = 0;
                 Vector3 bestPos = Program.W.GetBestConeCastPosition(enemies, out numHit);
                 
-                if (numHit > 0 && bestPos != Vector3.Zero)
+                if (numHit >= menu.GetSliderValue("W on x enemy units") && bestPos != Vector3.Zero)
                     hasDoneActionThisTick = Program.W.Cast(bestPos);
             }
         }
@@ -488,6 +500,65 @@ namespace UnsignedCamille
         public static void WFollow()
         {
 
+        }
+
+        public static void UseSmite(List<Obj_AI_Base> enemies, bool ks, bool forHP = false)
+        {
+            enemies = enemies.Where(a => a.MeetsCriteria() && a.IsTargetable && a.IsInRange(Camille, 500)
+            && !a.BaseSkinName.ContainsAny(false, "mini", "sru_crab")).ToList();
+
+            enemies = enemies.Where(a =>
+                //if it is for hp then the entity must not be dragon/baron/herald/vilemaw
+                (forHP && !a.BaseSkinName.ContainsAny(false, "Baron", "Dragon", "Herald", "Spider") && Camille.MissingHealth() >= Calculations.SmiteHeal())
+                //OR if it is for ks
+                || (ks &&
+                //ks on champion
+                (a.Type == GameObjectType.AIHeroClient
+                //or ks on minion
+                || a.Health <= Calculations.Smite(a, "regular")
+                ))).ToList();
+
+            Spell.Targeted blueSmite = new Spell.Targeted(Camille.GetSpellSlotFromName("S5_SummonerSmitePlayerGanker"), 500, DamageType.True);
+            Spell.Targeted redSmite = new Spell.Targeted(Camille.GetSpellSlotFromName("S5_SummonerSmiteDuel"), 500, DamageType.True);
+            Spell.Targeted Smite = new Spell.Targeted(Camille.GetSpellSlotFromName("SummonerSmite"), 500, DamageType.True);
+
+            if (blueSmite.Slot != SpellSlot.Unknown && blueSmite.IsReady())
+            {
+                var target = enemies.Where(a =>
+                //champions
+                ((ks && a.Type == GameObjectType.AIHeroClient && a.Health <= Calculations.Smite(a, "blue")) ||
+                //minions
+                a.Type != GameObjectType.AIHeroClient)).FirstOrDefault();
+
+                if (target != null)
+                    hasDoneActionThisTick = blueSmite.Cast(target);
+            }
+
+            if (redSmite.Slot != SpellSlot.Unknown && redSmite.IsReady())
+            {
+                var target = enemies.Where(a => a.IsInRange(Camille, Camille.GetAutoAttackRange())
+                //champions
+                && ((ks && a.Type == GameObjectType.AIHeroClient && a.Health <= Calculations.Smite(a, "red")) ||
+                //minions
+                a.Type != GameObjectType.AIHeroClient)).FirstOrDefault();
+
+                if (target != null)
+                {
+                    hasDoneActionThisTick = redSmite.Cast(target);
+
+                    //if it did smite them, attack them
+                    if (hasDoneActionThisTick)
+                        Player.IssueOrder(GameObjectOrder.AutoAttack, target);
+                }
+            }
+
+            if (Smite.Slot != SpellSlot.Unknown && Smite.IsReady())
+            {
+                var target = enemies.Where(a => a.Type != GameObjectType.AIHeroClient).FirstOrDefault();
+
+                if (target != null)
+                    hasDoneActionThisTick = Smite.Cast(target);
+            }
         }
     }
 }

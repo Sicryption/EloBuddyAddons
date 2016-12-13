@@ -36,15 +36,21 @@ namespace UnsignedCamille
             mainMenu.Add("Creator", new Label("This script is apart of the Unsigned Series made by Chaos"));
             AddComboBox(mainMenu, "Prediction Type:", 0, "EloBuddy", "Current Position");
 
-            AddCheckboxes(ref Combo, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use R", "Use Items", "Use Ignite");
-            AddCheckboxes(ref Harass, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use R_false", "Use Items");
+            AddCheckboxes(ref Combo, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use R", "Use Items", "Use Smite", "Use Ignite");
+            AddSlider(Combo, "W on x enemy units", 1, 1, 6);
+            AddCheckboxes(ref Harass, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use R_false", "Use Smite_false", "Use Items");
+            AddSlider(Harass, "W on x enemy units", 1, 1, 6);
 
-            AddCheckboxes(ref JungleClear, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1_false", "Use E2_false", "Use Items");
+            AddCheckboxes(ref JungleClear, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1_false", "Use E2_false", "Use Smite", "Use Smite for HP", "Use Items");
+            AddSlider(JungleClear, "W on x enemy units", 1, 1, 6);
             AddCheckboxes(ref LaneClear, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1_false", "Use E2_false", "Use Items_false");
+            AddSlider(LaneClear, "W on x enemy units", 3, 1, 6);
             AddCheckboxes(ref LastHit, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1_false", "Use E2_false", "Use Items");
+            AddSlider(LastHit, "W on x enemy units", 2, 1, 6);
 
             AddCheckboxes(ref Killsteal, "Killsteal", "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use Items", "Use Ignite");
-            AddCheckboxes(ref Flee, "Use Q1", "Use Q2", "Use W", "Use E1", "Use E2");
+            AddSlider(Killsteal, "W on x enemy units", 1, 1, 6);
+            AddCheckboxes(ref Flee, "Use E1", "Use E2");
 
             AddCheckboxes(ref Items, "Use Quick Silver Sash", "Use Mercurials Scimitar", "Use Tiamat", "Use Ravenous Hydra", "Use Titanic Hydra", "Use Youmuus", "Use Bilgewater Cutlass", "Use Hextech Gunblade", "Use Blade of the Ruined King");
             AddSlider(Items, "Minions to use Tiamat/Ravenous Hydra On", 2, 1, 10);

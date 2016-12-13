@@ -57,5 +57,26 @@ namespace UnsignedCamille
         {
             return ((10 + (4 * Camille.Level)) * 5) - ((target.HPRegenRate / 2) * 5);
         }
+        public static float Smite(Obj_AI_Base target, string type)
+        {
+            if (target.Type == GameObjectType.AIHeroClient)
+            {
+                if (type == "red")
+                    return 54 + 6 * Camille.Level;
+                else if (type == "blue")
+                    return 20 + 8 * Camille.Level;
+                else
+                {
+                    Console.WriteLine("Smite type: " + type + " does not exist!");
+                    return 0;
+                }
+            }
+            else
+                return new int[] { 0, 390, 410, 430, 450, 480, 510, 540, 570, 600, 640, 680, 720, 760, 800, 850, 900, 950, 1000 }[Camille.Level];
+        }
+        public static float SmiteHeal()
+        {
+            return 100 + (Camille.MaxHealth / 10);
+        }
     }
 }

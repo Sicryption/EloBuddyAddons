@@ -153,5 +153,21 @@ namespace UnsignedCamille
         {
             return enemies.Where(a => a.MeetsCriteria() && sector.IsInside(a.Position(delay))).ToList();
         }
+        public static bool ContainsAny(this string s, bool CaseSensitive, params string[] text)
+        {
+            List<string> temp = text.ToList();
+            if (!CaseSensitive)
+            {
+                List<string> NonCaseSensitiveList = new List<string>();
+                foreach (string str in temp)
+                    NonCaseSensitiveList.Add(str.ToLower());
+                temp = NonCaseSensitiveList;
+            }
+
+            foreach (string str in temp)
+                if (s.ToLower().Contains(str.ToLower()))
+                    return true;
+            return false;
+        }
     }
 }
