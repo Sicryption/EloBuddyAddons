@@ -202,7 +202,7 @@ namespace UnsignedRengar
                     .OrderBy(a => a.Position.WorldToScreen().Distance(Game.CursorPos2D)).FirstOrDefault();
 
                 if (closestEnemy != null && closestEnemy.Distance(Rengar) > 225)
-                    Orbwalker.ForcedTarget = closestEnemy;
+                    Player.IssueOrder(GameObjectOrder.AutoAttack, closestEnemy);
             }
         }
 
@@ -519,7 +519,7 @@ namespace UnsignedRengar
                     
                     //if it did smite them, attack them
                     if(hasDoneActionThisTick)
-                        Orbwalker.ForcedTarget = target;
+                        Player.IssueOrder(GameObjectOrder.AutoAttack, target);
                 }
             }
 
