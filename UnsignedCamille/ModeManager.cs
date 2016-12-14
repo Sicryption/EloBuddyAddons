@@ -429,6 +429,9 @@ namespace UnsignedCamille
         }
         public static void CastE(List<Obj_AI_Base> enemies, bool ks)
         {
+            if (ks)
+                enemies = enemies.Where(a => a.Health < Calculations.E2(a)).ToList();
+
             if (Program.E.IsReady() && !hasDoneActionThisTick && enemies.Count > 0)
             {
                 Obj_AI_Base closestEnemy = enemies.OrderBy(a => a.Distance(Camille)).FirstOrDefault();
