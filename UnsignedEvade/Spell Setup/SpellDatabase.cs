@@ -673,9 +673,20 @@ namespace UnsignedEvade
             //r
             CreateTargetedMissile("CaitlynAceintheHole", "CaitlynAceintheHoleMissile", "Caitlyn", 2000f, 3200f, 2200f, 2200f, SpellInfo.SpellSlot.R).FriendlyName("R").DangerValue(99),
             #endregion
-            //code camille
+            //camille e end position changes based off her movement
             #region Camille
-
+            //q
+            CreatePassiveSpell("CamilleQ", "Camille", "CamilleQ", SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease),
+            CreatePassiveSpell("CamilleQ2", "Camille", "CamilleQ2", SpellInfo.SpellSlot.Q, SpellInfo.CrowdControlType.None, SpellInfo.Buff.AttackDamageIncrease),
+            //w
+            CreateConeSpell("CamilleW", "Camille", "camillewconeslashcharge", 640f, 40f, SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.Slow),
+            //e
+            CreateLinearSkillshotNoDamage("CamilleE", "CamilleEMissile", "Camille", 1100f, 1400f, 1400f, 1400f, 30, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None),
+            CreateLinearSkillshotNoDamage("CamilleE", "CamilleELeftMissile", "Camille", 1100f, 1400f, 1400f, 1400f, 30, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None),
+            CreateLinearSkillshotNoDamage("CamilleE", "CamilleERightMissile", "Camille", 1100f, 1400f, 1400f, 1400f, 30, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.None),
+            CreateLinearDash("CamilleEDash2", "Camille", 800f, 40, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.KnockBack),
+            //r
+            CreateTargetedDash("CamilleR", "Camille", 475f, SpellInfo.SpellSlot.R, SpellInfo.Dashtype.Targeted, SpellInfo.CrowdControlType.None),
             #endregion
             //cassiopeia stun logic 
             //cassiopeia w? data below
@@ -984,7 +995,8 @@ namespace UnsignedEvade
             //w
             CreatePassiveSpell("GarenW", "Garen", "GarenW", SpellInfo.SpellSlot.W, SpellInfo.CrowdControlType.None, SpellInfo.Buff.DamageReduction),
             //e
-            CreateToggleableSelfActive("GarenE", "Garen", "GarenE", 330f, SpellInfo.SpellSlot.E),
+            CreateToggleableSelfActive("GarenE", "Garen", "GarenE", 350f, SpellInfo.SpellSlot.E),
+            CreateToggleableSelfActive("GarenECancel", "Garen", "GarenE", 350f, SpellInfo.SpellSlot.E),
             //r
             //I have not confirmed this range.
             CreateTargetedSpell("GarenR", "Garen", 300f, SpellInfo.SpellSlot.R),
@@ -3785,7 +3797,7 @@ ViktorPowerTransfer
                 SpellName = spellName,
                 ChampionName = championName,
                 BuffName = buffName,
-                SpellType = SpellInfo.SpellTypeInfo.SelfActive,
+                SpellType = SpellInfo.SpellTypeInfo.SelfActiveToggleable,
                 CCtype = ccType,
                 Slot = slot,
             };

@@ -83,5 +83,31 @@ namespace UnsignedEvade
                 }
             }
         }
+
+        public static void OnSpellCreation(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args, SpellInfo info, ref SpellInfo newSpellInstance)
+        {
+            //overrides
+            if (info.SpellName == "AkaliSmokeBomb")
+                newSpellInstance.endPosition += new Vector3(0, 30f, 0);
+            else if (info.SpellName == "MissFortuneBulletTime")
+                newSpellInstance.startingDirection = sender.Direction;
+            else if (info.SpellName == "CamilleW")
+                newSpellInstance.startingDirection = args.End;
+            else if (info.MissileName == "GravesQLineMis")
+            {
+                Tuple<AIHeroClient, Vector3> newGravesQLine = null;
+                for (int i = 0; i < ParticleDatabase.GravesQRewind.Count; i++)
+                    if (ParticleDatabase.GravesQRewind[i].Item1 == (AIHeroClient)sender)
+                    {
+                        newGravesQLine = new Tuple<AIHeroClient, Vector3>((AIHeroClient)sender, newSpellInstance.startPosition);
+                        ParticleDatabase.GravesQRewind.Remove(ParticleDatabase.GravesQRewind[i]);
+                        break;
+                    }
+                if (newGravesQLine != null)
+                    ParticleDatabase.GravesQRewind.Add(newGravesQLine);
+                else
+                    Chat.Print("We have a problem");
+            }
+        }
     }
 }

@@ -54,7 +54,6 @@ namespace UnsignedEvade
             }
         }
 
-
         private static void CreatePolygons()
         {
             //reset polygon list to have no entities
@@ -64,8 +63,8 @@ namespace UnsignedEvade
             foreach(SpellInfo info in SpellDatabase.activeSpells)
             {
                 if (info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshot
-                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell 
-                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithBuff 
+                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell
+                    || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithBuff
                     || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration
                     || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash)
                 {
@@ -74,7 +73,7 @@ namespace UnsignedEvade
                     else
                         SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(info, info.endPosition, info.Radius));
                 }
-                else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveWithBuff)
+                else if (info.SpellType == SpellInfo.SpellTypeInfo.SelfActive || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveWithBuff || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveToggleable || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveNoDamage || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveNoDamageWithBuff)
                     SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularSkillshot(info, info.caster.Position, info.Radius));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.CircularWall)
                     SpellDatabase.Polygons.Add(PolygonCreater.CreateCircularWall(info, info.endPosition, info.Radius, info.SecondRadius));
@@ -130,7 +129,14 @@ namespace UnsignedEvade
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell)
                     SpellDatabase.Polygons.Add(PolygonCreater.CreateCone(info, info.startPosition, info.endPosition, info.ConeDegrees, info.Range));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.ConeSpellWithBuff)
-                    SpellDatabase.Polygons.Add(PolygonCreater.CreateCone(info, info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.ConeDegrees, info.Range));
+                {
+                    if(info.startingDirection == Vector3.Zero || info.SpellName == "MissFortuneBulletTime")
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateCone(info, info.caster.Position, info.caster.Position.Extend(info.caster.Position + info.caster.Direction, info.Range).To3D((int)info.caster.Position.Z), info.ConeDegrees, info.Range));
+                    else
+                        //camille w
+                        SpellDatabase.Polygons.Add(PolygonCreater.CreateCone(info, info.caster.Position, info.caster.Position - (info.startPosition - info.startingDirection), info.ConeDegrees, info.Range));
+
+                }
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.Wall)
                     SpellDatabase.Polygons.Add(PolygonCreater.CreateWall(info, info.startPosition, info.endPosition, info.Width, info.Radius));
                 else if (info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
@@ -232,6 +238,7 @@ namespace UnsignedEvade
                     || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell
                     || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration
                     || info.SpellType == SpellInfo.SpellTypeInfo.SelfActive
+                    || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveNoDamage
                     || info.SpellType == SpellInfo.SpellTypeInfo.ConeSpell
                     || info.SpellType == SpellInfo.SpellTypeInfo.ArcSkillshot)
                 {
@@ -272,6 +279,8 @@ namespace UnsignedEvade
                     || info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff
                     || info.SpellType == SpellInfo.SpellTypeInfo.PassiveSpellWithBuff
                     || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveWithBuff
+                    || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveToggleable
+                    || info.SpellType == SpellInfo.SpellTypeInfo.SelfActiveNoDamageWithBuff
                     || info.SpellType == SpellInfo.SpellTypeInfo.TargetedPassiveSpell)
                 {
                     float timeItTakesToCast = info.Delay + info.Duration + info.TravelTime;
@@ -279,7 +288,8 @@ namespace UnsignedEvade
                     if (info.caster.HasBuff(info.BuffName)
                         || timeSinceCast <= timeItTakesToCast
                         //this is so mf's ult isn't angled away from where it was casted
-                        && (info.startingDirection == null || info.startingDirection == info.caster.Direction))
+                        //
+                        && (info.startingDirection == null || info.SpellName == "CamilleW" || (info.startingDirection == info.caster.Direction && info.SpellName == "MissFortuneBulletTime")))
                         KeepList.Add(info);
                 }
             }
@@ -311,6 +321,7 @@ namespace UnsignedEvade
                 {
                     if (info.missile != null && info.missile.StartPosition != Vector3.Zero
                         && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null
+                        && info.missile.Target != null
                             && ((info.missile.SData != null && info.missile.SData.Name != null
                             && (info.missile.SData.Name == info.MissileName || info.OtherMissileNames.Contains(info.missile.SData.Name)))
                         ||
@@ -357,6 +368,7 @@ namespace UnsignedEvade
             {
                 if (info.missile != null && info.missile.StartPosition != Vector3.Zero
                     && info.missile.EndPosition != Vector3.Zero && info.missile.Name != null
+                    && info.missile.Target != null  
                     && info.missile.EndPosition.Distance(info.missile) <= info.caster.GetAutoAttackRange() * 2)
                     KeepList.Add(info);
             }

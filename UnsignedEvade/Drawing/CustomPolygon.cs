@@ -29,6 +29,13 @@ namespace UnsignedEvade
         }
         public float TimeUntilHitsPosition(Vector3 pos)
         {
+            if (info == null)
+            {
+                //particles fall into play here
+                Chat.Print("This Spell Does Not Have A Spell Info | TimeUntilHitsPos");
+                return 0;
+            }
+
             if (SpellDatabase.GetSpellInfo(info.SpellName).MissileName == "")
                 return Math.Max((info.TimeOfCast + info.Delay) - Game.Time, 0) * 1000;
             else
@@ -53,6 +60,13 @@ namespace UnsignedEvade
         }
         public Vector3 PositionInTime(float time)
         {
+            if(info == null)
+            {
+                //particles fall into play here
+                Chat.Print("This Spell Does Not Have A Spell Info | PosInTime");
+                return Vector3.Zero;
+            }
+
             if (SpellDatabase.GetSpellInfo(info.SpellName).MissileName == "")
             {
                 //if time of spell is after the spell delay, then the position is the end

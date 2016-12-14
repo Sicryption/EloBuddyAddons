@@ -74,27 +74,9 @@ namespace UnsignedEvade
                     else
                         newSpellInstance.endPosition = args.End.To2D().To3D((int)NavMesh.GetHeightForPosition(args.End.X, args.End.Y));
 
-                    //overrides
-                    if (info.SpellName == "AkaliSmokeBomb")
-                        newSpellInstance.endPosition += new Vector3(0, 30f, 0);
-                    else if (info.MissileName == "GravesQLineMis")
-                    {
-                        Tuple<AIHeroClient, Vector3> newGravesQLine = null;
-                        for (int i = 0; i < ParticleDatabase.GravesQRewind.Count; i++)
-                            if (ParticleDatabase.GravesQRewind[i].Item1 == (AIHeroClient)sender)
-                            {
-                                newGravesQLine = new Tuple<AIHeroClient, Vector3>((AIHeroClient)sender, newSpellInstance.startPosition);
-                                ParticleDatabase.GravesQRewind.Remove(ParticleDatabase.GravesQRewind[i]);
-                                break;
-                            }
-                        if (newGravesQLine != null)
-                            ParticleDatabase.GravesQRewind.Add(newGravesQLine);
-                        else
-                            Chat.Print("We have a problem");
-                    }
+                    ExtraSpellOverides.OnSpellCreation(sender, args, info, ref newSpellInstance);
 
                     newSpellInstance.MissileName = "";
-                    newSpellInstance.startingDirection = sender.Direction;
                     newSpellInstance.caster = sender;
                     newSpellInstance.CreationLocation = location;
                     newSpellInstance.TimeOfCast = Game.Time;
