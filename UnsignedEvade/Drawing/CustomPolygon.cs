@@ -16,13 +16,34 @@ namespace UnsignedEvade
     {
         public Geometry.Polygon polygon;
         public SpellInfo info;
+        public ParticleInfo partinfo;
+        public Obj_AI_Minion trap;
         
         public CustomPolygon(Geometry.Polygon poly, SpellInfo spellInfo)
         {
             polygon = poly;
             info = spellInfo;
         }
+        public CustomPolygon(Geometry.Polygon poly, ParticleInfo particleInfo)
+        {
+            polygon = poly;
+            partinfo = particleInfo;
+        }
 
+        public bool IsEnemy()
+        {
+            if (info != null)
+                return info.caster.IsEnemy;
+            else if (partinfo != null)
+                return partinfo.particle.IsEnemy;
+            else if (trap != null)
+                return trap.IsEnemy;
+            else
+            {
+                Console.WriteLine("This object isn't a unit!");
+                return false;
+            }
+        }
         public float TimeUntilHitsChampion(AIHeroClient champion)
         {
             return TimeUntilHitsPosition(champion.Position);
@@ -37,7 +58,9 @@ namespace UnsignedEvade
             }
 
             if (SpellDatabase.GetSpellInfo(info.SpellName).MissileName == "")
+            {
                 return Math.Max((info.TimeOfCast + info.Delay) - Game.Time, 0) * 1000;
+            }
             else
             {
                 float distance = 0;

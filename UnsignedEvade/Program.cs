@@ -54,6 +54,21 @@ namespace UnsignedEvade
             if (_Player.IsDead)
                 return;
 
+            /*foreach(SpellInfo inf in SpellDatabase.activeSpells)
+            {
+                if(inf.missile != null)
+                {
+                    if(inf.missilePosTest.Distance(inf.missile) <= 50)
+                    {
+                        inf.missilePosTest = inf.missile.Position;
+                    }
+                    else
+                    {
+                        Chat.Print(inf.oldTarget.Name + "|" + inf.missile.Target.Name);
+                    }
+                }
+            }*/
+
             DodgeManager.HandleDodging();
         }
 

@@ -29,7 +29,8 @@ namespace UnsignedEvade
             MissileName = "",
             SpellName = "",
             BuffName = "";
-        public bool CanVaryInLength = false;
+        public bool CanVaryInLength = false,
+            CanBeSpellShielded = true;
         public string[] OtherMissileNames = new string[0];
         public SpellSlot Slot = SpellSlot.None;
         public CrowdControlType CCtype = CrowdControlType.None;
@@ -40,8 +41,10 @@ namespace UnsignedEvade
 
         public Vector3 startPosition = Vector3.Zero,
             endPosition = Vector3.Zero,
-            startingDirection;
+            startingDirection = Vector3.Zero,
+            missilePosTest = Vector3.Zero;
         public GameObject target = null;
+        public GameObject oldTarget = null;
         public Obj_AI_Base caster = null;
         public MissileClient missile = null;
 

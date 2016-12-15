@@ -109,5 +109,19 @@ namespace UnsignedEvade
                     Chat.Print("We have a problem");
             }
         }
+        public static void OnMissileCreation(Obj_AI_Base sender, MissileClient projectile, SpellInfo info, ref SpellInfo newSpellInstance)
+        {
+            //overrides
+            if (info.MissileName == "GravesQReturn")
+                newSpellInstance.endPosition = ParticleDatabase.GravesQRewind.Where(a => a.Item1 == (AIHeroClient)projectile.SpellCaster).FirstOrDefault().Item2;
+            else if (info.MissileName == "GnarQMissileReturn")
+                newSpellInstance.endPosition = projectile.StartPosition.Extend(projectile.EndPosition, 3000).To3DFromNavMesh();
+            else if (info.MissileName == "CaitlynPiltoverPeacemaker2")
+            {
+                SpellInfo caitQ1Spell = SpellDatabase.activeSpells.FirstOrDefault(a => a.caster.Name == sender.Name && a.MissileName == "CaitlynPiltoverPeacemaker");
+
+                newSpellInstance.endPosition = caitQ1Spell.startPosition.Extend(caitQ1Spell.endPosition, 1400f).To3DFromNavMesh();
+            }
+        }
     }
 }

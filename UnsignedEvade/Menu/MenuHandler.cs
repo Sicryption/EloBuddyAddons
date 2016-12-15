@@ -30,8 +30,9 @@ namespace UnsignedEvade
                 "Show Buff Gains_false", "Show Buff Losses_false", "Draw Player Direction_false");
 
             AddSlider(mainChampionEvadeMenu, "Flash Danger Level", 8, 0, 10);
+            AddSlider(mainChampionEvadeMenu, "Spell Shield Danger Level", 5, 0, 10);
 
-            foreach(string s in EntityManager.Heroes.AllHeroes.GetChampionNames())
+            foreach (string s in EntityManager.Heroes.AllHeroes.GetChampionNames())
             {
                 Menu champMenu = AddSubMenu(mainChampionEvadeMenu, s);
 

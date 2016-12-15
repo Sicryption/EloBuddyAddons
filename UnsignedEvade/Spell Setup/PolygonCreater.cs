@@ -83,7 +83,7 @@ namespace UnsignedEvade
             
             return new CustomPolygon(circle, info);
         }
-        public static CustomPolygon CreateRectangleAroundPoint(int length, int width, Vector3 position, int xoffset = 0, int yoffset = 0)
+        public static CustomPolygon CreateRectangleAroundPoint(ParticleInfo info, int length, int width, Vector3 position, int xoffset = 0, int yoffset = 0)
         {
             Geometry.Polygon rect = new Geometry.Polygon();
 
@@ -92,7 +92,7 @@ namespace UnsignedEvade
             rect.Add(new Vector3(position.X - (length / 2) + xoffset, position.Y + (width / 2) + yoffset, position.Z));
             rect.Add(new Vector3(position.X + (length / 2) + xoffset, position.Y + (width / 2) + yoffset, position.Z));
             
-            return new CustomPolygon(rect, null);
+            return new CustomPolygon(rect, info);
         }
         public static CustomPolygon CreateCircularWall(SpellInfo info, Vector3 position, float radius, float secondRadius)
         {

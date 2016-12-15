@@ -45,7 +45,7 @@ namespace UnsignedEvade
             if (info.GetChampionSpell() != null &&
                 info.startingAmmoCount != -1)
                 return true;
-
+            
             return info.GetChampionSpell() != null && (!info.IsOnCooldown() || (info.BuffName != "" && info.caster.HasBuff(info.BuffName)));// && info.SpellName == info.GetChampionSpell().Name;
         }
         public static bool IsOnCooldown(this SpellInfo info)
@@ -128,17 +128,17 @@ namespace UnsignedEvade
         }
         public static bool IsSafe(this AIHeroClient champ)
         {
-            if (SpellDatabase.Polygons.Any(a => a.polygon.IsInside(champ.Position)))
+            if (SpellDatabase.Polygons.Where(a => a.IsEnemy()).Any(a => a.polygon.IsInside(champ.Position)))
                 return false;
             
-            return SpellDatabase.Polygons.All(polygon => polygon.polygon.IsOutside(champ.Position.To2D()));
+            return SpellDatabase.Polygons.Where(a => a.IsEnemy()).All(polygon =>polygon.polygon.IsOutside(champ.Position.To2D()));
         }
         public static bool IsSafe(this Vector3 pos, AIHeroClient champ)
         {
-            if (SpellDatabase.Polygons.Any(a => a.polygon.IsInside(pos)))
+            if (SpellDatabase.Polygons.Where(a => a.IsEnemy()).Any(a => a.polygon.IsInside(pos)))
                 return false;
 
-            return SpellDatabase.Polygons.All(polygon => polygon.polygon.IsOutside(pos.To2D()));
+            return SpellDatabase.Polygons.Where(a => a.IsEnemy()).All(polygon => polygon.polygon.IsOutside(pos.To2D()));
         }
         public static float DistanceFromClosestEnemy(this Vector3 pos)
         {
@@ -150,17 +150,17 @@ namespace UnsignedEvade
         public static CustomPolygon FindSpellInfoWithClosestTime(this AIHeroClient champ)
         {
             //make sure the champions hitbox isnt inside the unsafe area
-            List<CustomPolygon> polys = SpellDatabase.Polygons.Where(a => champ.BBox.GetCorners().Any(b => a.polygon.IsInside(b))).ToList();
+            List<CustomPolygon> polys = SpellDatabase.Polygons.Where(a => a.IsEnemy() && champ.BBox.GetCorners().Any(b => a.polygon.IsInside(b))).ToList();
             
             return polys.OrderBy(a => a.TimeUntilHitsChampion(champ)).FirstOrDefault();
         }
         public static CustomPolygon FindSpellInfoWithClosestTime(this Vector3 pos)
         {
-            return SpellDatabase.Polygons.OrderBy(a => a.TimeUntilHitsPosition(pos)).FirstOrDefault();
+            return SpellDatabase.Polygons.Where(a=> a.IsEnemy()).OrderBy(a => a.TimeUntilHitsPosition(pos)).FirstOrDefault();
         }
         public static float GetSpellInfoWithClosestTime(this Vector3 pos)
         {
-            return SpellDatabase.Polygons.OrderBy(a => a.TimeUntilHitsPosition(pos)).FirstOrDefault().TimeUntilHitsPosition(pos);
+            return SpellDatabase.Polygons.Where(a=>a.IsEnemy()).OrderBy(a => a.TimeUntilHitsPosition(pos)).FirstOrDefault().TimeUntilHitsPosition(pos);
         }
         public static Vector3 To3DFromNavMesh(this Vector2 pos)
         {
@@ -168,7 +168,7 @@ namespace UnsignedEvade
         }
         public static List<CustomPolygon> GetPolygonsThatHitMe(this AIHeroClient me)
         {
-            return SpellDatabase.Polygons.Where(a => a.polygon.IsInside(me.Position.To2D())).ToList();
+            return SpellDatabase.Polygons.Where(a => a.IsEnemy() && a.polygon.IsInside(me.Position.To2D())).ToList();
         }
         public static SpellInfo FriendlyName(this SpellInfo info, string name)
         {
@@ -179,6 +179,10 @@ namespace UnsignedEvade
         {
             info.DangerValue = value;
             return info;
+        }
+        public static List<SpellInfo> GetSpells(this AIHeroClient self)
+        {
+            return SpellDatabase.SpellList.Where(a => a.ChampionName == self.ChampionName).ToList();
         }
     }
 }

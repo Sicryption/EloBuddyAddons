@@ -11,6 +11,7 @@ namespace UnsignedEvade
     class ParticleInfo
     {
         public string ParticleName;
+        public Obj_GeneralParticleEmitter particle;
 
         public int Width,
             Length,

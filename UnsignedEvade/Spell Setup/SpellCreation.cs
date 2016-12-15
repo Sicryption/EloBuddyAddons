@@ -41,6 +41,8 @@ namespace UnsignedEvade
 
             #region Adding Spell to Active Spells
             List<SpellInfo> spells = SpellDatabase.GetSpells(args.SData.Name);
+            //having multiple spells only happen if they have the same missile name. Gnar has 2 Q's with the same spell name, but with different missile names
+            spells = spells.Where(a => a.MissileName == spells[0].MissileName).ToList();
             foreach (SpellInfo info in spells)
             {
                 if (info != null
@@ -56,7 +58,13 @@ namespace UnsignedEvade
                     newSpellInstance.target = args.Target;
 
                     if ((!info.CanVaryInLength || args.Start.Distance(args.End) >= info.Range)
-                        && (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell || info.SpellType == SpellInfo.SpellTypeInfo.LinearDash || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration))
+                        && (info.SpellType == SpellInfo.SpellTypeInfo.LinearSkillshot 
+                        || info.SpellType == SpellInfo.SpellTypeInfo.CircularSkillshotDash 
+                        || info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithBuff
+                        || info.SpellType == SpellInfo.SpellTypeInfo.LinearSpellWithDuration
+                        || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpell
+                        || info.SpellType == SpellInfo.SpellTypeInfo.LinearDash
+                        || info.SpellType == SpellInfo.SpellTypeInfo.CircularSpellWithDuration))
                         newSpellInstance.endPosition = CalculateEndPosition(args.Start, args.End, info.Range);
                     else if (info.DashType == SpellInfo.Dashtype.TargetedLinear && info.target != null)
                         newSpellInstance.endPosition = info.target.Position;
@@ -172,12 +180,16 @@ namespace UnsignedEvade
                         newSpellInstance.endPosition = projectile.EndPosition;
 
                     //overrides
-                    if (info.MissileName == "GravesQReturn")
-                        newSpellInstance.endPosition = ParticleDatabase.GravesQRewind.Where(a => a.Item1 == (AIHeroClient)projectile.SpellCaster).FirstOrDefault().Item2;
+                    ExtraSpellOverides.OnMissileCreation(projectile.SpellCaster, projectile, info, ref newSpellInstance);
                     
                     newSpellInstance.target = projectile.Target;
                     newSpellInstance.caster = projectile.SpellCaster;
                     newSpellInstance.missile = projectile;
+                    if (projectile != null)
+                    {
+                        newSpellInstance.missilePosTest = projectile.Position;
+                        newSpellInstance.oldTarget = projectile.Target;
+                    }
                     newSpellInstance.CreationLocation = SpellInfo.SpellCreationLocation.OnObjectCreate;
                     newSpellInstance.TimeOfCast = Game.Time;
 
