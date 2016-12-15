@@ -1492,7 +1492,7 @@ namespace UnsignedEvade
             CreateLinearSkillshot("KogMawVoidOozeMissile", "KogMawVoidOozeMissile", "KogMaw", 1500f, 1400f, 1400f, 1400f, 120f, false, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
             CreateLinearSpell("KogMawVoidOoze", "KogMaw", 4f, 1500f, 120f, SpellInfo.SpellSlot.E, SpellInfo.CrowdControlType.Slow),
             //r
-            CreateCircularSpell("KogMawLivingArtillery", "KogMaw", 1200f, 240f, true, 0.6f, SpellInfo.SpellSlot.R, SpellInfo.Buff.None),
+            CreateCircularSpell("KogMawLivingArtillery", "KogMaw", 1200f, 120f, true, 0.6f, SpellInfo.SpellSlot.R, SpellInfo.Buff.None),
             #endregion
             //LB Ult spells are coded as when she has the buff: " "
             #region LeBlanc
