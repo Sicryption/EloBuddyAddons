@@ -39,7 +39,7 @@ namespace UnsignedJarvanIV
             if (menu.GetCheckboxValue("Use E") && bestEPos.HitNumber >= 1)
                 CastE(bestEPos.CastPosition);
 
-            if (menu.GetCheckboxValue("Use R") && bestEPos.HitNumber >= 1)
+            if (menu.GetCheckboxValue("Use R"))
                 CastR(enemies, false);
 
             if (menu.GetCheckboxValue("Use Items"))
@@ -104,7 +104,7 @@ namespace UnsignedJarvanIV
             if (menu.GetCheckboxValue("Use E") && bestEPos.HitNumber >= 1)
                 CastE(bestEPos.CastPosition);
 
-            if (menu.GetCheckboxValue("Use R") && bestEPos.HitNumber >= 1)
+            if (menu.GetCheckboxValue("Use R"))
                 CastR(enemies, true);
 
             if (menu.GetCheckboxValue("Use Items"))
@@ -155,7 +155,7 @@ namespace UnsignedJarvanIV
             if (menu.GetCheckboxValue("Use E") && bestEPos.HitNumber >= 1)
                 CastE(bestEPos.CastPosition);
 
-            if (menu.GetCheckboxValue("Use R") && bestEPos.HitNumber >= 1)
+            if (menu.GetCheckboxValue("Use R"))
                 CastR(enemies, false);
 
             if (menu.GetCheckboxValue("Use Items"))
