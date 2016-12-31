@@ -43,6 +43,12 @@ namespace UnsignedVi
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
             Drawing.OnEndScene += Drawing_OnEndScene;
+            Orbwalker.OnPostAttack += Orbwalker_OnPostAttack;
+        }
+
+        private static void Orbwalker_OnPostAttack(AttackableUnit target, EventArgs args)
+        {
+            ModeHandler.LastAutoTime = Game.Time;
         }
 
         private static void Drawing_OnEndScene(EventArgs args)

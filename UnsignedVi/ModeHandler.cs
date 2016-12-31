@@ -14,6 +14,7 @@ namespace UnsignedVi
     {
         public static AIHeroClient Vi;
         public static bool hasDoneActionThisTick = false;
+        public static float LastAutoTime = 0;
 
         public static void Combo()
         {
@@ -346,7 +347,7 @@ namespace UnsignedVi
         }
         public static void CastE(List<Obj_AI_Base> enemies)
         {
-            if (!Program.E.IsReady() || hasDoneActionThisTick || !Vi.IsAutoCanceling(enemies))
+            if (!Program.E.IsReady() || hasDoneActionThisTick || Game.Time - LastAutoTime > 0.25f)
                 return;
 
             int bestCount = 0;
@@ -368,7 +369,8 @@ namespace UnsignedVi
             {
                 Orbwalker.ResetAutoAttack();
                 hasDoneActionThisTick = Program.E.Cast();
-                Orbwalker.ForcedTarget = bestEnemy;
+                if (hasDoneActionThisTick)
+                    Player.IssueOrder(GameObjectOrder.AutoAttack, bestEnemy);
             }
         }
         public static void CastR(List<Obj_AI_Base> enemies)

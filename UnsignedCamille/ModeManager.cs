@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EloBuddy;
 using EloBuddy.SDK;
 using EloBuddy.SDK.Menu;
+using EloBuddy.SDK.Spells;
 using SharpDX;
 
 namespace UnsignedCamille
@@ -375,7 +376,7 @@ namespace UnsignedCamille
         
         public static void UseIgnite(List<Obj_AI_Base> enemies, bool ks)
         {
-            Spell.Targeted ignite = new Spell.Targeted(Camille.GetSpellSlotFromName("SummonerDot"), 600, DamageType.True);
+            Spell.Targeted ignite = SummonerSpells.Ignite;
 
             if (ignite.Slot == SpellSlot.Unknown || !ignite.IsReady())
                 return;
