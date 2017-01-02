@@ -48,7 +48,7 @@ namespace UnsignedCamille
             AddCheckboxes(ref LastHit, "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1_false", "Use E2_false", "Use Items");
             AddSlider(LastHit, "W on x enemy units", 2, 1, 6);
 
-            AddCheckboxes(ref Killsteal, "Killsteal", "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use Items", "Use Ignite");
+            AddCheckboxes(ref Killsteal, "Killsteal", "Use Q1", "Use Q2", "Use W", /*"Force Follow in W Range",*/ "Use E1", "Use E2", "Use Smite", "Use Items", "Use Ignite");
             AddSlider(Killsteal, "W on x enemy units", 1, 1, 6);
             AddCheckboxes(ref Flee, "Use E1", "Use E2");
 
