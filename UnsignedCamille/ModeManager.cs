@@ -440,7 +440,7 @@ namespace UnsignedCamille
                 {
                     Vector3 closestPos = closestEnemy.Position;
 
-                    if (Program.E.IsReady() && Program.E.Name == "CamilleE" && Game.Time - LastECheckTime > 0.25f)
+                    if (Program.E.Name == "CamilleE" && Game.Time - LastECheckTime > 0.25f)
                     {
                         List<Vector2> wallPositions = Program.GetWallPositions(Camille.Position);
                         Vector2 closestToEnemyPos = Vector2.Zero;
@@ -451,7 +451,7 @@ namespace UnsignedCamille
                             List<Vector2> dashPoses = Program.GetDashablePositions(wallPos.To3D());
                             foreach (Vector2 dashPos in dashPoses)
                             {
-                                if (dashPos.Distance(Game.CursorPos) <= closestToEnemyPosDistance)
+                                if (dashPos.Distance(Game.CursorPos) < closestToEnemyPosDistance)
                                 {
                                     closestToEnemyPos = wallPos;
                                     closestToEnemyPosDistance = dashPos.Distance(closestPos);
@@ -463,14 +463,14 @@ namespace UnsignedCamille
                         if (closestToEnemyPos != Vector2.Zero)
                             CastE(closestToEnemyPos.To3D());
                     }
-                    else if (Program.E.IsReady() && Program.E.Name == "CamilleEDash2" && Game.Time - LastECheckTime > 0.1)
+                    else if (Program.E.Name == "CamilleEDash2" && Game.Time - LastECheckTime > 0.1)
                     {
                         Vector2 closestToEnemyPos = Vector2.Zero;
                         float closestToEnemyPosDistance = Camille.Distance(closestEnemy);
                         List<Vector2> dashPoses = Program.GetDashablePositions(Camille.Position);
                         foreach (Vector2 dashPos in dashPoses)
                         {
-                            if (dashPos.Distance(closestPos) <= closestToEnemyPosDistance)
+                            if (dashPos.Distance(closestPos) < closestToEnemyPosDistance)
                             {
                                 closestToEnemyPos = dashPos;
                                 closestToEnemyPosDistance = dashPos.Distance(closestPos);
