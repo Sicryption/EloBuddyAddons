@@ -344,7 +344,8 @@ namespace UnsignedYasuo
                 //not being knocked back by dragon
                 && !Yasuo.HasBuff("moveawaycollision")
                 //not standing on raka silence
-                && !Yasuo.HasBuff("sorakaepacify"))
+                && !Yasuo.HasBuff("sorakaepacify")
+                && !Yasuo.HasBuff("plantsatchelknockback"))
                 didActionThisTick = QSS.Cast();
             #endregion
 
@@ -362,7 +363,8 @@ namespace UnsignedYasuo
                 //not being knocked back by dragon
                 && !Yasuo.HasBuff("moveawaycollision")
                 //not standing on raka silence
-                && !Yasuo.HasBuff("sorakaepacify"))
+                && !Yasuo.HasBuff("sorakaepacify")
+                && !Yasuo.HasBuff("plantsatchelknockback"))
                 didActionThisTick = MercurialsScimitar.Cast();
             #endregion
 

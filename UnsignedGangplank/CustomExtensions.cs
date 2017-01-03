@@ -70,7 +70,8 @@ namespace UnsignedGangplank
                 //not being knocked back by dragon
                 && !self.HasBuff("moveawaycollision")
                 //not standing on raka silence
-                && !self.HasBuff("sorakaepacify");
+                && !self.HasBuff("sorakaepacify")
+                && !self.HasBuff("plantsatchelknockback");
         }
         public static bool MeetsCriteria(this InventorySlot item)
         {
