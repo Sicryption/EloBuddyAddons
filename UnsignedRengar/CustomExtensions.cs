@@ -142,6 +142,29 @@ namespace UnsignedRengar
         }
         public static Vector3 GetBestLinearPredictionPos(this Spell.Skillshot self, List<Obj_AI_Base> enemies, Vector3 sourcePosition, out int enemiesHit)
         {
+            PredictionResult bestPR = null;
+
+            foreach(Obj_AI_Base enemy in enemies)
+            {
+                var pr = Prediction.Position.PredictLinearMissile(enemy, self.Range, self.Radius, self.CastDelay, self.Speed, self.AllowedCollisionCount, Player.Instance.Position);
+
+                if (bestPR == null || pr.HitChancePercent > bestPR.HitChancePercent)
+                    bestPR = pr;
+             }
+
+            if (bestPR != null)
+            {
+                enemiesHit = bestPR.CollisionObjects.Count() + 1;
+                return bestPR.CastPosition;
+            }
+            else
+            {
+                enemiesHit = 0;
+                return Vector3.Zero;
+            }
+
+
+            /*
             enemiesHit = 0;
 
             enemies = enemies.Where(a => a.MeetsCriteria() && a.Position(self.CastDelay).IsInRange(sourcePosition, self.Range)).ToList();
@@ -185,7 +208,7 @@ namespace UnsignedRengar
             if (bestPos != null)
                 return sourcePosition.Extend(bestPos.Item2, self.Range / 2).To3D((int)sourcePosition.Z);
             else
-                return Vector3.Zero;
+                return Vector3.Zero;*/
         }
         public static int EnemiesHitInSectorAndRectangle(this Geometry.Polygon.Sector sector, Geometry.Polygon.Rectangle rect, List<Obj_AI_Base> enemies, int delay)
         {

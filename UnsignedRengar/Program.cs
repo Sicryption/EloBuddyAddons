@@ -48,7 +48,7 @@ namespace UnsignedRengar
             W = new Spell.Active(SpellSlot.W, 450, DamageType.Magical);
             E = new Spell.Skillshot(SpellSlot.E, 1000, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 250, 1500, 70, DamageType.Physical)
             {
-                AllowedCollisionCount = 1,
+                AllowedCollisionCount = 0,
                 MinimumHitChance = EloBuddy.SDK.Enumerations.HitChance.High,
             };
             R = new Spell.Active(SpellSlot.R, 2000);
