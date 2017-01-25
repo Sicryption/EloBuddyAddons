@@ -44,7 +44,7 @@ namespace UnsignedYasuo
                 dmgModifier += Yasuo.GetBuff("yasuodashscalar").Count * 0.25f;
 
             return Yasuo.CalculateDamageOnUnit(target, DamageType.Magical,
-                dmgModifier * (50 + (20 * Program.E.Level)) + (0.6f * Yasuo.FlatMagicDamageMod));
+                dmgModifier * (50 + (10 * Program.E.Level)) + (0.6f * Yasuo.FlatMagicDamageMod) + (0.2f * (Yasuo.TotalAttackDamage - Yasuo.BaseAttackDamage)));
         }
         public static float Ignite(Obj_AI_Base target)
         {
