@@ -10,8 +10,6 @@ namespace Template
 {
     internal class Program
     {
-        public static Menu menu;
-
         private static void Main(string[] args)
         {
             Loading.OnLoadingComplete += Loading_OnLoadingComplete;
@@ -19,6 +17,8 @@ namespace Template
 
         private static void Loading_OnLoadingComplete(EventArgs args)
         {
+            MenuHandler.Initialize();
+
             Game.OnTick += Game_OnTick;
             Drawing.OnDraw += Drawing_OnDraw;
         }

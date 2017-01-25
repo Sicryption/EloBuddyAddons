@@ -20,6 +20,7 @@ namespace Template
         public static void Initialize()
         {
             #region CreateMenus
+            mainMenu = MainMenu.AddMenu("Main Menu", "Main Menu");
             #endregion
 
             #region Set Menu Values
