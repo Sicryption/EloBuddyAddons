@@ -14,7 +14,7 @@ namespace KhaZix
     {
         public static bool MeetsCriteria(this Obj_AI_Base target)
         {
-            if (!target.IsDead && target.IsVisible && !target.IsInvulnerable && target.IsTargetable && target.IsHPBarRendered)
+            if (!target.IsDead && target.IsVisible && !target.IsInvulnerable && target.IsTargetable && target.IsHPBarRendered && target.IsInRange(Player.Instance, 2000))
                 return true;
             return false;
         }
