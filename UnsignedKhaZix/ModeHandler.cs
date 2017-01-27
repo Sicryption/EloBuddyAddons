@@ -21,6 +21,9 @@ namespace KhaZix
             Menu menu = MenuHandler.Combo;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
+            if (enemies.Count <= 0)
+                return;
+
             if (menu.GetCheckboxValue("Use Q"))
                 CastQ(enemies, false, menu);
             if (menu.GetCheckboxValue("Use W"))
@@ -40,6 +43,9 @@ namespace KhaZix
             Menu menu = MenuHandler.Harass;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
+            if (enemies.Count <= 0)
+                return;
+
             if (menu.GetCheckboxValue("Use Q"))
                 CastQ(enemies, false, menu);
             if (menu.GetCheckboxValue("Use W"))
@@ -57,6 +63,9 @@ namespace KhaZix
 
             Menu menu = MenuHandler.AutoHarass;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
+            
+            if (enemies.Count <= 0)
+                return;
 
             if (menu.GetCheckboxValue("Use Q"))
                 CastQ(enemies, false, menu);
@@ -72,6 +81,9 @@ namespace KhaZix
         {
             Menu menu = MenuHandler.JungleClear;
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.Monsters.ToList().ToObj_AI_BaseList();
+
+            if (enemies.Count <= 0)
+                return;
 
             if (menu.GetCheckboxValue("Use Q"))
                 CastQ(enemies, false, menu);
@@ -89,7 +101,10 @@ namespace KhaZix
         {
             Menu menu = MenuHandler.Killsteal;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
-            
+
+            if (enemies.Count <= 0)
+                return;
+
             if (menu.GetCheckboxValue("Use Q"))
                 CastQ(enemies, true, null);
             if (menu.GetCheckboxValue("Use W"))
@@ -107,6 +122,9 @@ namespace KhaZix
             Menu menu = MenuHandler.Flee;
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
+            if (enemies.Count <= 0)
+                return;
+
             if (menu.GetCheckboxValue("Use W"))
                 CastW(enemies, false, null);
             if (menu.GetCheckboxValue("E to Cursor"))
@@ -119,6 +137,9 @@ namespace KhaZix
         {
             Menu menu = MenuHandler.LaneClear;
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList();
+
+            if (enemies.Count <= 0)
+                return;
 
             if (menu.GetCheckboxValue("Use Q") || menu.GetCheckboxValue("Use Q for Last Hit"))
                 CastQ(enemies, menu.GetCheckboxValue("Use Q for Last Hit"), menu);
@@ -134,6 +155,9 @@ namespace KhaZix
         {
             Menu menu = MenuHandler.LastHit;
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList();
+
+            if (enemies.Count <= 0)
+                return;
 
             if (menu.GetCheckboxValue("Use Q"))
                 CastQ(enemies, true, menu);
