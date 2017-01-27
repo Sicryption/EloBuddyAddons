@@ -12,13 +12,13 @@ namespace KhaZix
 {
     internal class Program
     {
-        public static Spell.Targeted Q => new Spell.Targeted(SpellSlot.Q, (uint)(Player.Instance.Spellbook.GetSpell(SpellSlot.E).Name.Contains("Long") ? 375 : 325), DamageType.Physical);
-        public static Spell.Skillshot W => new Spell.Skillshot(SpellSlot.W, 1025, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 250, 1700, 70, DamageType.Physical);
+        public static Spell.Targeted Q;
+        public static Spell.Skillshot W;
         //radius is 300 so width is 600
-        public static Spell.Skillshot E => new Spell.Skillshot(SpellSlot.E, (uint)(Player.Instance.Spellbook.GetSpell(SpellSlot.E).Name.Contains("Long") ? 900 : 700), EloBuddy.SDK.Enumerations.SkillShotType.Circular, 250, 1000, 600, DamageType.Physical);
-        public static Spell.Active R => new Spell.Active(SpellSlot.R, Kha.HasBuff("khazixrstealth")?0:(uint)(1.25f * (Player.Instance.MoveSpeed * 1.4f)));
+        public static Spell.Skillshot E;
+        public static Spell.Active R;
 
-        public static AIHeroClient Kha => Player.Instance;
+        public static AIHeroClient Kha = null;
 
         private static void Main(string[] args)
         {
@@ -27,8 +27,16 @@ namespace KhaZix
 
         private static void Loading_OnLoadingComplete(EventArgs args)
         {
+            Kha = Player.Instance;
             if (Kha.Hero != Champion.Khazix)
                 return;
+
+
+            Q = new Spell.Targeted(SpellSlot.Q, (uint)(Player.Instance.Spellbook.GetSpell(SpellSlot.E).Name.Contains("Long") ? 375 : 325), DamageType.Physical);
+            //radius is 300 so width is 600
+            W = new Spell.Skillshot(SpellSlot.W, 1025, EloBuddy.SDK.Enumerations.SkillShotType.Linear, 250, 1700, 70, DamageType.Physical);
+            E = new Spell.Skillshot(SpellSlot.E, (uint)(Player.Instance.Spellbook.GetSpell(SpellSlot.E).Name.Contains("Long") ? 900 : 700), EloBuddy.SDK.Enumerations.SkillShotType.Circular, 250, 1000, 600, DamageType.Physical);
+            R = new Spell.Active(SpellSlot.R, Kha.HasBuff("khazixrstealth") ? 0 : (uint)(1.25f * (Player.Instance.MoveSpeed * 1.4f)));
 
             MenuHandler.Initialize();
 
@@ -89,7 +97,12 @@ namespace KhaZix
             if (Kha.IsDead)
                 return;
 
-            ModeHandler.hasDoneActionThisTick = false;
+            Q.Range = (uint)(Q.Name.Contains("Long") ? 375 : 325);
+            //radius is 300 so width is 600
+            E.Range = (uint)(E.Name.Contains("Long") ? 900 : 700);
+            R.Range = Kha.HasBuff("khazixrstealth") ? 0 : (uint)(1.25f * (Player.Instance.MoveSpeed * 1.4f));
+
+        ModeHandler.hasDoneActionThisTick = false;
 
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                 ModeHandler.Combo();

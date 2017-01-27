@@ -111,7 +111,7 @@ namespace KhaZix
                 CastW(enemies, false, null);
             if (menu.GetCheckboxValue("E to Cursor"))
                 CastE(Game.CursorPos);
-            if (menu.GetCheckboxValue("Use R"))
+            if (menu.GetCheckboxValue("Use R") && Champion.CountEnemyHeroesInRangeWithPrediction(1200, 250) > 1)
                 CastR();
         }
 
@@ -245,7 +245,7 @@ namespace KhaZix
                 }
 
                 if (bestPrediction != null)
-                    hasDoneActionThisTick = Program.E.Cast(bestPrediction.CastPosition);
+                    CastE(bestPrediction.CastPosition);
             }
 
             if (eIntoAARange)
@@ -253,10 +253,10 @@ namespace KhaZix
         }
         public static void CastE(Vector3 pos)
         {
-            if (hasDoneActionThisTick || pos == null || pos.IsZero || !Program.E.IsReady() || !pos.IsInRange(Champion, Program.E.Range))
+            if (hasDoneActionThisTick || pos == null || pos.IsZero || !Program.E.IsReady())
                 return;
 
-            hasDoneActionThisTick = Program.E.Cast(pos);
+            hasDoneActionThisTick = Program.E.Cast((pos.IsInRange(Champion, Program.E.Range))?pos:Champion.Position.Extend(pos, Program.E.Range - 1).To3D());
         }
 
         public static void CastR()
