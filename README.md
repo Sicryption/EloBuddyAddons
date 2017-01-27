@@ -30,6 +30,9 @@ Unsigned Minigames
 Unsigned Gangplank:
 - https://www.elobuddy.net/topic/42596-620-unsigned-gangplank/
 
+Unsigned Kha'Zix:
+- https://www.elobuddy.net/topic/48291-updated-unsigned-khazix-1000-best-logic/
+
 Unsigned Evade:
 - The currently uploaded version is the last public version I will upload. It is, currently, a month outdated and has nothing but basic dodging logic. I have continued to work on Unsigned Evade and will continue to work on it. I don't have any plans to release the updated version. I may update spell information every once in a while to keep the spell database up-to-date.
 - UnsignedEvade, unlike other evades, can dodge ALL spells including spells casted instantaneously (Annie R, Amumu R, Katarina E) and can stop spells from ever being casted with forms of CC or denial (Leona Q on Annie R [if Leona's AA speed is less than 0.25], Morgana R against Zhonyas [Morgana's Ult will fail to cast if zhonyas is casted].
