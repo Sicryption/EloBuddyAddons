@@ -22,11 +22,11 @@ namespace KhaZix
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
             if (menu.GetCheckboxValue("Use Q"))
-                CastQ(enemies, false);
+                CastQ(enemies, false, menu);
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, menu);
             if (menu.GetCheckboxValue("Use E"))
-                CastE(enemies, false);
+                CastE(enemies, false, menu, -1, true);
             if (menu.GetCheckboxValue("Use R") && Champion.Position.CountEnemyHeroesInRangeWithPrediction((int)Champion.GetAutoAttackRange(), 250) >= 1)
                 CastR();
             if (menu.GetCheckboxValue("Use Items"))
@@ -41,11 +41,11 @@ namespace KhaZix
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
             if (menu.GetCheckboxValue("Use Q"))
-                CastQ(enemies, false);
+                CastQ(enemies, false, menu);
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, menu);
             if (menu.GetCheckboxValue("Use E"))
-                CastE(enemies, false);
+                CastE(enemies, false, menu);
             if (menu.GetCheckboxValue("Use Items"))
                 UseItems(enemies, false);
         }
@@ -59,11 +59,11 @@ namespace KhaZix
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
             if (menu.GetCheckboxValue("Use Q"))
-                CastQ(enemies, false);
+                CastQ(enemies, false, menu);
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, menu);
             if (menu.GetCheckboxValue("Use E"))
-                CastE(enemies, false);
+                CastE(enemies, false, menu);
             if (menu.GetCheckboxValue("Use Items"))
                 UseItems(enemies, false);
         }
@@ -74,15 +74,15 @@ namespace KhaZix
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.Monsters.ToList().ToObj_AI_BaseList();
 
             if (menu.GetCheckboxValue("Use Q"))
-                CastQ(enemies, false);
+                CastQ(enemies, false, menu);
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, menu, menu.GetCheckboxValue("Use W only for heal"));
             if (menu.GetCheckboxValue("Use E"))
-                CastE(enemies, false);
+                CastE(enemies, false, menu);
             if (menu.GetCheckboxValue("Use Items"))
                 UseItems(enemies, false);
             if (menu.GetCheckboxValue("Use Smite"))
-                UseSmite(enemies, false, menu.GetCheckboxValue("Use Smite for HP"));
+                UseSmite(enemies, true, menu.GetCheckboxValue("Use Smite for HP"));
         }
 
         public static void Killsteal()
@@ -91,11 +91,11 @@ namespace KhaZix
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
             
             if (menu.GetCheckboxValue("Use Q"))
-                CastQ(enemies, true);
+                CastQ(enemies, true, null);
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, true);
+                CastW(enemies, true, null);
             if (menu.GetCheckboxValue("Use E"))
-                CastE(enemies, true);
+                CastE(enemies, true, null);
             if (menu.GetCheckboxValue("Use Items"))
                 UseItems(enemies, true);
             if (menu.GetCheckboxValue("Use Smite"))
@@ -108,7 +108,7 @@ namespace KhaZix
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
 
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, null);
             if (menu.GetCheckboxValue("E to Cursor"))
                 CastE(Game.CursorPos);
             if (menu.GetCheckboxValue("Use R"))
@@ -121,11 +121,11 @@ namespace KhaZix
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList();
 
             if (menu.GetCheckboxValue("Use Q") || menu.GetCheckboxValue("Use Q for Last Hit"))
-                CastQ(enemies, menu.GetCheckboxValue("Use Q for Last Hit"));
+                CastQ(enemies, menu.GetCheckboxValue("Use Q for Last Hit"), menu);
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, false);
+                CastW(enemies, false, menu);
             if (menu.GetCheckboxValue("Use E"))
-                CastE(enemies, false, menu.GetCheckboxValue("Use E on X enemies")?menu.GetSliderValue("Units to E on"):-1);
+                CastE(enemies, false, menu, menu.GetCheckboxValue("Use E on X enemies")?menu.GetSliderValue("Units to E on"):-1);
             if (menu.GetCheckboxValue("Use Items"))
                 UseItems(enemies, false);
         }
@@ -136,35 +136,47 @@ namespace KhaZix
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList();
 
             if (menu.GetCheckboxValue("Use Q"))
-                CastQ(enemies, true);
+                CastQ(enemies, true, menu);
             if (menu.GetCheckboxValue("Use W"))
-                CastW(enemies, true);
+                CastW(enemies, true, menu);
             if (menu.GetCheckboxValue("Use E"))
-                CastE(enemies, true);
+                CastE(enemies, true, menu);
             if (menu.GetCheckboxValue("Use Items"))
                 UseItems(enemies, true);
         }
-        
-        public static void CastQ(List<Obj_AI_Base> enemies, bool ks)
+
+        public static void CastQ(List<Obj_AI_Base> enemies, bool ks, Menu menu)
         {
-            if (hasDoneActionThisTick || !Program.Q.IsReady() || Orbwalker.IsAutoAttacking)
+            if (hasDoneActionThisTick || !Program.Q.IsReady() || (LastAutoTime.IsWithin(0.5f) || !enemies.Any(a => Champion.IsInAutoAttackRange(a)))
+                || (menu != null && Champion.ManaPercent < menu.GetSliderValue("Q Mana %")))
                 return;
+
+            enemies = enemies.Where(a => a.IsInRange(Champion, Program.Q.Range)).ToList();
 
             if (ks)
                 enemies = enemies.Where(a => a.Health <= Calculations.Q(a)).ToList();
 
-            if(enemies.Count > 0)
+            if (enemies.Count > 0)
             {
-                var bestEnemy = enemies.OrderByDescending(a=>a.FlatGoldRewardMod).FirstOrDefault();
+                var bestEnemy = enemies.OrderByDescending(a => a.FlatGoldRewardMod).FirstOrDefault();
+                if (menu == MenuHandler.JungleClear && Orbwalker.LastTarget != null && Orbwalker.LastTarget.IsInRange(Champion, Program.Q.Range) && (!ks || Orbwalker.LastTarget.Health < Calculations.Q(Orbwalker.LastTarget as Obj_AI_Base)))
+                    bestEnemy = Orbwalker.LastTarget as Obj_AI_Base;
                 if (bestEnemy != null)
                     hasDoneActionThisTick = Program.Q.Cast(bestEnemy);
             }
         }
 
-        public static void CastW(List<Obj_AI_Base> enemies, bool ks)
+        public static void CastW(List<Obj_AI_Base> enemies, bool ks, Menu menu, bool onlyForHeal = false)
         {
-            if (hasDoneActionThisTick || !Program.W.IsReady())
+            if (hasDoneActionThisTick || !Program.W.IsReady() || Orbwalker.IsAutoAttacking
+                || (menu != null && Champion.ManaPercent < menu.GetSliderValue("W Mana %")))
                 return;
+
+            var rangeCheck = Program.W.Range;
+            if (onlyForHeal)
+                rangeCheck = 275;
+
+            enemies = enemies.Where(a => a.IsInRange(Champion, rangeCheck)).ToList();
 
             if (ks)
                 enemies = enemies.Where(a => a.Health <= Calculations.W(a)).ToList();
@@ -202,10 +214,15 @@ namespace KhaZix
             }
         }
 
-        public static void CastE(List<Obj_AI_Base> enemies, bool ks, int enemiesHit = -1)
+        public static void CastE(List<Obj_AI_Base> enemies, bool ks, Menu menu, int enemiesHit = -1, bool eIntoAARange = false)
         {
-            if (hasDoneActionThisTick || !Program.E.IsReady())
+            if (hasDoneActionThisTick || !Program.E.IsReady() || Orbwalker.IsAutoAttacking || (menu != null && Champion.ManaPercent < menu.GetSliderValue("E Mana %")))
                 return;
+
+            if (eIntoAARange)
+                Program.E.Range += (uint)Champion.GetAutoAttackRange();
+
+            enemies = enemies.Where(a => a.IsInRange(Champion, Program.E.Range)).ToList();
 
             if (ks)
                 enemies = enemies.Where(a => a.Health <= Calculations.E(a)).ToList();
@@ -230,10 +247,13 @@ namespace KhaZix
                 if (bestPrediction != null)
                     hasDoneActionThisTick = Program.E.Cast(bestPrediction.CastPosition);
             }
+
+            if (eIntoAARange)
+                Program.E.Range -= (uint)Champion.GetAutoAttackRange();
         }
         public static void CastE(Vector3 pos)
         {
-            if (hasDoneActionThisTick || !Program.E.IsReady() || !pos.IsInRange(Champion, Program.E.Range))
+            if (hasDoneActionThisTick || pos == null || pos.IsZero || !Program.E.IsReady() || !pos.IsInRange(Champion, Program.E.Range))
                 return;
 
             hasDoneActionThisTick = Program.E.Cast(pos);
@@ -262,6 +282,9 @@ namespace KhaZix
                 //or ks on minion
                 || a.Health <= Calculations.Smite(a, "regular")
                 ))).ToList();
+
+            if (enemies.Count < 0)
+                return;
 
             Spell.Targeted blueSmite = new Spell.Targeted(Champion.GetSpellSlotFromName("S5_SummonerSmitePlayerGanker"), 500, DamageType.True);
             Spell.Targeted redSmite = new Spell.Targeted(Champion.GetSpellSlotFromName("S5_SummonerSmiteDuel"), 500, DamageType.True);

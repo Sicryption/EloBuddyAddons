@@ -37,13 +37,32 @@ namespace KhaZix
             mainMenu.Add("Creator", new Label("This script is apart of the Unsigned Series made by Chaos"));
 
             AddCheckboxes(ref Combo, "Use Q", "Use W", "Use E", "Use R_false", "Use Items", "Use Smite", "Use Ignite_false");
+            AddSlider(Combo, "Q Mana %", 0, 0, 100);
+            AddSlider(Combo, "W Mana %", 0, 0, 100);
+            AddSlider(Combo, "E Mana %", 0, 0, 100);
             AddCheckboxes(ref Harass, "Use Q", "Use W", "Use E_false", "Use Items");
+            AddSlider(Harass, "Q Mana %", 0, 0, 100);
+            AddSlider(Harass, "W Mana %", 50, 0, 100);
+            AddSlider(Harass, "E Mana %", 80, 0, 100);
             AddCheckboxes(ref AutoHarass, "Use Q", "Use W", "Use E_false", "Use Items");
+            AddSlider(AutoHarass, "Q Mana %", 0, 0, 100);
+            AddSlider(AutoHarass, "W Mana %", 80, 0, 100);
+            AddSlider(AutoHarass, "E Mana %", 90, 0, 100);
 
             AddCheckboxes(ref JungleClear, "Use Q", "Use W", "Use W only for heal", "Use E", "Use R_false", "Use Items", "Use Smite", "Use Smite for HP", "Use Items");
+            AddSlider(JungleClear, "Q Mana %", 0, 0, 100);
+            AddSlider(JungleClear, "W Mana %", 80, 0, 100);
+            AddSlider(JungleClear, "E Mana %", 90, 0, 100);
+
             AddCheckboxes(ref LaneClear, "Use Q", "Use Q for Last Hit", "Use W", "Use E", "Use E on X enemies", "Use R_false", "Use Items");
+            AddSlider(LaneClear, "Q Mana %", 0, 0, 100);
+            AddSlider(LaneClear, "W Mana %", 50, 0, 100);
+            AddSlider(LaneClear, "E Mana %", 90, 0, 100);
             AddSlider(LaneClear, "Units to E on", 3, 1, 10);
             AddCheckboxes(ref LastHit, "Use Q", "Use W_false", "Use E_false", "Use R_false", "Use Items");
+            AddSlider(LastHit, "Q Mana %", 0, 0, 100);
+            AddSlider(LastHit, "W Mana %", 50, 0, 100);
+            AddSlider(LastHit, "E Mana %", 90, 0, 100);
             AddCheckboxes(ref Killsteal, "Killsteal", "Use Q", "Use W", "Use E", "Use R_false", "Use Items", "Use Smite", "Use Ignite");
             AddCheckboxes(ref Flee, "Use W", "E to Cursor", "Use R");
 
