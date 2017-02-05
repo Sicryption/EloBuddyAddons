@@ -75,7 +75,7 @@ namespace UnsignedYasuo
             #endregion
 
             #region Variable Setup
-            currentPentaKills = Yasuo.PentaKills;
+            //currentPentaKills = Yasuo.PentaKills;
             #endregion
 
             Orbwalker.DisableMovement = true;
@@ -115,12 +115,12 @@ namespace UnsignedYasuo
                     YasuoFunctions.LaneClear();
             }
 
-            if (Yasuo.PentaKills > currentPentaKills)
+            /*if (Yasuo.PentaKills > currentPentaKills)
             {
                 Chat.Print("Nice Penta! Make sure to screenshot it and post it on the UnsignedYasuo thread to show off!");
                 
                 currentPentaKills = Yasuo.PentaKills;
-            }
+            }*/
         }
         
         //complete

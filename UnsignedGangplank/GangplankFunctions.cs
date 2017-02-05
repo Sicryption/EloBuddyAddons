@@ -18,13 +18,13 @@ namespace UnsignedGangplank
         public static bool didActionThisTick = false;
 
         public static AIHeroClient Gangplank { get { return ObjectManager.Player; } }
-        
+
         //working and tested
         public static void LaneClear()
         {
             List<Obj_AI_Base> enemies = EntityManager.MinionsAndMonsters.EnemyMinions.ToList().ToObj_AI_BaseList();
             Menu menu = MenuHandler.LaneClear;
-            
+
             if (menu.GetCheckboxValue("Use Q"))
             {
                 if (menu.GetCheckboxValue("Use Q to kill barrels") && Gangplank.NearbyBarrelCount(Program.Q.Range) >= 1)
@@ -94,7 +94,7 @@ namespace UnsignedGangplank
                 if (menu.GetCheckboxValue("Create First Barrel") && Gangplank.NearbyBarrelCount(Program.E.Range) == 0)
                     CastEOnBestPosition(enemies, menu.GetSliderValue("Minions to use Barrel"), false);
             }
-            
+
             if (menu.GetCheckboxValue("Use Items"))
                 CastItems(enemies, true);
 
@@ -103,7 +103,7 @@ namespace UnsignedGangplank
             {
                 Barrel b = Calculations.getBestBarrel(enemies, false, menu.GetSliderValue("Minions to Auto-Attack Barrel"), true);
 
-                if (b != null && b.EHitNumber(enemies.Where(a=>a.Health <= Calculations.E(a, false)).ToList()) >= menu.GetSliderValue("Minions to Auto-Attack Barrel"))
+                if (b != null && b.EHitNumber(enemies.Where(a => a.Health <= Calculations.E(a, false)).ToList()) >= menu.GetSliderValue("Minions to Auto-Attack Barrel"))
                 {
                     Orbwalker.ForcedTarget = b.barrel;
                     didActionThisTick = true;
@@ -317,7 +317,7 @@ namespace UnsignedGangplank
         {
             List<Obj_AI_Base> enemies = EntityManager.Heroes.Enemies.ToList().ToObj_AI_BaseList();
             Menu menu = MenuHandler.Flee;
-            
+
             if (menu.GetCheckboxValue("Slow Enemies with Barrels") && Gangplank.NearbyBarrelCount(Program.Q.Range) >= 1)
                 CastQOnBestBarrel(enemies, false, 1);
 
@@ -325,13 +325,13 @@ namespace UnsignedGangplank
                 CastQ(Gangplank.Nearby1HPBarrel(Program.Q.Range));
 
             if (menu.GetCheckboxValue("Ult for slow"))
-                CastR(enemies.Where(a=>a.IsInRange(Gangplank, 1200f)).ToList(), 1, false);
+                CastR(enemies.Where(a => a.IsInRange(Gangplank, 1200f)).ToList(), 1, false);
         }
 
         //working and tested
         public static void AutoHarrass()
         {
-            if (Gangplank.IsRecalling() || Gangplank.IsUnderEnemyturret() || 
+            if (Gangplank.IsRecalling() || Gangplank.IsUnderEnemyturret() ||
                 Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo) ||
                 Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass) ||
                 Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
@@ -444,7 +444,7 @@ namespace UnsignedGangplank
                 RavenousHydra.MeetsCriteria()
                 && enemies.Where(a => a.IsInRange(Gangplank, 400)).FirstOrDefault() != null
                 && Gangplank.IsAutoCanceling(enemies)
-                && (!ks || enemies.Where(a=> a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Gangplank, a, ItemId.Ravenous_Hydra)).FirstOrDefault() != null))
+                && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Gangplank, a, ItemId.Ravenous_Hydra)).FirstOrDefault() != null))
                 didActionThisTick = RavenousHydra.Cast();
             #endregion
 
@@ -498,7 +498,7 @@ namespace UnsignedGangplank
                 HextechGunblade.MeetsCriteria()
                 && enemies.Where(a => a.IsInRange(Gangplank, 700)).FirstOrDefault() != null
                 && (!ks || enemies.Where(a => a.MeetsCriteria() && a.Health <= DamageLibrary.GetItemDamage(Gangplank, a, ItemId.Hextech_Gunblade)).FirstOrDefault() != null))
-                didActionThisTick = HextechGunblade.Cast(enemies.OrderBy(a=>a.Health).FirstOrDefault());
+                didActionThisTick = HextechGunblade.Cast(enemies.OrderBy(a => a.Health).FirstOrDefault());
             #endregion
 
             #region BOTRK
@@ -519,23 +519,23 @@ namespace UnsignedGangplank
 
             return false;
         }
-        
+
         //working and tested
         private static void CastEOnBestBarrelChainPosition(List<Obj_AI_Base> enemies, int enemiesToUseEOn, bool ks)
         {
-            if(ks)
+            if (ks)
                 enemies = enemies.Where(a => a.Health <= Calculations.E(a, false)).ToList();
 
             if (!Program.E.IsReady() || enemies.Count == 0)
                 return;
 
             Vector3 bestChainPositition = GetBestBarrelChainPosition(enemies, enemiesToUseEOn);
-            
+
             CastE(bestChainPositition);
         }
 
         //working and tested
-        public static Vector3 GetBestBarrelChainPosition(List<Obj_AI_Base> enemies, int enemiesToUseEOn)    
+        public static Vector3 GetBestBarrelChainPosition(List<Obj_AI_Base> enemies, int enemiesToUseEOn)
         {
             List<Barrel> barrelsInQRange = Program.barrels.Where(a => a.barrel.IsInRange(Gangplank, Program.Q.Range) && a.TimeAt1HP - Game.Time <= Calculations.CalculateQTimeToTarget(a.barrel)).ToList();
 
@@ -591,7 +591,7 @@ namespace UnsignedGangplank
 
                 secondBarrelPosition = secondBarrelPosition.Where(a => a.CenterOfPolygon().IsInRange(Gangplank, Program.E.Range)).ToList();
                 secondBarrelPosition = secondBarrelPosition.Where(secondBarrel => secondBarrel.CenterOfPolygon().NearbyBarrelCount(barrelConnectionExtendRange) == 0).ToList();
-                
+
                 foreach (Geometry.Polygon.Circle secondBarrel in secondBarrelPosition)
                 {
                     List<Obj_AI_Base> tempEnemiesHitList = enemies.Where(a => a.Position(250).Distance(secondBarrel.CenterOfPolygon()) <= Program.barrelRadius).ToList();
@@ -616,14 +616,14 @@ namespace UnsignedGangplank
         {
             enemies = enemies.Where(a => a.Distance(Gangplank) <= Program.E.Range + (Program.barrelRadius / 2)).ToList();
 
-            if(ks)
+            if (ks)
                 enemies = enemies.Where(a => a.Health <= Calculations.E(a, false)).ToList();
 
             if (!Program.E.IsReady() || enemies.Count == 0)
                 return;
-            
+
             Spell.Skillshot.BestPosition bestPos = Program.E.GetBestCircularCastPosition(enemies);
-            
+
             if (bestPos.CastPosition != Vector3.Zero && bestPos.CastPosition.IsInRange(Gangplank, Program.E.Range) && bestPos.EHitNumber(enemies) >= enemiesToUseEOn)
                 CastE(bestPos.CastPosition);
         }
@@ -638,7 +638,7 @@ namespace UnsignedGangplank
                 return;
 
             Barrel b = Calculations.getBestBarrel(enemies, true, 1, ks);
-            
+
             if (enemies.Count >= 1 && b != null && Calculations.EnemiesHitByBarrel(b, enemies, true) >= enemiesHit)
                 didActionThisTick = Program.Q.Cast(b.barrel);
         }
@@ -671,9 +671,9 @@ namespace UnsignedGangplank
                 && a.MeetsCriteria()).FirstOrDefault();
 
             if (unit != null)
-                didActionThisTick =  Program.Ignite.Cast(unit);
+                didActionThisTick = Program.Ignite.Cast(unit);
         }
-        
+
         public static void CastQ(List<Obj_AI_Base> enemies, bool ks)
         {
             if ((!Program.Q.IsReady() || !Program.Q.IsLearned) || didActionThisTick || !enemies.Any(a => a.IsInRange(Gangplank, Program.Q.Range)))
@@ -683,7 +683,7 @@ namespace UnsignedGangplank
 
             if (ks)
                 enemies = enemies.Where(a => a.Health <= Calculations.Q(a)).ToList();
-            
+
             if (enemies.Count >= 1)
                 CastQ(enemies.First());
         }
@@ -708,7 +708,7 @@ namespace UnsignedGangplank
                 return;
 
             Spell.Skillshot.BestPosition bestPos = Program.R.GetBestCircularCastPosition(enemies);
-            
+
             if (bestPos.CastPosition != Vector3.Zero && bestPos.RHitNumber(enemies) >= enemiesToUlt)
                 didActionThisTick = Program.R.Cast(bestPos.CastPosition);
         }

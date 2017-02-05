@@ -63,7 +63,7 @@ namespace UnsignedGangplank
             #endregion
 
             #region Variable Setup
-            currentPentaKills = Gangplank.PentaKills;
+            //currentPentaKills = Gangplank.PentaKills;
 
             foreach (Obj_AI_Base ob in ObjectManager.Get<Obj_AI_Base>().Where(a => a.Name == "Barrel"))
                 barrels.Add(new Barrel(ob, Game.Time - 500));
@@ -148,12 +148,12 @@ namespace UnsignedGangplank
             if (MenuHandler.Items.GetCheckboxValue("Auto W"))
                 GangplankFunctions.AutoW();
 
-            if (Gangplank.PentaKills > currentPentaKills)
+           /* if (Gangplank.PentaKills > currentPentaKills)
             {
                 Chat.Print("Nice Penta! Make sure to screenshot it and post it on the UnsignedGangplank thread to show off!");
                 
                 currentPentaKills = Gangplank.PentaKills;
-            }
+            }*/
         }
 
         private static void Obj_AI_Base_OnDelete(GameObject sender, EventArgs args)
