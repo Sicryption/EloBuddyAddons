@@ -25,8 +25,9 @@ namespace UnsignedCamille
                 percentOfDamageAsRegularDamage = 1 - percentOfDamageAsTrueDamage,
                 damage = Camille.TotalAttackDamage * 0.2f;
 
+            //7.3 changed this from 2 to 1.8
             if (chargedQ)
-                damage *= 2;
+                damage *= 1.8f;
 
             float regularDamage = Camille.CalculateDamageOnUnit(target, DamageType.Physical, Camille.GetAutoAttackDamage(target) + damage * percentOfDamageAsRegularDamage),
                 trueDamage = Camille.CalculateDamageOnUnit(target, DamageType.True, damage * percentOfDamageAsTrueDamage);

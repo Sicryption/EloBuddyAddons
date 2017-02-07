@@ -15,7 +15,7 @@ namespace KhaZix
         public static float Q(Obj_AI_Base target)
         {
             float dmg = 45 + 25 * Program.Q.Level;
-            dmg += 1.4f * (Kha.TotalAttackDamage - Kha.BaseAttackDamage);
+            dmg += 1.2f * (Kha.TotalAttackDamage - Kha.BaseAttackDamage);
 
             if (target.IsIsolated())
                 dmg *= 1.5f;
